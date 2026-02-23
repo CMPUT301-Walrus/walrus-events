@@ -7,10 +7,10 @@ assignees: ''
 
 ---
 
-US ID: 
-Description: 
-Implementation: 
-Requirements: 
-Story Points: 
-Risk: 
-Half way checkpoint:
+**US ID**: 
+**Description**: 
+**Implementation**: 
+**Requirements**: 
+**Story Points**: 
+**Risk**: 
+**Half way checkpoint**: 
