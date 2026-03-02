@@ -1,13 +1,8 @@
 package com.example.walrusevents;
 
 import android.media.Image;
-import android.os.Build;
 
-import androidx.annotation.RequiresApi;
-
-import java.time.Clock;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 public class Event {
     private String title;
@@ -65,18 +60,8 @@ public class Event {
         return entrantCapacity;
     }
 
-    /**
-     * Sets the maximum amount of entrants that can sign up for the event. Must be greater than 0.
-     * @param entrantCapacity
-     * The new capacity that will be set
-     * @return true if successfully set to the specified capacity, false if not
-     */
-    public boolean setEntrantCapacity(int entrantCapacity) {
-        if (entrantCapacity < 0) {
-            return false;
-        }
+    public void setEntrantCapacity(int entrantCapacity) {
         this.entrantCapacity = entrantCapacity;
-        return true;
     }
 
     public Image getPoster() {
@@ -99,34 +84,14 @@ public class Event {
         return useGeolocation;
     }
 
-    /**
-     * Toggles whether or not to use geolocation
-     * @return the value of useGeolocation after toggling
-     */
-    public boolean toggleGeolocation() {
-        useGeolocation = !useGeolocation;
-        return useGeolocation;
+    public void setUseGeolocation(boolean useGeolocation) {
+        this.useGeolocation = useGeolocation;
     }
 
     /**
-     * Checks if the event is currently in registration phase
-     * @return true if in registration phase, false if not
+     * Save all edited data to database
      */
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public boolean inRegistrationPhase() {
-        LocalDateTime now = LocalDateTime.now();
-
-        return now.isAfter(startRegistrationTime) && now.isBefore(endRegistrationTime);
-    }
-
-    /**
-     * Checks if the event is currently in registration phase
-     * @return true if in registration phase, false if not
-     */
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public boolean inConfirmationPhase() {
-        LocalDateTime now = LocalDateTime.now();
-
-        return now.isAfter(startConfirmationTime) && now.isBefore(endConfirmationTIme);
+    public void saveToDatabase() {
+        //TODO: Update database
     }
 }
