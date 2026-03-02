@@ -29,19 +29,9 @@ public class EventController {
     public void setEndConfirmationTIme(LocalDateTime endConfirmationTIme) {
         model.setEndConfirmationTIme(endConfirmationTIme);
     }
-
-    /**
-     * Sets the maximum amount of entrants that can sign up for the event. Must be greater than 0.
-     * @param entrantCapacity
-     * The new capacity that will be set
-     * @return true if successfully set to the specified capacity, false if not
-     */
-    public boolean setEntrantCapacity(int entrantCapacity) {
-        if (entrantCapacity < 0) {
-            return false;
-        }
+    
+    public void setEntrantCapacity(int entrantCapacity) {
         model.setEntrantCapacity(entrantCapacity);
-        return true;
     }
 
     public void setPoster(Image poster) {

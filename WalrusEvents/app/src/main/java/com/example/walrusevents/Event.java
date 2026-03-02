@@ -60,7 +60,16 @@ public class Event {
         return entrantCapacity;
     }
 
+    /**
+     * Sets the maximum amount of entrants that can sign up for the event. Must be greater than 0.
+     * @param entrantCapacity
+     * The new capacity that will be set
+     */
     public void setEntrantCapacity(int entrantCapacity) {
+        if (entrantCapacity < 0) {
+            //TODO: send error message to view
+            return;
+        }
         this.entrantCapacity = entrantCapacity;
     }
 
