@@ -1,0 +1,5 @@
+# This file was made so git would recognize this directory while it served as a skeleton for our project
+# Idea was taken from two StackOverflow threads
+# URL: https://stackoverflow.com/questions/115983/how-do-i-add-an-empty-directory-to-a-git-repository
+# URL2:https://stackoverflow.com/questions/7229885/what-are-the-differences-between-gitignore-and-gitkeep
+# 02/03/26
