@@ -11,10 +11,17 @@ public class Event {
     private LocalDateTime startConfirmationTime;
     private LocalDateTime endConfirmationTIme;
     private int entrantCapacity;
+    private int applicantCapacity;
     private Image poster;
     private Image thumbnail;
     private Image qrCodeImage;
     private boolean useGeolocation;
+
+    public Event() {
+        //TODO: Construct model from database object
+
+
+    }
 
     public String getTitle() {
         return title;
@@ -65,12 +72,26 @@ public class Event {
      * @param entrantCapacity
      * The new capacity that will be set
      */
-    public void setEntrantCapacity(int entrantCapacity) {
-        if (entrantCapacity < 0) {
-            //TODO: send error message to view
-            return;
+    public boolean setEntrantCapacity(int entrantCapacity) {
+        if (entrantCapacity <= 0) {
+            return false;
         }
         this.entrantCapacity = entrantCapacity;
+        return true;
+    }
+
+    /**
+     * Sets the maximum amount of applicants that can be chosen by the lottery. Must be greater than
+     * 0 and less than entrant capacity.
+     * @param applicantCapacity
+     * The new capacity that will be set
+     */
+    public boolean setApplicantCapacity(int applicantCapacity) {
+        if (applicantCapacity <= 0 || applicantCapacity > entrantCapacity) {
+            return false;
+        }
+        this.applicantCapacity = applicantCapacity;
+        return true;
     }
 
     public Image getPoster() {

@@ -8,7 +8,12 @@ import androidx.annotation.RequiresApi;
 import java.time.LocalDateTime;
 
 public class EventController {
-    private Event model;
+    private final Event model;
+
+    public EventController(Event model) {
+        //Initialize EventController
+        this.model = model;
+    }
 
     public void setTitle(String title) {
         model.setTitle(title);
