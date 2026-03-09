@@ -1,5 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
+
+    // add the google services gradle plugin
+    id("com.google.gms.google-services")
+
 }
 
 android {
@@ -44,4 +48,16 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     // Firestore dependency
     implementation("com.google.firebase:firebase-storage:20.3.0")
+
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:34.10.0"))
+
+
+    // TODO: Add the dependencies for Firebase products you want to use
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation("com.google.firebase:firebase-analytics")
+
+
+    // Add the dependencies for any other desired Firebase products
+    // https://firebase.google.com/docs/android/setup#available-libraries
 }
