@@ -1,6 +1,9 @@
 package com.example.walrusevents;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +22,13 @@ public class MainActivity extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+
+        Button eventsButton = findViewById(R.id.myEventsButton);
+        eventsButton.setOnClickListener(v -> {
+            //Button goes to "My Events" activity for organizer
+            Intent goOrganizerEventsIntent = new Intent(MainActivity.this, OrganizerEventsActivity.class);
+            startActivity(goOrganizerEventsIntent);
         });
     }
 }
