@@ -25,8 +25,8 @@ public class EventRepository {
 
     // Constructor: connects to Firestore
     public EventRepository() {
-        //db = FirebaseFirestore.getInstance();
-        //eventsCollection = db.collection("events");
+        db = FirebaseFirestore.getInstance();
+        eventsCollection = db.collection("events");
     }
 
     /**
