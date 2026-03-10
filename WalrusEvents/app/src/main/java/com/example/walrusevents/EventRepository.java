@@ -1,6 +1,6 @@
 package com.example.walrusevents;
 
-import com.example.walrusevents.Event;
+//import com.example.walrusevents.Event;
 
 //import com.google.firebase.firestore.FirebaseFirestore;
 //import com.google.firebase.firestore.CollectionReference;
