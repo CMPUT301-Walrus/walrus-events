@@ -5,6 +5,7 @@ import android.media.Image;
 import java.time.LocalDateTime;
 
 public class Event {
+    private String id;
     private String title;
     private LocalDateTime startRegistrationTime;
     private LocalDateTime endRegistrationTime;
@@ -17,11 +18,14 @@ public class Event {
     private Image qrCodeImage;
     private boolean useGeolocation;
 
-    public Event(String title) {
+    public Event(String title, String id) {
+        this.id = id;
         this.title = title;
         entrantCapacity = -1;
     }
 
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
     public String getTitle() {
         return title;
     }

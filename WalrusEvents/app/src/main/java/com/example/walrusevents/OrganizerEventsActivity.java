@@ -25,8 +25,8 @@ public class OrganizerEventsActivity extends AppCompatActivity {
 
         Button addEventButton = findViewById(R.id.addButton);
         addEventButton.setOnClickListener(v -> {
-            //TODO: Popup asking for the new event's name
-            Event event = new Event("New Event");
+            //TODO: Popup asking for the new event's name and get the appropriate id from database
+            Event event = new Event("New Event", "0");
             eventsList.add(event);
             //TODO: Add event to database
         });

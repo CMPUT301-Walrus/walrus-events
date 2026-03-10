@@ -1,11 +1,11 @@
 package com.example.walrusevents;
 
-//import com.example.walrusevents.Event;
+import com.example.walrusevents.Event;
 
-//import com.google.firebase.firestore.FirebaseFirestore;
-//import com.google.firebase.firestore.CollectionReference;
-//import com.google.firebase.firestore.DocumentSnapshot;
-//import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +18,10 @@ import java.util.List;
 public class EventRepository {
 
     // Firestore instance
-    //private FirebaseFirestore db;
+    private FirebaseFirestore db;
 
     // Reference to the events collection
-    //private CollectionReference eventsCollection;
+    private CollectionReference eventsCollection;
 
     // Constructor: connects to Firestore
     public EventRepository() {
@@ -29,23 +29,21 @@ public class EventRepository {
         //eventsCollection = db.collection("events");
     }
 
-    /*
+    /**
      Store a new event in db
      Document ID = event.getId()
      ADMIN
- *//*
+    */
     public void addEvent(Event event) {
         eventsCollection
                 .document(event.getId())
                 .set(event);
     }
-*/
-    /*
+
+    /**
      Retrieve one event by ID
      Firestore is asynchronous so we use a callback
     */
-
-    /*
     public void getEvent(String eventId, EventCallback callback) {
 
         eventsCollection
@@ -65,12 +63,11 @@ public class EventRepository {
                     e.printStackTrace();
                 });
     }
-*/
-    /*
+
+    /**
      Retrieve all events
     */
 
-    /*
     public void getAllEvents(EventListCallback callback) {
 
         eventsCollection
@@ -92,12 +89,11 @@ public class EventRepository {
                     e.printStackTrace();
                 });
     }
-*/
-    /*
+
+    /**
      Delete an event ADMIN
     */
 
-    /*
     public void deleteEvent(String eventId) {
 
         eventsCollection
@@ -105,10 +101,7 @@ public class EventRepository {
                 .delete();
     }
 
-     */
-
-
-    /*
+    /**
      Callback interface for single event
      method made to get the event that we want from the Event class
     */
@@ -116,7 +109,7 @@ public class EventRepository {
         void onEventLoaded(Event event);
     }
 
-    /*
+    /**
      Callback interface for event list
     */
     public interface EventListCallback {
