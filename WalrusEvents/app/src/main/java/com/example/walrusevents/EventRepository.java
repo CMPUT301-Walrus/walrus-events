@@ -2,6 +2,7 @@ package com.example.walrusevents;
 
 import com.example.walrusevents.Event;
 
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -35,9 +36,9 @@ public class EventRepository {
      ADMIN
     */
     public void addEvent(Event event) {
-        eventsCollection
-                .document(event.getId())
-                .set(event);
+        DocumentReference docRef = eventsCollection.document();
+        event.setId(docRef.getId());
+        docRef.set(event);
     }
 
     /**

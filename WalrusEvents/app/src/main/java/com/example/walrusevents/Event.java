@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public class Event {
     private String id;
     private String title;
+    private String description;
     private LocalDateTime startRegistrationTime;
     private LocalDateTime endRegistrationTime;
     private LocalDateTime startConfirmationTime;
@@ -21,7 +22,10 @@ public class Event {
     public Event(String title, String id) {
         this.id = id;
         this.title = title;
-        entrantCapacity = -1;
+        description = "";
+        entrantCapacity = 0;
+        applicantCapacity = 0;
+        setStartConfirmationTime(LocalDateTime.now());
     }
 
     public String getId() { return id; }
@@ -32,6 +36,13 @@ public class Event {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public LocalDateTime getStartRegistrationTime() {

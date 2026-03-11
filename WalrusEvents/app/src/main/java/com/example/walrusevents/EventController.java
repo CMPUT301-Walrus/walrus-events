@@ -1,59 +1,67 @@
 package com.example.walrusevents;
 
+import android.content.Context;
 import android.media.Image;
 import android.os.Build;
+import android.widget.ListView;
 
 import androidx.annotation.RequiresApi;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class EventController {
-    private final Event model;
+    private ArrayList<Event> eventList;
+    private EventArrayAdapter eventListAdapter;
+    private EventRepository eventRepository;
 
-    public EventController(Event model) {
+    public EventController(Context context, EventRepository eventRepository, ListView eventListView) {
         //Initialize EventController
-        this.model = model;
+        eventList = new ArrayList<>();
+        eventListAdapter = new EventArrayAdapter(context, eventList);
+        eventListView.setAdapter(eventListAdapter);
+        this.eventRepository = eventRepository;
     }
 
-    public void setTitle(String title) {
-        model.setTitle(title);
+    public void setTitle(int index, String title) {
+        eventList.get(index).setTitle(title);
     }
 
-    public void setStartRegistrationTime(LocalDateTime startRegistrationTime) {
-        model.setStartRegistrationTime(startRegistrationTime);
+    public void setStartRegistrationTime(int index, LocalDateTime startRegistrationTime) {
+        eventList.get(index).setStartRegistrationTime(startRegistrationTime);
     }
 
-    public void setEndRegistrationTime(LocalDateTime endRegistrationTime) {
-        model.setEndRegistrationTime(endRegistrationTime);
+    public void setEndRegistrationTime(int index, LocalDateTime endRegistrationTime) {
+        eventList.get(index).setEndRegistrationTime(endRegistrationTime);
     }
 
-    public void setStartConfirmationTime(LocalDateTime startConfirmationTime) {
-        model.setStartConfirmationTime(startConfirmationTime);
+    public void setStartConfirmationTime(int index, LocalDateTime startConfirmationTime) {
+        eventList.get(index).setStartConfirmationTime(startConfirmationTime);
     }
 
-    public void setEndConfirmationTIme(LocalDateTime endConfirmationTIme) {
-        model.setEndConfirmationTIme(endConfirmationTIme);
+    public void setEndConfirmationTIme(int index, LocalDateTime endConfirmationTIme) {
+        eventList.get(index).setEndConfirmationTIme(endConfirmationTIme);
     }
     
-    public void setEntrantCapacity(int entrantCapacity) {
-        model.setEntrantCapacity(entrantCapacity);
+    public void setEntrantCapacity(int index,int entrantCapacity) {
+        eventList.get(index).setEntrantCapacity(entrantCapacity);
     }
 
-    public void setPoster(Image poster) {
-        model.setPoster(poster);
+    public void setPoster(int index, Image poster) {
+        eventList.get(index).setPoster(poster);
     }
 
-    public void setThumbnail(Image thumbnail) {
-        model.setThumbnail(thumbnail);
+    public void setThumbnail(int index, Image thumbnail) {
+        eventList.get(index).setThumbnail(thumbnail);
     }
 
     /**
      * Toggles whether or not to use geolocation
      * @return the value of useGeolocation after toggling
      */
-    public boolean toggleGeolocation() {
-        model.setUseGeolocation(!model.getUseGeolocation());
-        return model.getUseGeolocation();
+    public boolean toggleGeolocation(int index) {
+        eventList.get(index).setUseGeolocation(!eventList.get(index).getUseGeolocation());
+        return eventList.get(index).getUseGeolocation();
     }
 
     /**
@@ -61,10 +69,10 @@ public class EventController {
      * @return true if in registration phase, false if not
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public boolean inRegistrationPhase() {
+    public boolean inRegistrationPhase(int index) {
         LocalDateTime now = LocalDateTime.now();
 
-        return now.isAfter(model.getStartRegistrationTime()) && now.isBefore(model.getEndRegistrationTime());
+        return now.isAfter(eventList.get(index).getStartRegistrationTime()) && now.isBefore(eventList.get(index).getEndRegistrationTime());
     }
 
     /**
@@ -72,9 +80,15 @@ public class EventController {
      * @return true if in registration phase, false if not
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public boolean inConfirmationPhase() {
+    public boolean inConfirmationPhase(int index) {
         LocalDateTime now = LocalDateTime.now();
 
-        return now.isAfter(model.getStartConfirmationTime()) && now.isBefore(model.getEndConfirmationTIme());
+        return now.isAfter(eventList.get(index).getStartConfirmationTime()) && now.isBefore(eventList.get(index).getEndConfirmationTIme());
+    }
+
+    public void addEvent(Event event) {
+        eventRepository.addEvent(event);
+        eventList.add(event);
+        eventListAdapter.notifyDataSetChanged();
     }
 }
