@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#96E6F6"
-    tools:context=".OrganizerEventsActivity">
+    tools:context=".activity.OEventsActivity">
 
     <ListView
         android:id="@+id/listView"

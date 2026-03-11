@@ -2,9 +2,10 @@ package com.example.walrusevents;
 
 import android.media.Image;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Event {
+public class Event implements Serializable {
     private String id;
     private String title;
     private String description;
