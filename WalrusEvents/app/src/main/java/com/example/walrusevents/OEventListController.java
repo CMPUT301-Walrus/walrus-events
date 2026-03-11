@@ -1,24 +1,27 @@
 package com.example.walrusevents;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.Image;
-import android.os.Build;
 import android.widget.ListView;
 
-import androidx.annotation.RequiresApi;
+import androidx.fragment.app.FragmentManager;
+
+import com.example.walrusevents.activity.OEventsActivity;
+import com.example.walrusevents.ui.NameEventFragment;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class EventController {
+public class OEventListController  implements NameEventFragment.NameEventListener{
     private ArrayList<Event> eventList;
-    private EventArrayAdapter eventListAdapter;
+    private OEventArrayAdapter eventListAdapter;
     private EventRepository eventRepository;
 
-    public EventController(Context context, EventRepository eventRepository, ListView eventListView) {
+    public OEventListController(Context context, EventRepository eventRepository, ListView eventListView) {
         //Initialize EventController
         eventList = new ArrayList<>();
-        eventListAdapter = new EventArrayAdapter(context, eventList);
+        eventListAdapter = new OEventArrayAdapter(context, eventList);
         eventListView.setAdapter(eventListAdapter);
         this.eventRepository = eventRepository;
     }
@@ -68,7 +71,6 @@ public class EventController {
      * Checks if the event is currently in registration phase
      * @return true if in registration phase, false if not
      */
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public boolean inRegistrationPhase(int index) {
         LocalDateTime now = LocalDateTime.now();
 
@@ -79,15 +81,27 @@ public class EventController {
      * Checks if the event is currently in registration phase
      * @return true if in registration phase, false if not
      */
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public boolean inConfirmationPhase(int index) {
         LocalDateTime now = LocalDateTime.now();
 
         return now.isAfter(eventList.get(index).getStartConfirmationTime()) && now.isBefore(eventList.get(index).getEndConfirmationTIme());
     }
 
-    public void addEvent(Event event) {
-        eventRepository.addEvent(event);
+    public void addEvent(FragmentManager fragmentManager) {
+        NameEventFragment nameEventFragment = NameEventFragment.newInstance(this);
+        nameEventFragment.show(fragmentManager, "Name Event");
+    }
+
+    public void openEvent(Context context, int position) {
+        Intent goViewEventIntent = new Intent(context, OEventsActivity.class);
+        goViewEventIntent.putExtra("eventId", eventList.get(position).getId());
+        context.startActivity(goViewEventIntent);
+    }
+
+    public void updateEventTitle(String title) {
+        Event event = new Event(title, "");
+        event = eventRepository.addEvent(event);
+
         eventList.add(event);
         eventListAdapter.notifyDataSetChanged();
     }

@@ -12,11 +12,11 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
-public class EventArrayAdapter extends ArrayAdapter<Event> {
+public class OEventArrayAdapter extends ArrayAdapter<Event> {
     private ArrayList<Event> eventList;
     private Context context;
 
-    public EventArrayAdapter(@NonNull Context context, ArrayList<Event> eventList) {
+    public OEventArrayAdapter(@NonNull Context context, ArrayList<Event> eventList) {
         super(context, 0, eventList);
         this.eventList = eventList;
         this.context = context;

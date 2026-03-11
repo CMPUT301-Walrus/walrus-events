@@ -35,9 +35,16 @@ public class EventRepository {
      Document ID = event.getId()
      ADMIN
     */
-    public void addEvent(Event event) {
+    public Event addEvent(Event event) {
         DocumentReference docRef = eventsCollection.document();
         event.setId(docRef.getId());
+        docRef.set(event);
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        DocumentReference docRef = eventsCollection.document();
+        event.setId(event.getId());
         docRef.set(event);
     }
 
