@@ -36,6 +36,8 @@ public class OEventEditActivity extends AppCompatActivity {
         eventEditView.getDoneButton().setOnClickListener(v -> {
             eventEditController.setTitle(eventEditView.getTitleView().getText().toString());
             eventEditController.setDescription(eventEditView.getEditDescription().getText().toString());
+            eventEditController.setEntrantCapacity(Integer.parseInt(eventEditView.getEditEntrantCapacity().getText().toString()));
+            eventEditController.setApplicantCapacity(Integer.parseInt(eventEditView.getEditApplicantCapacity().getText().toString()));
             eventEditController.saveModel();
         });
     }

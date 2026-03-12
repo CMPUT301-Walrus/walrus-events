@@ -1,13 +1,19 @@
 package com.example.walrusevents;
 
+import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.graphics.Bitmap;
 import android.media.Image;
+import android.widget.DatePicker;
 
 import com.example.walrusevents.data.FirebaseAPIManager;
 import com.example.walrusevents.data.ImageRepository;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.util.PosterGenerator;
 import com.example.walrusevents.util.QRGenerator;
+
+import java.time.LocalDateTime;
 
 public class OEventEditController {
     private Event model;
@@ -46,6 +52,10 @@ public class OEventEditController {
 
     public void setEntrantCapacity(int entrantCapacity) {
         model.setEntrantCapacity(entrantCapacity);
+    }
+
+    public  void setApplicantCapacity(int applicantCapacity) {
+        model.setApplicantCapacity(applicantCapacity);
     }
 
     public void setThumbnail(Image thumbnail) {
@@ -108,6 +118,17 @@ public class OEventEditController {
             String fileName = "poster_" + model.getEventId();
             imgRepo.storeGeneratedBitmap(model.getPoster(), fileName, listener);
         }
+    }
+
+    public void openStartRegistrationDialog(Activity context) {
+        DatePickerDialog dialog = new DatePickerDialog(context, 0);
+        //LocalDateTime dateTime =
+        dialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+
+            }
+        });
     }
 
     public void saveModel() {
