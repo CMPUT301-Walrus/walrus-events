@@ -9,13 +9,14 @@ import android.graphics.Bitmap;
 import com.example.walrusevents.util.QRGenerator;
 
 public class Event {
-    private String id;
+    private String eventId;
+    private String ownerId;     //ID that references the organizer of this event
     private String title;
     private String description;
-    private LocalDateTime startRegistrationTime;
-    private LocalDateTime endRegistrationTime;
-    private LocalDateTime startConfirmationTime;
-    private LocalDateTime endConfirmationTIme;
+    private String startRegistrationTime;
+    private String endRegistrationTime;
+    private String startConfirmationTime;
+    private String endConfirmationTIme;
     private int entrantCapacity;    //Limits number of entrants. Set to 0 for no limit
     private int applicantCapacity;  //Number of applicants chosen by lottery. If 0, lottery should be disabled
     private Bitmap poster;
@@ -23,17 +24,28 @@ public class Event {
     private Bitmap qrCodeImage;
     private boolean useGeolocation;
 
-    public Event(String title, String id) {
-        this.id = id;
+    //No-argument constructor for database queries
+    public Event() {
+        this.eventId = "";
+        this.title = "";
+        this.ownerId = "";
+    }
+
+    public Event(String title, String eventId) {
+        this.eventId = eventId;
         this.title = title;
+        this.ownerId = "ABCDEF";  //TODO: refactor when profile functionality is added.
         description = "";
         entrantCapacity = 0;
         applicantCapacity = 0;
-        setStartConfirmationTime(LocalDateTime.now());
+        setStartConfirmationTime(LocalDateTime.now().toString());
     }
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public String getEventId() { return eventId; }
+    public void setEventId(String eventId) { this.eventId = eventId; }
+
+    public String getOwnerId() { return ownerId; }
+    public void setOwnerId(String eventId) { this.ownerId = ownerId; }
     public String getTitle() {
         return title;
     }
@@ -49,35 +61,35 @@ public class Event {
         this.description = description;
     }
 
-    public LocalDateTime getStartRegistrationTime() {
+    public String getStartRegistrationTime() {
         return startRegistrationTime;
     }
 
-    public void setStartRegistrationTime(LocalDateTime startRegistrationTime) {
+    public void setStartRegistrationTime(String startRegistrationTime) {
         this.startRegistrationTime = startRegistrationTime;
     }
 
-    public LocalDateTime getEndRegistrationTime() {
+    public String getEndRegistrationTime() {
         return endRegistrationTime;
     }
 
-    public void setEndRegistrationTime(LocalDateTime endRegistrationTime) {
+    public void setEndRegistrationTime(String endRegistrationTime) {
         this.endRegistrationTime = endRegistrationTime;
     }
 
-    public LocalDateTime getStartConfirmationTime() {
+    public String getStartConfirmationTime() {
         return startConfirmationTime;
     }
 
-    public void setStartConfirmationTime(LocalDateTime startConfirmationTime) {
+    public void setStartConfirmationTime(String startConfirmationTime) {
         this.startConfirmationTime = startConfirmationTime;
     }
 
-    public LocalDateTime getEndConfirmationTIme() {
+    public String getEndConfirmationTIme() {
         return endConfirmationTIme;
     }
 
-    public void setEndConfirmationTIme(LocalDateTime endConfirmationTIme) {
+    public void setEndConfirmationTIme(String endConfirmationTIme) {
         this.endConfirmationTIme = endConfirmationTIme;
     }
 
@@ -121,7 +133,7 @@ public class Event {
     }
 
     public void generateEventQRCode() {
-        this.qrCodeImage = QRGenerator.generateQRCode("walrusevents://event/" + this.id);
+        this.qrCodeImage = QRGenerator.generateQRCode("walrusevents://event/" + this.eventId);
     }
 
     public Bitmap getQrCode() { return qrCodeImage; }

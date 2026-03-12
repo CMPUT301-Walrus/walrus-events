@@ -1,11 +1,10 @@
 package com.example.walrusevents;
 
-import com.example.walrusevents.Event;
-
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -37,14 +36,14 @@ public class EventRepository {
     */
     public Event addEvent(Event event) {
         DocumentReference docRef = eventsCollection.document();
-        event.setId(docRef.getId());
+        event.setEventId(docRef.getId());
         docRef.set(event);
         return event;
     }
 
     public void setEvent(Event event) {
         DocumentReference docRef = eventsCollection.document();
-        event.setId(event.getId());
+        event.setEventId(event.getEventId());
         docRef.set(event);
     }
 
@@ -72,6 +71,27 @@ public class EventRepository {
                 });
     }
 
+    public void getEventsFromUser(String id, EventListCallback callback) {
+        eventsCollection
+                .whereEqualTo("ownerId", id)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    ArrayList<Event> events = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+
+                        Event event = doc.toObject(Event.class);
+
+                        events.add(event);
+                    }
+                    callback.onEventsLoaded(events);
+                    System.out.println("Successfully loaded events from user ");
+                    System.out.println(querySnapshot.getDocuments().size());
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                });
+    }
+
     /**
      Retrieve all events
     */
@@ -82,7 +102,7 @@ public class EventRepository {
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
 
-                    List<Event> events = new ArrayList<>();
+                    ArrayList<Event> events = new ArrayList<>();
 
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
 
@@ -121,6 +141,6 @@ public class EventRepository {
      Callback interface for event list
     */
     public interface EventListCallback {
-        void onEventsLoaded(List<Event> events);
+        void onEventsLoaded(ArrayList<Event> events);
     }
 }

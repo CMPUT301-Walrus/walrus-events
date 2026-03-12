@@ -1,6 +1,5 @@
 package com.example.walrusevents.ui;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,14 +10,12 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
-import com.example.walrusevents.Event;
 import com.example.walrusevents.R;
 
 public class NameEventFragment extends DialogFragment {
     public interface NameEventListener {
-        void updateEventTitle(String title);
+        void addEvent(String title);
     }
 
     private  NameEventListener listener;
@@ -42,7 +39,7 @@ public class NameEventFragment extends DialogFragment {
         EditText editName = view.findViewById(R.id.editName);
         Button confirmButton = view.findViewById(R.id.editNameConfirm);
         confirmButton.setOnClickListener(v -> {
-            listener.updateEventTitle(editName.getText().toString());
+            listener.addEvent(editName.getText().toString());
             dismiss();
         });
 
