@@ -29,7 +29,7 @@ public class Lottery {
      * @return
      *  Returns false if the draw fails
      */
-    public boolean drawToCapacity(List<Entry> entrants, int capacity) {
+    public boolean drawToCapacity(List<WaitlistEntry> entrants, int capacity) {
         if (capacity < 1) return false; /* Draw failed: capacity needs to be at least one */
 
         int length = entrants.size();
@@ -37,11 +37,11 @@ public class Lottery {
 
         int limit = capacity;
         // Create a new list of entrants that are PENDING and track how many seats are already reserved.
-        ArrayList<Entry> pending = new ArrayList<>();
-        for (Entry entrant : entrants) {
-            if (entrant.getStatus() == Status.PENDING) {
+        ArrayList<WaitlistEntry> pending = new ArrayList<>();
+        for (WaitlistEntry entrant : entrants) {
+            if (entrant.getStatus() == WaitlistEntry.Status.PENDING) {
                 pending.add(entrant);
-            } else if (entrant.getStatus() == Status.INVITED || entrant.getStatus() == Status.ACCEPTED) {
+            } else if (entrant.getStatus() == WaitlistEntry.Status.INVITED || entrant.getStatus() == WaitlistEntry.Status.ACCEPTED) {
                 limit--;
             }
         }
@@ -50,7 +50,7 @@ public class Lottery {
 
         // If event can seat all PENDING entrants, invite them all
         if (limit >= pending.size()) {
-            for (Entry entrant : pending) {
+            for (WaitlistEntry entrant : pending) {
                 if (invite(entrant) < 0)
                     return false; /* Draw failed: non-PENDING entrant found in the draw */
             }
@@ -77,9 +77,9 @@ public class Lottery {
      * @return
      *  Returns -1 if the entrant is not PENDING and therefore cannot be invited
      */
-    private int invite(Entry entrant) {
-        if(entrant.getStatus() != Status.PENDING) return -1;
-        entrant.setStatus(Status.INVITED);
+    private int invite(WaitlistEntry entrant) {
+        if(entrant.getStatus() != WaitlistEntry.Status.PENDING) return -1;
+        entrant.setStatus(WaitlistEntry.Status.INVITED);
         return 0;
     }
 }
