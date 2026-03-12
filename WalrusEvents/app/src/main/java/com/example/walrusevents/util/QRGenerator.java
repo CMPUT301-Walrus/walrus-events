@@ -8,7 +8,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
  * This class is in charge of generating a QR code that links to an event poster
  * Used for US 02.01.01
  * May be integrated into another class later (developing in isolation for now...)
- * Inputs: Poster link
+ * Inputs: eventId
  * Returns: Returns a bitmap of the QR code, do <ImageView_name>.setImageBitmap(bitmap) to display code
  */
 public class QRGenerator {
@@ -17,15 +17,15 @@ public class QRGenerator {
      * Asked how to generate a QR code in Java using Android Studio
      * 10/03/26
      */
-    public static Bitmap generateQRCode(String posterURL) {
+    public static Bitmap generateQRCode(String eventId) {
 
         // Make sure poster exists
-        if (posterURL != null && !posterURL.isEmpty()) {
+        if (eventId != null && !eventId.isEmpty()) {
             // Error handling
             try {
                 // Generate QR code using ZXing BarcodeEncoder
                 BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-                return barcodeEncoder.encodeBitmap(posterURL.trim(), BarcodeFormat.QR_CODE, 400, 400);
+                return barcodeEncoder.encodeBitmap(eventId.trim(), BarcodeFormat.QR_CODE, 400, 400);
             } catch (Exception e) {
                 e.printStackTrace();
             }

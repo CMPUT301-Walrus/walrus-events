@@ -1,9 +1,15 @@
 package com.example.walrusevents;
 
+import android.graphics.Bitmap;
 import android.media.Image;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
+
+import com.example.walrusevents.data.FirebaseAPIManager;
+import com.example.walrusevents.data.ImageRepository;
+import com.example.walrusevents.util.QRGenerator;
+import com.example.walrusevents.util.PosterGenerator;
 
 import java.time.LocalDateTime;
 
@@ -39,18 +45,10 @@ public class EventController {
         model.setEntrantCapacity(entrantCapacity);
     }
 
-    public void setPoster(Image poster) {
-        model.setPoster(poster);
-    }
-
     public void setThumbnail(Image thumbnail) {
         model.setThumbnail(thumbnail);
     }
 
-    /**
-     * Toggles whether or not to use geolocation
-     * @return the value of useGeolocation after toggling
-     */
     public boolean toggleGeolocation() {
         model.setUseGeolocation(!model.getUseGeolocation());
         return model.getUseGeolocation();

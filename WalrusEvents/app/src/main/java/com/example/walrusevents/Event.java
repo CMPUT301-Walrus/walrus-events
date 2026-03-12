@@ -2,26 +2,34 @@ package com.example.walrusevents;
 
 import android.media.Image;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import android.graphics.Bitmap;
+import com.example.walrusevents.util.QRGenerator;
 
 public class Event {
     private String id;
     private String title;
+    private String description;
     private LocalDateTime startRegistrationTime;
     private LocalDateTime endRegistrationTime;
     private LocalDateTime startConfirmationTime;
     private LocalDateTime endConfirmationTIme;
     private int entrantCapacity;    //Limits number of entrants. Set to 0 for no limit
     private int applicantCapacity;  //Number of applicants chosen by lottery. If 0, lottery should be disabled
-    private Image poster;
+    private Bitmap poster;
     private Image thumbnail;
-    private Image qrCodeImage;
+    private Bitmap qrCodeImage;
     private boolean useGeolocation;
 
     public Event(String title, String id) {
         this.id = id;
         this.title = title;
-        entrantCapacity = -1;
+        description = "";
+        entrantCapacity = 0;
+        applicantCapacity = 0;
+        setStartConfirmationTime(LocalDateTime.now());
     }
 
     public String getId() { return id; }
@@ -32,6 +40,13 @@ public class Event {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public LocalDateTime getStartRegistrationTime() {
@@ -97,13 +112,21 @@ public class Event {
         return true;
     }
 
-    public Image getPoster() {
+    public Bitmap getPoster() {
         return poster;
     }
 
-    public void setPoster(Image poster) {
+    public void setPoster(Bitmap poster) {
         this.poster = poster;
     }
+
+    public void generateEventQRCode() {
+        this.qrCodeImage = QRGenerator.generateQRCode("walrusevents://event/" + this.id);
+    }
+
+    public Bitmap getQrCode() { return qrCodeImage; }
+
+    public void setQRCodeImage(Bitmap qrCodeImage) { this.qrCodeImage = qrCodeImage; }
 
     public Image getThumbnail() {
         return thumbnail;
