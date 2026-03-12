@@ -5,18 +5,18 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 public class LotteryTest {
-    private ArrayList<Entry> makeList() {
-        ArrayList<Entry> entrants = new ArrayList();
+    private ArrayList<WaitlistEntry> makeList() {
+        ArrayList<WaitlistEntry> entrants = new ArrayList();
         for(Integer i = 0; i< 10; i++) {
-            entrants.add(new Entry(i.toString()));
+            entrants.add(new WaitlistEntry(i.toString()));
         }
         return entrants;
     }
 
-    private int winCount(ArrayList<Entry> entries) {
+    private int winCount(ArrayList<WaitlistEntry> entries) {
         int count = 0;
-        for(Entry entrant: entries) {
-            if(entrant.getStatus() == Status.INVITED) {
+        for(WaitlistEntry entrant: entries) {
+            if(entrant.getStatus() == WaitlistEntry.Status.INVITED) {
                 count++;
             }
         }
@@ -25,7 +25,7 @@ public class LotteryTest {
 
     @Test
     public void testDrawToCapacity() {
-        ArrayList<Entry> entrants = makeList();
+        ArrayList<WaitlistEntry> entrants = makeList();
         Lottery lottery = new Lottery();
 
     // Default: draw to capacity from a list of all PENDING entrants (capacity < entrants.size())
@@ -46,7 +46,7 @@ public class LotteryTest {
 
     @Test
     public void testDrawToCapacityExceptions() {
-        ArrayList<Entry> entrants = new ArrayList<>();
+        ArrayList<WaitlistEntry> entrants = new ArrayList<>();
         Lottery lottery = new Lottery();
 
     // Empty list
