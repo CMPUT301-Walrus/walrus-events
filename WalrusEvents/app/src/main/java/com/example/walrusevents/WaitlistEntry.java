@@ -2,7 +2,7 @@ package com.example.walrusevents;
 
 import com.google.firebase.Timestamp;
 
-public class EntrantStatus {
+public class WaitlistEntry {
 
     /**
      * Possible states for an entrant within a waitlist.
@@ -21,7 +21,7 @@ public class EntrantStatus {
     private Double latitude;
     private Double longitude;
 
-    public EntrantStatus(String entrantId) {
+    public WaitlistEntry(String entrantId) {
         this.entrantId = entrantId;
         this.status = Status.PENDING;
         this.joinedAt = Timestamp.now();

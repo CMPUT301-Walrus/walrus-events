@@ -8,6 +8,8 @@ public class Profile {
     private String phone;
     private boolean notificationsEnabled;
 
+    public Profile() {}
+
     public Profile(String deviceId, String name, String email) {
         this.deviceId = deviceId;
         this.name = name;
