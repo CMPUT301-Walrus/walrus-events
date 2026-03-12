@@ -30,7 +30,7 @@ public class OEventDetailsController {
          * It will generate the QR code and poster for the event
          */
         // create link for poster
-        String eventLink = "walrusevents://event/" + model.getId();
+        String eventLink = "walrusevents://event/" + model.getEventId();
 
         // Generate QR code using method in util, set destination as the link for the event
         Bitmap qrCode = QRGenerator.generateQRCode(eventLink);
@@ -57,7 +57,7 @@ public class OEventDetailsController {
     public void saveEventPoster(ImageRepository imgRepo, FirebaseAPIManager.OnUploadCompleteListener listener) {
         if (model.getPoster() != null) {
             // Use the event ID as the filename so it's always unique
-            String fileName = "poster_" + model.getId();
+            String fileName = "poster_" + model.getEventId();
             imgRepo.storeGeneratedBitmap(model.getPoster(), fileName, listener);
         }
     }
