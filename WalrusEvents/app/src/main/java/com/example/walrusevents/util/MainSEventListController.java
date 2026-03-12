@@ -3,7 +3,7 @@ package com.example.walrusevents.util;
 import android.content.Context;
 import android.widget.ListView;
 
-import com.example.walrusevents.Event;
+import com.example.walrusevents.model.Event;
 import com.example.walrusevents.EventRepository;
 import com.example.walrusevents.OEventArrayAdapter;
 import com.example.walrusevents.ui.NameEventFragment;

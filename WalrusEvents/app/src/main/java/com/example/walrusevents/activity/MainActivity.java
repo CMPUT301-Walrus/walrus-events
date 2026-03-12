@@ -12,9 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.walrusevents.EventRepository;
-import com.example.walrusevents.OEventListController;
 import com.example.walrusevents.R;
-import com.example.walrusevents.ui.OEventListView;
 import com.example.walrusevents.util.MainSEventListController;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
         /*
         * Scrolling ListView All the Events
+        *
          */
 
         eventListView = findViewById(R.id.mainScreenEventList);
@@ -46,9 +45,9 @@ public class MainActivity extends AppCompatActivity {
         eventListController = new MainSEventListController(this, eventRepository, eventListView);
         eventListController.loadEvents();
 
-            // 1 Event: Name, Desc, Reg Deadline
         //TODO: Button to change between admin / user / organizer(?)
             // Ex: admin - leave blank for now, organizer - OEventActivity, user - UEventActivity
+        // labels when
         //TODO: Main Buttons for MainView - Settings, MainScreen, MyEvents
             // MyEvents - UEventActivity, OEventActivity
             //Settings - USettingsActivity
