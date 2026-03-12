@@ -10,18 +10,15 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- EventRepository
- db class that takes the events from the events firebase db
- Lowkey can't access the firebase for some reason now, BUT the actual funcs SHOULD work
-*/
+/**
+ * EventRepository
+ * Class that manages communication with the events database in Firestore
+ */
 public class EventRepository {
 
-    // Firestore instance
-    private FirebaseFirestore db;
+    private FirebaseFirestore db;   // Firestore instance
 
-    // Reference to the events collection
-    private CollectionReference eventsCollection;
+    private CollectionReference eventsCollection;   // Reference to the events collection
 
     // Constructor: connects to Firestore
     public EventRepository() {
@@ -30,27 +27,29 @@ public class EventRepository {
     }
 
     /**
-     Store a new event in db
-     Document ID = event.getId()
-     ADMIN
-    */
-    public Event addEvent(Event event) {
+     * Store a new event in the database
+     * @param event The event being added
+     */
+    public void addEvent(Event event) {
         DocumentReference docRef = eventsCollection.document();
         event.setEventId(docRef.getId());
-        docRef.set(event);
-        return event;
-    }
-
-    public void setEvent(Event event) {
-        DocumentReference docRef = eventsCollection.document();
-        event.setEventId(event.getEventId());
         docRef.set(event);
     }
 
     /**
-     Retrieve one event by ID
-     Firestore is asynchronous so we use a callback
-    */
+     * Sets an event in the database
+     * @param event The event to be set/overwritten
+     */
+    public void setEvent(Event event) {
+        DocumentReference docRef = eventsCollection.document(event.getEventId());
+        docRef.set(event);
+    }
+
+    /**
+     * Retrieve one event by its ID
+     * @param eventId The ID of the event being retrieved
+     * @param callback Callback to pass the event to (Firestore is asynchronous)
+     */
     public void getEvent(String eventId, EventCallback callback) {
 
         eventsCollection
@@ -71,6 +70,11 @@ public class EventRepository {
                 });
     }
 
+    /**
+     * Gets the all the events made by the specified user
+     * @param id The ID of the user
+     * @param callback Callback to pass the events to (Firestore is asynchronous)
+     */
     public void getEventsFromUser(String id, EventListCallback callback) {
         eventsCollection
                 .whereEqualTo("ownerId", id)
@@ -84,8 +88,6 @@ public class EventRepository {
                         events.add(event);
                     }
                     callback.onEventsLoaded(events);
-                    System.out.println("Successfully loaded events from user ");
-                    System.out.println(querySnapshot.getDocuments().size());
                 })
                 .addOnFailureListener(e -> {
                     e.printStackTrace();
@@ -93,9 +95,9 @@ public class EventRepository {
     }
 
     /**
-     Retrieve all events
-    */
-
+     * Retrieve all events in the database
+     * @param callback Callback to pass the events to (Firestore is asynchronous)
+     */
     public void getAllEvents(EventListCallback callback) {
 
         eventsCollection
@@ -119,9 +121,9 @@ public class EventRepository {
     }
 
     /**
-     Delete an event ADMIN
-    */
-
+     * Delete an event (Admin)
+     * @param eventId ID of the event to be deleted
+     */
     public void deleteEvent(String eventId) {
 
         eventsCollection
@@ -130,16 +132,16 @@ public class EventRepository {
     }
 
     /**
-     Callback interface for single event
-     method made to get the event that we want from the Event class
-    */
+     * Callback interface for single event
+     * method made to get the event that we want from the Event class
+     */
     public interface EventCallback {
         void onEventLoaded(Event event);
     }
 
     /**
-     Callback interface for event list
-    */
+     * Callback interface for event list
+     */
     public interface EventListCallback {
         void onEventsLoaded(ArrayList<Event> events);
     }
