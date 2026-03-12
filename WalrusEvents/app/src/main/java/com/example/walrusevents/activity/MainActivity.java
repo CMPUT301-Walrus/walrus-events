@@ -3,6 +3,7 @@ package com.example.walrusevents.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,9 +11,20 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.walrusevents.EventRepository;
+import com.example.walrusevents.OEventListController;
 import com.example.walrusevents.R;
+import com.example.walrusevents.ui.OEventListView;
+import com.example.walrusevents.util.MainSEventListController;
 
 public class MainActivity extends AppCompatActivity {
+
+    private EventRepository eventRepository;
+
+    private ListView eventListView;
+
+    private MainSEventListController eventListController;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +37,15 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        //TODO: Scrolling ListView of Events (for all)
+        /*
+        * Scrolling ListView All the Events
+         */
+
+        eventListView = findViewById(R.id.mainScreenEventList);
+        eventRepository = new EventRepository();
+        eventListController = new MainSEventListController(this, eventRepository, eventListView);
+        eventListController.loadEvents();
+
             // 1 Event: Name, Desc, Reg Deadline
         //TODO: Button to change between admin / user / organizer(?)
             // Ex: admin - leave blank for now, organizer - OEventActivity, user - UEventActivity
