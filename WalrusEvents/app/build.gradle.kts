@@ -66,4 +66,9 @@ dependencies {
     // Dependencies for ZXing (used for generating QR codes
     implementation("com.google.zxing:core:3.5.3") // Check for the latest version
     implementation("com.journeyapps:zxing-android-embedded:4.3.0") // Simplifies bitmap generation
+
+    // Dependencies for Glide (used for converting a URI into a Bitmap
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    // This 'annotationProcessor' line is what makes Glide smart
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 }

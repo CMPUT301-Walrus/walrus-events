@@ -5,7 +5,10 @@ import android.media.Image;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Event implements Serializable {
+import android.graphics.Bitmap;
+import com.example.walrusevents.util.QRGenerator;
+
+public class Event {
     private String id;
     private String title;
     private String description;
@@ -15,9 +18,9 @@ public class Event implements Serializable {
     private LocalDateTime endConfirmationTIme;
     private int entrantCapacity;    //Limits number of entrants. Set to 0 for no limit
     private int applicantCapacity;  //Number of applicants chosen by lottery. If 0, lottery should be disabled
-    private Image poster;
+    private Bitmap poster;
     private Image thumbnail;
-    private Image qrCodeImage;
+    private Bitmap qrCodeImage;
     private boolean useGeolocation;
 
     public Event(String title, String id) {
@@ -109,13 +112,21 @@ public class Event implements Serializable {
         return true;
     }
 
-    public Image getPoster() {
+    public Bitmap getPoster() {
         return poster;
     }
 
-    public void setPoster(Image poster) {
+    public void setPoster(Bitmap poster) {
         this.poster = poster;
     }
+
+    public void generateEventQRCode() {
+        this.qrCodeImage = QRGenerator.generateQRCode("walrusevents://event/" + this.id);
+    }
+
+    public Bitmap getQrCode() { return qrCodeImage; }
+
+    public void setQRCodeImage(Bitmap qrCodeImage) { this.qrCodeImage = qrCodeImage; }
 
     public Image getThumbnail() {
         return thumbnail;
