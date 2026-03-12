@@ -1,5 +1,11 @@
 package com.example.walrusevents;
 
+/**
+ * Profile
+ * Data container holding a user's personal information and device id.
+ * Used for passwordless authentication via device ID.
+ */
+
 public class Profile {
 
     private String deviceId;

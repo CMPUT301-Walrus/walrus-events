@@ -1,5 +1,10 @@
 package com.example.walrusevents;
 
+/**
+ * Entrant
+ * Represents a user who signs up for events through the lottery system.
+ */
+
 public class Entrant {
 
     private String entrantId;

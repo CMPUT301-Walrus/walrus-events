@@ -6,6 +6,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * ProfileRepository
+ * Handles all Firestore reads and writes for Entrant profiles.
+ *
+ * Firestore structure:
+ *   entrants/{deviceId}  →  { name, email, phone, profileImageUrl, notificationsEnabled }
+ */
+
 public class ProfileRepository {
 
     private static final String COLLECTION = "profiles";

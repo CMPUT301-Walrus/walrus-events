@@ -1,5 +1,11 @@
 package com.example.walrusevents;
 
+/**
+ * EntrantController
+ * Controller layer for all Entrant-related actions.
+ * Bridges the UI with the Entrant model, WaitlistRepository, and ProfileRepository.
+ */
+
 public class EntrantController {
 
     private final Entrant entrant;

@@ -7,6 +7,17 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * WaitlistRepository
+ * Handles all Firestore reads and writes for waitlist entries.
+ *
+ * Firestore structure (subcollection per event):
+ *   events/{eventId}/waitlist/{entrantId} -> { status, joinedAt, latitude, longitude }
+ *
+ * Firestore's subcollection is the waitlist. One entrant can appear in many events' waitlists,
+ * each with their own independent status.
+ */
+
 public class WaitlistRepository {
 
     private static final String EVENTS = "events";

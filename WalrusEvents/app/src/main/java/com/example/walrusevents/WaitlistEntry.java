@@ -2,6 +2,12 @@ package com.example.walrusevents;
 
 import com.google.firebase.Timestamp;
 
+/**
+ * WaitlistEntry
+ * Represents a single entrant's position and status within one event's waitlist.
+ * Stored as a Firestore document at: events/{eventId}/waitlist/{entrantId}
+ */
+
 public class WaitlistEntry {
 
     /**
