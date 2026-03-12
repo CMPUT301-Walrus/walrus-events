@@ -30,7 +30,7 @@ public class FirebaseAPIManager {
 
 
     public void uploadImage(Uri fileUri, String fileName, OnUploadCompleteListener listener) {
-        StorageReference fileRef = storageReference.child("images/" + fileName);
+        StorageReference fileRef = storageReference.child("posters/" + fileName);
 
         fileRef.putFile(fileUri)
                 .addOnSuccessListener(taskSnapshot -> {
@@ -54,7 +54,7 @@ public class FirebaseAPIManager {
      * Because this is an async network call, we use a listener instead of a direct 'return'.
      */
     public void downloadImage(String fileName, OnDownloadCompleteListener listener) {
-        StorageReference fileRef = storageReference.child("images/" + fileName);
+        StorageReference fileRef = storageReference.child("posters/" + fileName + ".jpg");
 
         fileRef.getDownloadUrl()
                 .addOnSuccessListener(uri -> {

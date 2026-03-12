@@ -30,5 +30,8 @@ public class MainActivity extends AppCompatActivity {
             Intent goOrganizerEventsIntent = new Intent(MainActivity.this, OrganizerEventsActivity.class);
             startActivity(goOrganizerEventsIntent);
         });
+
     }
+
+
 }
