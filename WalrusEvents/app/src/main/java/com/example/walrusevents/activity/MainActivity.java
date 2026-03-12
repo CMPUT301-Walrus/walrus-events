@@ -25,6 +25,17 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        //TODO: Scrolling ListView of Events (for all)
+            // 1 Event: Name, Desc, Reg Deadline
+        //TODO: Button to change between admin / user / organizer(?)
+            // Ex: admin - leave blank for now, organizer - OEventActivity, user - UEventActivity
+        //TODO: Main Buttons for MainView - Settings, MainScreen, MyEvents
+            // MyEvents - UEventActivity, OEventActivity
+            //Settings - USettingsActivity
+            //MainScreen - go to main screen?? (even though youre on the main screen... - change that
+        //TODO: Views for User:  Settings(Profile), MyEvents(Signed in Events)
+
+
         Button eventsButton = findViewById(R.id.myEventsButton);
         eventsButton.setOnClickListener(v -> {
             //Button goes to "My Events" activity for organizer
