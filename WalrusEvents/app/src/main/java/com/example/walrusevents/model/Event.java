@@ -1,4 +1,4 @@
-package com.example.walrusevents;
+package com.example.walrusevents.model;
 
 import android.media.Image;
 
@@ -11,7 +11,7 @@ import com.example.walrusevents.util.QRGenerator;
 /**
  * Model class that holds information about an event
  */
-public class Event {
+public class Event implements Serializable {
     private String eventId;
     private String ownerId;     //ID that references the organizer of this event
     private String title;
