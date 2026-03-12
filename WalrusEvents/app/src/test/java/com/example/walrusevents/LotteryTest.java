@@ -5,48 +5,59 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 public class LotteryTest {
-    private ArrayList<Applicant> makeList() {
-        ArrayList<Applicant> applicants = new ArrayList();
-        for(int i = 0; i< 10; i++) {
-            applicants.add(new Applicant(i));
+    private ArrayList<Entry> makeList() {
+        ArrayList<Entry> entrants = new ArrayList();
+        for(Integer i = 0; i< 10; i++) {
+            entrants.add(new Entry(i.toString()));
         }
-        return applicants;
+        return entrants;
+    }
+
+    private int winCount(ArrayList<Entry> entries) {
+        int count = 0;
+        for(Entry entrant: entries) {
+            if(entrant.getStatus() == Status.INVITED) {
+                count++;
+            }
+        }
+        return count;
     }
 
     @Test
-    public void testDraw() {
-        ArrayList<Applicant> applicants = makeList();
+    public void testDrawToCapacity() {
+        ArrayList<Entry> entrants = makeList();
         Lottery lottery = new Lottery();
 
+    // Default: draw to capacity from a list of all PENDING entrants (capacity < entrants.size())
         // Draw 3 winners
-        lottery.drawLottery(applicants, 3);
+        lottery.drawToCapacity(entrants, 3);
 
         // Count winners
-        int winCount = 0;
-        for(int i = 0; i< 10; i++) {
-            if(applicants.get(i).getStatus() == 1) winCount++;
-        }
-        assert(winCount == 3);
+        assert(winCount(entrants) == 3);
+
+    // Subsequent draws (draw to 6)
+        lottery.drawToCapacity(entrants, 6);
+        assert(winCount(entrants) == 6);
+
+    // Subsequent Overdraw
+        lottery.drawToCapacity(entrants, 20);
+        assert(winCount(entrants) == 10);
     }
 
     @Test
-    public void testOverdraw() {
-        ArrayList<Applicant> applicants = makeList();
+    public void testDrawToCapacityExceptions() {
+        ArrayList<Entry> entrants = new ArrayList<>();
         Lottery lottery = new Lottery();
 
-        // Draw too many winners
-        assert(lottery.drawLottery(applicants, 20) < 0);
-    }
+    // Empty list
+        assert(!lottery.drawToCapacity(entrants, 3));
 
-    @Test
-    public void testSubsequentOverdraw() {
-        ArrayList<Applicant> applicants = makeList();
-        Lottery lottery = new Lottery();
+    // Invalid capacity
+        entrants = makeList();
+        assert(!lottery.drawToCapacity(entrants, -1));
 
-        // Draw 6 winners
-        lottery.drawLottery(applicants, 6);
-
-        // Draw more winners than there are unselected
-        assert(lottery.drawLottery(applicants, 5) < 0);
+    // No PENDING entrants
+        lottery.drawToCapacity(entrants, 10);
+        assert(!lottery.drawToCapacity(entrants, 1));
     }
 }
