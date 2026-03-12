@@ -1,5 +1,6 @@
 package com.example.walrusevents.activity;
 
+import android.app.role.RoleManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -14,6 +15,8 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.walrusevents.EventRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.util.MainSEventListController;
+import com.example.walrusevents.util.UserRole;
+import com.example.walrusevents.util.UserRoleManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     private ListView eventListView;
 
     private MainSEventListController eventListController;
+
+    private Button changeUserRoleButton;
 
 
     @Override
@@ -46,7 +51,14 @@ public class MainActivity extends AppCompatActivity {
 
         //TODO: Button to change between admin / user / organizer(?)
             // Ex: admin - leave blank for now, organizer - OEventActivity, user - UEventActivity
-        // labels when
+        changeUserRoleButton = findViewById(R.id.changeRoleButton);
+        updateRoleText();
+        changeUserRoleButton.setOnClickListener(v -> {
+            //Changes role in a loop user-organizer-admin
+            UserRoleManager.nextRole();
+            updateRoleText();
+        });
+
         //TODO: Main Buttons for MainView - Settings, MainScreen, MyEvents
             // MyEvents - UEventActivity, OEventActivity
             //Settings - USettingsActivity
@@ -58,8 +70,24 @@ public class MainActivity extends AppCompatActivity {
         eventsButton.setOnClickListener(v -> {
             //Button goes to "My Events" activity for organizer
             Intent goOrganizerEventsIntent = new Intent(MainActivity.this, OEventsActivity.class);
-            startActivity(goOrganizerEventsIntent);
+            Intent goUserHistoryEventsIntent = new Intent(MainActivity.this,UEventsActivity.class);
+
+            UserRole userRole=UserRoleManager.getRole();
+            System.out.println("Current role: " + userRole);
+            if(userRole==UserRole.ORGANIZER){
+                startActivity(goOrganizerEventsIntent);
+            }
+            else{ //USER (admin for now ignored)
+                startActivity(goUserHistoryEventsIntent);
+            }
+
         });
+
+    }
+
+    private void updateRoleText(){
+        UserRole role = UserRoleManager.getRole();
+        changeUserRoleButton.setText("Role:"+role.toString());
 
     }
 
