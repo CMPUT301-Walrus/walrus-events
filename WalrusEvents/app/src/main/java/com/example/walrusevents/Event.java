@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 import android.graphics.Bitmap;
 import com.example.walrusevents.util.QRGenerator;
 
+/**
+ * Model class that holds information about an event
+ */
 public class Event {
     private String eventId;
     private String ownerId;     //ID that references the organizer of this event
@@ -154,12 +157,5 @@ public class Event {
 
     public void setUseGeolocation(boolean useGeolocation) {
         this.useGeolocation = useGeolocation;
-    }
-
-    /**
-     * Save all edited data to database
-     */
-    public void saveToDatabase() {
-        //TODO: Update database
     }
 }

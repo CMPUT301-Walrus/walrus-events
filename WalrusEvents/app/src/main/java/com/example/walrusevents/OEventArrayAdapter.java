@@ -12,10 +12,18 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
+/**
+ * Adapts an array of events to be properly shown in the organizer event list view
+ */
 public class OEventArrayAdapter extends ArrayAdapter<Event> {
     private ArrayList<Event> eventList;
     private Context context;
 
+    /**
+     * Constructor for organizer event array adapter
+     * @param context
+     * @param eventList
+     */
     public OEventArrayAdapter(@NonNull Context context, ArrayList<Event> eventList) {
         super(context, 0, eventList);
         this.eventList = eventList;
