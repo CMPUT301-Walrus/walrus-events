@@ -50,10 +50,6 @@ public class OEventListController  implements NameEventFragment.NameEventListene
         eventList.get(index).setEntrantCapacity(entrantCapacity);
     }
 
-    public void setPoster(int index, Image poster) {
-        eventList.get(index).setPoster(poster);
-    }
-
     public void setThumbnail(int index, Image thumbnail) {
         eventList.get(index).setThumbnail(thumbnail);
     }

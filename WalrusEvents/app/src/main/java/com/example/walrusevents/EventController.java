@@ -45,66 +45,10 @@ public class EventController {
         model.setEntrantCapacity(entrantCapacity);
     }
 
-    public void setPoster(Bitmap poster) {
-        model.setPoster(poster);
-    }
-
-    public Bitmap getPoster() {
-        return model.getPoster();
-    }
-
-    public void setQRCode(Bitmap QRCodeImage) {
-        model.setQRCodeImage(QRCodeImage);
-    }
-
     public void setThumbnail(Image thumbnail) {
         model.setThumbnail(thumbnail);
     }
 
-    public void generateQRAndPoster() {
-        /**
-         * This function is called when an organizer creates an event
-         * It will generate the QR code and poster for the event
-         */
-        // create link for poster
-        String eventLink = "walrusevents://event/" + model.getId();
-
-        // Generate QR code using method in util, set destination as the link for the event
-        Bitmap qrCode = QRGenerator.generateQRCode(eventLink);
-
-        // Generate description for event
-        String eventDescription = model.generateDefaultDescription();
-
-        // Generate the poster
-        // Needs event title & description, and QR code
-        Bitmap poster = PosterGenerator.createEventPoster(
-                model.getTitle(),
-                eventDescription,
-                qrCode
-        );
-
-        // Update the Event
-        model.setQRCodeImage(qrCode);
-        model.setPoster(poster);
-    }
-
-    /**
-     * This method stores event posters to Firebase
-     * @param imgRepo
-     * @param listener
-     */
-    public void saveEventPoster(ImageRepository imgRepo, FirebaseAPIManager.OnUploadCompleteListener listener) {
-        if (model.getPoster() != null) {
-            // Use the event ID as the filename so it's always unique
-            String fileName = "poster_" + model.getId();
-            imgRepo.storeGeneratedBitmap(model.getPoster(), fileName, listener);
-        }
-    }
-
-    /**
-     * Toggles whether or not to use geolocation
-     * @return the value of useGeolocation after toggling
-     */
     public boolean toggleGeolocation() {
         model.setUseGeolocation(!model.getUseGeolocation());
         return model.getUseGeolocation();

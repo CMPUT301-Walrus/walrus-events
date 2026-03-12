@@ -25,7 +25,7 @@ public class FirebaseImageStorageTest {
     public void testEventPosterUpload() throws InterruptedException {
         // 1. Setup
         Event testEvent = new Event("Integration Test Party", "test-999");
-        EventController controller = new EventController(testEvent);
+        OEventDetailsController controller = new OEventDetailsController(testEvent);
         CountDownLatch latch = new CountDownLatch(1); // Used to wait for async Firebase
 
         // 2. Execution
