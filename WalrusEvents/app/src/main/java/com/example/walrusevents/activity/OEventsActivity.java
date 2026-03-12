@@ -7,11 +7,9 @@ import android.widget.AdapterView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.walrusevents.Event;
 import com.example.walrusevents.EventRepository;
 import com.example.walrusevents.OEventListController;
 import com.example.walrusevents.R;
-import com.example.walrusevents.ui.NameEventFragment;
 import com.example.walrusevents.ui.OEventListView;
 
 /**
@@ -33,10 +31,11 @@ public class OEventsActivity extends AppCompatActivity {
         eventListView = new OEventListView(findViewById(R.id.listView), findViewById(R.id.addButton));
         eventRepository = new EventRepository();
         eventListController = new OEventListController(this, eventRepository, eventListView.getEventList());
+        eventListController.loadEvents("ABCDEF");     //**Currently using a placeholder owner id
 
         eventListView.getAddButton().setOnClickListener(v -> {
             //TODO: Popup asking for the new event's name and get the appropriate id from database
-            eventListController.addEvent(getSupportFragmentManager());
+            eventListController.startAddEvent(getSupportFragmentManager());
         });
 
         eventListView.getEventList().setOnItemClickListener(new AdapterView.OnItemClickListener() {
