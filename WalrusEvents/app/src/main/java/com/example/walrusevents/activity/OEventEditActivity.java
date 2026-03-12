@@ -20,9 +20,10 @@ public class OEventEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.edit_event);
+        model = getIntent().getSerializableExtra("Event", Event.class);
 
-        eventEditView = new OEventEditView(this);
-        eventEditController = new OEventEditController(getIntent().getSerializableExtra("Event", Event.class));
+        eventEditView = new OEventEditView(this, model);
+        eventEditController = new OEventEditController(model);
 
         eventEditView.getEditPosterImage().setOnClickListener(v -> {
             //TODO: Allow for selection of poster

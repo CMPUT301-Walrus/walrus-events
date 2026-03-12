@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.walrusevents.R;
+import com.example.walrusevents.model.Event;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -23,11 +24,15 @@ public class OEventEditView {
     private EditText editApplicantCapacity;
     private Button doneButton;
 
-    public OEventEditView(Activity activity) {
+    public OEventEditView(Activity activity, Event model) {
         titleView = activity.findViewById(R.id.eventName);
+        titleView.setText(model.getTitle());
+
         editPosterImage = activity.findViewById(R.id.editPoster);
         editThumbnail = activity.findViewById(R.id.editThumbnail);
         editDescription = activity.findViewById(R.id.editDescription);
+        editDescription.setText(model.getDescription());
+
         editRegistrationStart = activity.findViewById(R.id.startRegistration);
         editRegistrationEnd = activity.findViewById(R.id.endRegistration);
         editConfirmationStart = activity.findViewById(R.id.startConfirmation);

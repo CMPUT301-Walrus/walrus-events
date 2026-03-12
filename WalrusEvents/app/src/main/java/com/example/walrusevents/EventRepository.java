@@ -40,6 +40,7 @@ public class EventRepository {
      */
     public void setEvent(Event event) {
         DocumentReference docRef = eventsCollection.document(event.getEventId());
+        System.out.println(event.getOwnerId());
         docRef.set(event);
     }
 

@@ -105,7 +105,6 @@ public class OEventListController implements NameEventFragment.NameEventListener
     public void onEventsLoaded(ArrayList<Event> events) {
         eventList.clear();
         eventList.addAll(events);
-        System.out.printf("%d event(s) loaded", events.size());
         eventListAdapter.notifyDataSetChanged();
     }
 }
