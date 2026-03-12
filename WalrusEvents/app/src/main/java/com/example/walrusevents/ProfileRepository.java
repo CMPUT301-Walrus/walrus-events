@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class ProfileRepository {
 
-    private static final String COLLECTION = "entrants";
+    private static final String COLLECTION = "profiles";
 
     private final FirebaseFirestore db;
     private final CollectionReference profileCollection;
