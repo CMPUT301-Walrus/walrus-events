@@ -2,6 +2,7 @@ package com.example.walrusevents;
 
 import com.example.walrusevents.Event;
 
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -25,8 +26,8 @@ public class EventRepository {
 
     // Constructor: connects to Firestore
     public EventRepository() {
-        //db = FirebaseFirestore.getInstance();
-        //eventsCollection = db.collection("events");
+        db = FirebaseFirestore.getInstance();
+        eventsCollection = db.collection("events");
     }
 
     /**
@@ -34,10 +35,17 @@ public class EventRepository {
      Document ID = event.getId()
      ADMIN
     */
-    public void addEvent(Event event) {
-        eventsCollection
-                .document(event.getId())
-                .set(event);
+    public Event addEvent(Event event) {
+        DocumentReference docRef = eventsCollection.document();
+        event.setId(docRef.getId());
+        docRef.set(event);
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        DocumentReference docRef = eventsCollection.document();
+        event.setId(event.getId());
+        docRef.set(event);
     }
 
     /**

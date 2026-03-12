@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WalrusEvents">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".OrganizerEventsActivity"
+            android:name=".activity.OEventsActivity"
             android:exported="true">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
