@@ -2,12 +2,13 @@ package com.example.walrusevents;
 
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
 import android.widget.ListView;
 
 import androidx.fragment.app.FragmentManager;
 
+import com.example.walrusevents.activity.OEventEditActivity;
 import com.example.walrusevents.activity.OEventsActivity;
+import com.example.walrusevents.model.Event;
 import com.example.walrusevents.ui.NameEventFragment;
 
 import java.time.LocalDateTime;
@@ -30,43 +31,6 @@ public class OEventListController implements NameEventFragment.NameEventListener
         eventListAdapter = new OEventArrayAdapter(context, eventList);
         eventListView.setAdapter(eventListAdapter);
         this.eventRepository = eventRepository;
-    }
-
-    public void setTitle(int index, String title) {
-        eventList.get(index).setTitle(title);
-    }
-
-    public void setStartRegistrationTime(int index, String startRegistrationTime) {
-        eventList.get(index).setStartRegistrationTime(startRegistrationTime);
-    }
-
-    public void setEndRegistrationTime(int index, String endRegistrationTime) {
-        eventList.get(index).setEndRegistrationTime(endRegistrationTime);
-    }
-
-    public void setStartConfirmationTime(int index, String startConfirmationTime) {
-        eventList.get(index).setStartConfirmationTime(startConfirmationTime);
-    }
-
-    public void setEndConfirmationTIme(int index, String endConfirmationTIme) {
-        eventList.get(index).setEndConfirmationTIme(endConfirmationTIme);
-    }
-    
-    public void setEntrantCapacity(int index,int entrantCapacity) {
-        eventList.get(index).setEntrantCapacity(entrantCapacity);
-    }
-
-    public void setThumbnail(int index, Image thumbnail) {
-        eventList.get(index).setThumbnail(thumbnail);
-    }
-
-    /**
-     * Toggles whether or not to use geolocation
-     * @return the value of useGeolocation after toggling
-     */
-    public boolean toggleGeolocation(int index) {
-        eventList.get(index).setUseGeolocation(!eventList.get(index).getUseGeolocation());
-        return eventList.get(index).getUseGeolocation();
     }
 
     /**
@@ -99,8 +63,8 @@ public class OEventListController implements NameEventFragment.NameEventListener
      * @param position The position of the selected event in the list view
      */
     public void openEvent(Context context, int position) {
-        Intent goViewEventIntent = new Intent(context, OEventsActivity.class);
-        goViewEventIntent.putExtra("eventId", eventList.get(position).getEventId());
+        Intent goViewEventIntent = new Intent(context, OEventEditActivity.class);
+        goViewEventIntent.putExtra("Event", eventList.get(position));
         context.startActivity(goViewEventIntent);
     }
 

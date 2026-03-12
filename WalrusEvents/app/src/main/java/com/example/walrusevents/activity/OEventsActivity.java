@@ -17,7 +17,6 @@ import com.example.walrusevents.ui.OEventListView;
  * organizer event list view and organizer event list controller.
  */
 public class OEventsActivity extends AppCompatActivity {
-    //TODO: Refactor into MV/MVC architecture
     private OEventListView eventListView;
     private EventRepository eventRepository;
     private OEventListController eventListController;
@@ -34,13 +33,13 @@ public class OEventsActivity extends AppCompatActivity {
         eventListController.loadEvents("ABCDEF");     //**Currently using a placeholder owner id
 
         eventListView.getAddButton().setOnClickListener(v -> {
-            //TODO: Popup asking for the new event's name and get the appropriate id from database
             eventListController.startAddEvent(getSupportFragmentManager());
         });
 
         eventListView.getEventList().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                eventListController.openEvent(OEventsActivity.this, position);
             }
         });
     }
