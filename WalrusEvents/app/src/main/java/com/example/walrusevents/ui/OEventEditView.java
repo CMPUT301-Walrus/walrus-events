@@ -48,7 +48,7 @@ public class OEventEditView implements OEventEditController.EventEditListener {
         editApplicantCapacity = activity.findViewById(R.id.maxApplicantsText);
 
         doneButton = activity.findViewById(R.id.doneButton);
-        backButton = activity.findViewById(R.id.backButton);
+        backButton = activity.findViewById(R.id.backButton_organizer_to_main);
     }
 
     public TextView getTitleView() {

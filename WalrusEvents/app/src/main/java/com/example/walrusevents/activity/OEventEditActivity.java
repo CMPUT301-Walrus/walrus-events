@@ -43,9 +43,11 @@ public class OEventEditActivity extends AppCompatActivity {
 
         // Take event class info and move it here
         model = getIntent().getSerializableExtra("Event", Event.class);
-
-        eventEditView = new OEventEditView(this);
-        eventEditController = new OEventEditController(model);
+        
+        if (model != null) {
+            eventEditView = new OEventEditView(this, model); // Initialize View first
+            eventEditController = new OEventEditController(model, eventEditView); // Then Controller
+        }
 
         // Get event title text view and put actual event title in it
         TextView eventNameTitle = findViewById(R.id.eventName);
@@ -111,28 +113,6 @@ public class OEventEditActivity extends AppCompatActivity {
             eventEditController.setTitle(newTitle);
             eventEditController.setDescription(newDescription);
             eventEditController.saveModel();
-
-            // Use the same eventId so make sure QR code still points to this even
-            String eventId = model.getEventId();
-            Bitmap qrCode = QRGenerator.generateQRCode(eventId);
-
-            // Update poster
-            Bitmap updatedPoster = PosterGenerator.createEventPoster(newTitle, newDescription, qrCode);
-
-            // Update poster on Firebase by overwriting,  still using the same eventId.jpg file naming convention
-            FirebaseAPIManager apiMgr = new FirebaseAPIManager();
-            apiMgr.uploadBitmap(updatedPoster, eventId, new FirebaseAPIManager.OnUploadCompleteListener() {
-                @Override
-                public void onSuccess() {
-                    Log.d("EDIT_EVENT", "Poster successfully updated with new description!");
-                    finish();  // return to event list
-                }
-
-                @Override
-                public void onFailure(String error) {
-                    Log.e("EDIT_EVENT", "Poster upload failed: " + error);
-                    finish();
-                }
-            });        });
+        });
     }
 }
