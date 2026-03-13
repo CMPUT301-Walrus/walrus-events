@@ -61,7 +61,10 @@ public class MainActivity extends AppCompatActivity {
                 if(UserRoleManager.getRole() == UserRole.USER) {
                     Event event_selected = (Event) adapterView.getItemAtPosition(i);
                     Intent passToUserEventDetails = new Intent(MainActivity.this, UEventDetailsActivity.class);
-                    passToUserEventDetails.putExtra("event", event_selected);
+                    // packaging serializable object into Intent referenced from Peter Mortensen in Stack Overflow https://stackoverflow.com/questions/14333449/passing-data-through-intent-using-serializable. March 12, 2026
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("event",event_selected);
+                    passToUserEventDetails.putExtras(bundle);
                     startActivity(passToUserEventDetails);
                 }
             }
