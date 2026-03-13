@@ -16,6 +16,11 @@ public class Profile {
 
     public Profile() {}
 
+    public Profile(String deviceId) {
+        this.deviceId = deviceId;
+        this.notificationsEnabled = true;
+    }
+
     public Profile(String deviceId, String name, String email) {
         this.deviceId = deviceId;
         this.name = name;

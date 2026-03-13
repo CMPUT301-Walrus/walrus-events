@@ -18,12 +18,12 @@ public class EntrantTest {
     @Before
     public void setUp() {
         profile = new Profile(DEVICE_ID, "Alice", "alice@example.com");
-        entrant = new Entrant(DEVICE_ID, profile);
+        entrant = new Entrant(profile);
     }
 
     @Test
     public void entrant_storesIdAndProfile() {
-        assertEquals(DEVICE_ID, entrant.getEntrantId());
+        assertEquals(DEVICE_ID, entrant.getDeviceId());
         assertNotNull(entrant.getProfile());
     }
 
