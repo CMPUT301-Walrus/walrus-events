@@ -5,6 +5,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
 
@@ -40,7 +41,7 @@ public class EventRepository {
      */
     public void setEvent(Event event) {
         DocumentReference docRef = eventsCollection.document(event.getEventId());
-        docRef.set(event);
+        docRef.set(event, SetOptions.merge());
     }
 
     /**
@@ -82,8 +83,10 @@ public class EventRepository {
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
 
                         Event event = doc.toObject(Event.class);
-
+                        //event.setOwnerId(id);
                         events.add(event);
+                        event.setOwnerId(doc.get("ownerId").toString());
+                        System.out.println(event.getOwnerId());
                     }
                     callback.onEventsLoaded(events);
                 })

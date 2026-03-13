@@ -23,7 +23,7 @@ public class OEventDetailsController {
     }
 
     public void setQRCode(Bitmap QRCodeImage) {
-        model.setQRCodeImage(QRCodeImage);
+        model.setQrCodeImage(QRCodeImage);
     }
     public void generateQRAndPoster() {
         /**
@@ -46,7 +46,7 @@ public class OEventDetailsController {
         );
 
         // Update the Event
-        model.setQRCodeImage(qrCode);
+        model.setQrCodeImage(qrCode);
         model.setPoster(poster);
     }
 

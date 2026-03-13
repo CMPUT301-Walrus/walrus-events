@@ -1,7 +1,10 @@
 package com.example.walrusevents;
 
+import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.graphics.Bitmap;
 import android.media.Image;
+import android.widget.DatePicker;
 
 import com.example.walrusevents.data.FirebaseAPIManager;
 import com.example.walrusevents.data.ImageRepository;
@@ -9,15 +12,56 @@ import com.example.walrusevents.model.Event;
 import com.example.walrusevents.util.PosterGenerator;
 import com.example.walrusevents.util.QRGenerator;
 
+import java.time.LocalDateTime;
+
 public class OEventEditController {
+    public interface EventEditListener {
+        public void updateRegistrationStart(LocalDateTime dateTime);
+        public void updateRegistrationEnd(LocalDateTime dateTime);
+        public void updateConfirmationStart(LocalDateTime dateTime);
+        public void updateConfirmationEnd(LocalDateTime dateTime);
+        public void updateEntrantCapacity(int capacity);
+        public void updateApplicantCapacity(int capacity);
+    }
+
     private Event model;
+    private EventEditListener listener;
+    private LocalDateTime registrationStart;
+    private LocalDateTime registrationEnd;
+    private LocalDateTime confirmationStart;
+    private LocalDateTime confirmationEnd;
 
     /**
      * Constructor for the organizer event edit controller
      * @param model
      */
-    public OEventEditController(Event model) {
+    public OEventEditController(Event model, EventEditListener listener) {
         this.model = model;
+        this.listener = listener;
+
+        if (model.getStartRegistrationTime() != null)
+        {
+            registrationStart = LocalDateTime.parse(model.getStartRegistrationTime());
+            listener.updateRegistrationStart(registrationStart);
+        }
+
+        if (model.getEndRegistrationTime() != null) {
+            registrationEnd = LocalDateTime.parse(model.getEndRegistrationTime());
+            listener.updateRegistrationEnd(registrationEnd);
+        }
+
+        if (model.getStartConfirmationTime() != null) {
+            confirmationStart = LocalDateTime.parse(model.getStartConfirmationTime());
+            listener.updateConfirmationStart(confirmationStart);
+        }
+
+        if (model.getEndConfirmationTime() != null) {
+            confirmationEnd = LocalDateTime.parse(model.getEndConfirmationTime());
+            listener.updateConfirmationEnd(confirmationEnd);
+        }
+
+        listener.updateEntrantCapacity(model.getEntrantCapacity());
+        listener.updateApplicantCapacity(model.getApplicantCapacity());
     }
 
     public void setTitle(String title) {
@@ -41,11 +85,25 @@ public class OEventEditController {
     }
 
     public void setEndConfirmationTIme(String endConfirmationTIme) {
-        model.setEndConfirmationTIme(endConfirmationTIme);
+        model.setEndConfirmationTime(endConfirmationTIme);
     }
 
-    public void setEntrantCapacity(int entrantCapacity) {
-        model.setEntrantCapacity(entrantCapacity);
+    public void setEntrantCapacity(String entrantCapacity) {
+        if (entrantCapacity.isEmpty()) {
+            model.setEntrantCapacity(0);
+        }
+        else {
+            model.setEntrantCapacity(Integer.parseInt(entrantCapacity));
+        }
+    }
+
+    public void setApplicantCapacity(String applicantCapacity) {
+        if (applicantCapacity.isEmpty()) {
+            model.setApplicantCapacity(0);
+        }
+        else {
+            model.setApplicantCapacity(Integer.parseInt(applicantCapacity));
+        }
     }
 
     public void setThumbnail(Image thumbnail) {
@@ -70,7 +128,7 @@ public class OEventEditController {
     }
 
     public void setQRCode(Bitmap QRCodeImage) {
-        model.setQRCodeImage(QRCodeImage);
+        model.setQrCodeImage(QRCodeImage);
     }
     public void generateQRAndPoster() {
         /**
@@ -93,7 +151,7 @@ public class OEventEditController {
         );
 
         // Update the Event
-        model.setQRCodeImage(qrCode);
+        model.setQrCodeImage(qrCode);
         model.setPoster(poster);
     }
 
@@ -110,8 +168,75 @@ public class OEventEditController {
         }
     }
 
+    public void openStartRegistrationDialog(Activity context) {
+        DatePickerDialog dialog = new DatePickerDialog(context, 0);
+        dialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                registrationStart = LocalDateTime.of(year, month + 1, dayOfMonth, 0, 0, 0);
+                listener.updateRegistrationStart(registrationStart);
+            }
+        });
+
+        dialog.show();
+    }
+
+    public void openEndRegistrationDialog(Activity context) {
+        DatePickerDialog dialog = new DatePickerDialog(context, 0);
+        dialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                registrationEnd = LocalDateTime.of(year, month + 1, dayOfMonth, 0, 0, 0);
+                listener.updateRegistrationEnd(registrationEnd);
+            }
+        });
+
+        dialog.show();
+    }
+
+    public void openStartConfirmationDialog(Activity context) {
+        DatePickerDialog dialog = new DatePickerDialog(context, 0);
+        dialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                confirmationStart = LocalDateTime.of(year, month + 1, dayOfMonth, 0, 0, 0);
+                listener.updateConfirmationStart(confirmationStart);
+            }
+        });
+
+        dialog.show();
+    }
+    public void openEndConfirmationDialog(Activity context) {
+        DatePickerDialog dialog = new DatePickerDialog(context, 0);
+        dialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                confirmationEnd = LocalDateTime.of(year, month + 1, dayOfMonth, 0, 0, 0);
+                listener.updateConfirmationEnd(confirmationEnd);
+            }
+        });
+
+        dialog.show();
+    }
     public void saveModel() {
         EventRepository eventRepository = new EventRepository();
+
+        if (registrationStart != null) {
+            model.setStartRegistrationTime(registrationStart.toString());
+        }
+
+        if (registrationEnd != null) {
+            model.setEndRegistrationTime(registrationEnd.toString());
+        }
+
+        if (confirmationStart != null) {
+            model.setStartConfirmationTime(confirmationStart.toString());
+        }
+
+        if (confirmationEnd != null) {
+            model.setEndConfirmationTime(confirmationEnd.toString());
+        }
+
         eventRepository.setEvent(model);
     }
 }
