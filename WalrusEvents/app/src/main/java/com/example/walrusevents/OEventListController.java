@@ -2,13 +2,19 @@ package com.example.walrusevents;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.ListView;
 
 import androidx.fragment.app.FragmentManager;
 
 import com.example.walrusevents.activity.OEventEditActivity;
+import com.example.walrusevents.activity.OEventsActivity;
+import com.example.walrusevents.data.FirebaseAPIManager;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.ui.NameEventFragment;
+import com.example.walrusevents.util.PosterGenerator;
+import com.example.walrusevents.util.QRGenerator;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -81,14 +87,36 @@ public class OEventListController implements NameEventFragment.NameEventListener
      * @param title The title to be given to the new event
      */
     public void addEvent(String title) {
-        Event event = new Event(title, "");
-        eventRepository.addEvent(event);
+        // Create new event
+        Event event = new Event(title, "Default description");
 
+        // Get new eventId from creating the event in eventRepo
+        String eventId = eventRepository.addEvent(event);
+
+        // Generate QR code and poster
+        Bitmap qrCode = QRGenerator.generateQRCode(eventId);
+        Bitmap poster = PosterGenerator.createEventPoster(title, event.getDescription(), qrCode);
+
+        // Upload poster to Firebase
+        // EventPosterFragment will download it via eventId.jpg
+        FirebaseAPIManager apiManager = new FirebaseAPIManager();
+        apiManager.uploadBitmap(poster, eventId, new FirebaseAPIManager.OnUploadCompleteListener() {
+            @Override
+            public void onSuccess() {
+                Log.d("QR_LOG", "Poster and QR generated/uploaded for ID: " + eventId);
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Log.e("QR_LOG", "Failed to upload poster: " + error);
+            }
+        });
+
+        // Update local UI
         eventList.add(event);
         eventListAdapter.notifyDataSetChanged();
     }
-
-    /**
+     /**
      * Loads the events made by a specific user to be put into eventList
      * @param ownerID The ID of the event organizer
      */
