@@ -220,7 +220,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/backButton"
+            android:id="@+id/backButton_organizer_to_main"
             android:layout_width="40dp"
             android:layout_height="match_parent"
             android:layout_marginStart="5dp"
