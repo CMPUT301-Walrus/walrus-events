@@ -4,19 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.walrusevents.EventRepository;
-import com.example.walrusevents.Lottery;
-import com.example.walrusevents.OEventPoolController;
+import com.example.walrusevents.model.Lottery;
+import com.example.walrusevents.controllers.OEventPoolController;
 import com.example.walrusevents.R;
 import com.example.walrusevents.WaitlistEntry;
 import com.example.walrusevents.WaitlistRepository;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.ui.OEventPoolView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class OEventPoolActivity extends AppCompatActivity implements WaitlistRepository.EntryListCallback {
@@ -63,6 +60,20 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
             Intent goEventPage = new Intent(this, UEventDetailsActivity.class);
             goEventPage.putExtra("event", eventModel);
             startActivity(goEventPage);
+        });
+
+
+        view.getShowQrCodeButton().setOnClickListener(v -> {
+            if (eventModel != null) {
+                // Create intent to go to QRCode Activity
+                Intent intent = new Intent(OEventPoolActivity.this, QRCodeActivity.class);
+
+                // Pass eventId and eventName to new activity
+                intent.putExtra("EVENT_ID", eventModel.getEventId());
+                intent.putExtra("EVENT_NAME", eventModel.getTitle());
+
+                startActivity(intent);
+            }
         });
     }
 

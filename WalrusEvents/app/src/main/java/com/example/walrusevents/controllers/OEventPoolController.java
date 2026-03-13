@@ -1,8 +1,12 @@
-package com.example.walrusevents;
+package com.example.walrusevents.controllers;
 
 import android.app.Activity;
 import android.widget.ListView;
 
+import com.example.walrusevents.ProfileRepository;
+import com.example.walrusevents.WaitlistEntry;
+import com.example.walrusevents.WaitlistRepository;
+import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.util.EntrantArrayAdapter;
 
 import java.util.ArrayList;

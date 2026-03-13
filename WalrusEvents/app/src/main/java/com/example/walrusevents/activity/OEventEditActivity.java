@@ -1,7 +1,5 @@
 package com.example.walrusevents.activity;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
@@ -14,12 +12,9 @@ import com.bumptech.glide.Glide;
 import com.example.walrusevents.data.FirebaseAPIManager;
 import com.example.walrusevents.data.ImageRepository;
 import com.example.walrusevents.model.Event;
-import com.example.walrusevents.EventRepository;
-import com.example.walrusevents.OEventEditController;
+import com.example.walrusevents.controllers.OEventEditController;
 import com.example.walrusevents.R;
 import com.example.walrusevents.ui.OEventEditView;
-import com.example.walrusevents.util.PosterGenerator;
-import com.example.walrusevents.util.QRGenerator;
 
 public class OEventEditActivity extends AppCompatActivity {
     private OEventEditView eventEditView;
