@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WalrusEvents">
         <activity
+            android:name=".activity.UViewWaitlistActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.MainActivity"
             android:exported="true">
             <intent-filter>
@@ -22,20 +25,16 @@
         </activity>
         <activity
             android:name=".activity.OEventsActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".activity.OEventPoolActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".activity.OEventEditActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".activity.UEventsActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".activity.UEventDetailsActivity"
             android:exported="true">
