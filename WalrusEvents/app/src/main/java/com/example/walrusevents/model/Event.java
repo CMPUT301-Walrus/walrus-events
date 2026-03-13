@@ -3,6 +3,7 @@ package com.example.walrusevents.model;
 import android.media.Image;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import android.graphics.Bitmap;
 import com.example.walrusevents.util.QRGenerator;
@@ -156,5 +157,28 @@ public class Event implements Serializable {
 
     public void setUseGeolocation(boolean useGeolocation) {
         this.useGeolocation = useGeolocation;
+    }
+
+    public boolean isInRegistration() {
+        if (endRegistrationTime == null || startRegistrationTime == null
+                || endRegistrationTime.isBlank() || startRegistrationTime.isBlank()) {
+            //No valid registration period set, so assume always in registration
+            return true;
+        }
+        return LocalDateTime.now().isBefore(LocalDateTime.parse(endRegistrationTime))
+                && LocalDateTime.now().isAfter(LocalDateTime.parse(startRegistrationTime));
+    }
+
+    public boolean isInConfirmation() {
+        if (isInRegistration()) {
+            return false;
+        }
+        if (endConfirmationTime == null || startConfirmationTime == null
+                || endConfirmationTime.isBlank() || startConfirmationTime.isBlank()) {
+            //No valid confirmation period set, so assume always in registration
+            return true;
+        }
+        return LocalDateTime.now().isBefore(LocalDateTime.parse(endConfirmationTime))
+                && LocalDateTime.now().isAfter(LocalDateTime.parse(startConfirmationTime));
     }
 }
