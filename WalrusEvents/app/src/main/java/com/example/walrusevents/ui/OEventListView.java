@@ -19,7 +19,7 @@ public class OEventListView {
     public OEventListView(Activity context) {
         eventList = context.findViewById(R.id.listView);
         addButton = context.findViewById(R.id.addButton);
-        backButton = context.findViewById(R.id.backButton);
+        backButton = context.findViewById(R.id.backButton_organizer_to_main);
     }
 
     public ListView getEventList() {
