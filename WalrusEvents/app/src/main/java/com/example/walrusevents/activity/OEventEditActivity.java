@@ -1,5 +1,6 @@
 package com.example.walrusevents.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -53,6 +54,14 @@ public class OEventEditActivity extends AppCompatActivity {
             eventEditController.setApplicantCapacity(eventEditView.getEditApplicantCapacity().getText().toString());
 
             eventEditController.saveModel();
+
+            Intent doneIntent = new Intent(this, OEventsActivity.class);
+            startActivity(doneIntent);
+        });
+
+        eventEditView.getBackButton().setOnClickListener(v -> {
+            Intent backIntent = new Intent(this, OEventsActivity.class);
+            startActivity(backIntent);
         });
     }
 }
