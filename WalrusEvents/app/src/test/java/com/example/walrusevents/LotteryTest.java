@@ -8,7 +8,7 @@ public class LotteryTest {
     private ArrayList<WaitlistEntry> makeList() {
         ArrayList<WaitlistEntry> entrants = new ArrayList();
         for(Integer i = 0; i< 10; i++) {
-            entrants.add(new WaitlistEntry(i.toString()));
+            entrants.add(new WaitlistEntry(i.toString(), i.toString()));
         }
         return entrants;
     }

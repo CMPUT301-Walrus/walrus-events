@@ -55,7 +55,8 @@ public class OEventEditActivity extends AppCompatActivity {
 
             eventEditController.saveModel();
 
-            Intent doneIntent = new Intent(this, OEventsActivity.class);
+            Intent doneIntent = new Intent(this, OEventPoolActivity.class);
+            doneIntent.putExtra("Event", model);
             startActivity(doneIntent);
         });
 
