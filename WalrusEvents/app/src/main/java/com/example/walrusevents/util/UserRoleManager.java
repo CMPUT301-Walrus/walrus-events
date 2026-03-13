@@ -3,7 +3,9 @@ package com.example.walrusevents.util;
 import com.google.firebase.firestore.auth.User;
 
 /*
-* Handles the role of the user for testing and demonstration
+* Class handles the role of the user for testing and demonstration
+* gets the current role the user is
+* changes the current role by cycling through the enum UserRole
  */
 public class UserRoleManager {
     private static UserRole currentRole=UserRole.USER;

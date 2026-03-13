@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -14,14 +15,17 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.walrusevents.Entrant;
 import com.example.walrusevents.EventRepository;
+import com.example.walrusevents.Profile;
+import com.example.walrusevents.ProfileRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.util.MainSEventListController;
 import com.example.walrusevents.util.UserRole;
 import com.example.walrusevents.util.UserRoleManager;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ProfileRepository.SaveCallback {
 
     private EventRepository eventRepository;
 
@@ -61,7 +65,10 @@ public class MainActivity extends AppCompatActivity {
                 if(UserRoleManager.getRole() == UserRole.USER) {
                     Event event_selected = (Event) adapterView.getItemAtPosition(i);
                     Intent passToUserEventDetails = new Intent(MainActivity.this, UEventDetailsActivity.class);
-                    passToUserEventDetails.putExtra("event", event_selected);
+                    // packaging serializable object into Intent referenced from Peter Mortensen in Stack Overflow https://stackoverflow.com/questions/14333449/passing-data-through-intent-using-serializable. March 12, 2026
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("event",event_selected);
+                    passToUserEventDetails.putExtras(bundle);
                     startActivity(passToUserEventDetails);
                 }
             }
@@ -70,23 +77,55 @@ public class MainActivity extends AppCompatActivity {
 
 
         //TODO: Button to change between admin / user / organizer(?)
-            // Ex: admin - leave blank for now, organizer - OEventActivity, user - UEventActivity
+        /*
+        * Admin View Button
+        * CURRENTLY connected to MAin Button (instead of back button in StoryBoards)
+         */
+        //nav bar - basically useless, it needs its admin view which will have every admin task
+        Button adminViewButton = findViewById(R.id.main_button);
+        adminViewButton.setOnClickListener(v -> {
+            //Go to "Admin View" from this button
+            Intent goAdminViewActivityIntent = new Intent(MainActivity.this,AdminViewActivity.class);
+            startActivity(goAdminViewActivityIntent);
+
+        });
+
+        //TODO: Main Buttons for MainView - Settings, MainScreen, MyEvents
+        Button settingsButton = findViewById(R.id.settings_button);
+        Button eventsButton = findViewById(R.id.my_events_button);
+
+        /*
+        * Role Change Button
+        * Button to change between admin / user / organizer
+         */
         changeUserRoleButton = findViewById(R.id.changeRoleButton);
         updateRoleText();
         changeUserRoleButton.setOnClickListener(v -> {
             //Changes role in a loop user-organizer-admin
             UserRoleManager.nextRole();
             updateRoleText();
+
+            //Handling the View for Admin
+            if(UserRoleManager.getRole()==UserRole.ADMIN){
+                //show button for adminView
+                adminViewButton.setVisibility(View.VISIBLE);
+                adminViewButton.setText("Admin");
+                settingsButton.setVisibility(View.INVISIBLE);
+                eventsButton.setVisibility(View.INVISIBLE);
+
+            } else {
+                adminViewButton.setVisibility(View.INVISIBLE);
+                settingsButton.setVisibility(View.VISIBLE);
+                eventsButton.setVisibility(View.VISIBLE);
+
+            }
         });
 
-        //TODO: Main Buttons for MainView - Settings, MainScreen, MyEvents
-            // MyEvents - UEventActivity, OEventActivity
-            //Settings - USettingsActivity
-            //MainScreen - go to main screen?? (even though youre on the main screen... - change that
         //TODO: Views for User:  Settings(Profile), MyEvents(Signed in Events)
 
-
-        Button eventsButton = findViewById(R.id.my_events_button);
+        /*
+        * My Events onClick
+         */
         eventsButton.setOnClickListener(v -> {
             //Button goes to "My Events" activity for organizer
             Intent goOrganizerEventsIntent = new Intent(MainActivity.this, OEventsActivity.class);
@@ -103,6 +142,17 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        ProfileRepository profileRepository = new ProfileRepository();
+        Profile placeholderProfile = new Profile("placeholderDevice","placeholderName","placeholderEmail");
+        profileRepository.saveProfile(new Entrant("placeholderID", placeholderProfile), this);
+        /*
+        * Settings onClick
+         */
+        settingsButton.setOnClickListener(v -> {
+            Intent goUSettingsActivityIntent = new Intent(MainActivity.this, USettingsActivity.class);
+            startActivity(goUSettingsActivityIntent);
+        });
+
     }
 
     private void updateRoleText(){
@@ -111,5 +161,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+//TEMPORARY
+    @Override
+    public void onSuccess() {
 
+    }
+
+    @Override
+    public void onFailure(String error) {
+
+    }
 }

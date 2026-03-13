@@ -15,6 +15,10 @@ import com.example.walrusevents.R;
 
 import java.util.ArrayList;
 
+/**
+ * Adapts an array of events to be properly shown in the main screen event list view
+ */
+
 public class MainSEventArrayAdapter extends ArrayAdapter<Event> {
     private ArrayList<Event> eventList;
     private Context context;

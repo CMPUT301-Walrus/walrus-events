@@ -4,60 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#96E6F6">
+    android:background="#96E6F6"
+    tools:context=".activity.OEventPoolActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/settings_bar"
         android:layout_width="200dp"
         android:layout_height="300dp"
         android:visibility="visible"
-        tools:layout_editor_absoluteX="210dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:clickable="false" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#FFFFFF"
-                android:orientation="vertical">
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp" />
-
-                <Button
-                    android:id="@+id/view_event_page_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#FFD24B"
-                    android:text="View Event Page"
-                    android:textColor="#000000" />
-
-                <Button
-                    android:id="@+id/edit_details_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#FFD24B"
-                    android:text="Edit Details"
-                    android:textColor="#000000" />
-
-                <Button
-                    android:id="@+id/show_qr_code_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#FFD24B"
-                    android:text="Show QR Code"
-                    android:textColor="#000000" />
-            </LinearLayout>
-        </LinearLayout>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -126,7 +86,29 @@
                 android:textSize="30sp" />
 
         </LinearLayout>
+        <Button
+            android:id="@+id/view_event_page_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFD24B"
+            android:text="View Event Page"
+            android:textColor="#000000" />
 
+        <Button
+            android:id="@+id/edit_details_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFD24B"
+            android:text="Edit Details"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/show_qr_code_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFD24B"
+            android:text="Show QR Code"
+            android:textColor="#000000" />
         <ListView
             android:id="@+id/org_entrant_list_view"
             android:layout_width="match_parent"
@@ -147,7 +129,7 @@
                 android:textColor="#000000" />
 
             <Button
-                android:id="@+id/Lottery"
+                android:id="@+id/lottery_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -155,7 +137,6 @@
                 android:text="Lottery"
                 android:textColor="#000000" />
         </LinearLayout>
-
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

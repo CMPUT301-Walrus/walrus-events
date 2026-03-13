@@ -13,9 +13,11 @@
         android:layout_height="36dp"
         android:backgroundTint="#FFD24B"
         android:text="change"
-        android:textColor="#000000" />
+        android:textColor="#000000" /> 
+        android:text="change" />
 
     <LinearLayout
+        android:id="@+id/linearLayout5"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -96,6 +98,8 @@
                 android:backgroundTint="#FFD24B"
                 android:text="Main"
                 android:textColor="#000000" />
+              
+                android:visibility="invisible" />
 
             <Button
                 android:id="@+id/my_events_button"
