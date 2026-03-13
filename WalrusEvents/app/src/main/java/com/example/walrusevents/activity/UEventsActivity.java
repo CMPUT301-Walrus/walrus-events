@@ -2,9 +2,12 @@ package com.example.walrusevents.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.example.walrusevents.model.Event;
 import com.example.walrusevents.util.DeviceIdManager;
 
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -64,6 +67,21 @@ public class UEventsActivity extends AppCompatActivity {
         waitlistRepository = new WaitlistRepository();
 
         loadHistory();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                UEventHistoryAdapter.HistoryItem historyItem = (UEventHistoryAdapter.HistoryItem) adapterView.getItemAtPosition(i);
+                Event selectedEvent = historyItem.getEvent();
+                Intent passToUserEventDetails = new Intent(UEventsActivity.this, UEventDetailsActivity.class);
+
+                // packaging serializable object into Intent referenced from Peter Mortensen in Stack Overflow https://stackoverflow.com/questions/14333449/passing-data-through-intent-using-serializable. March 12, 2026
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("event", selectedEvent);
+                passToUserEventDetails.putExtras(bundle);
+                startActivity(passToUserEventDetails);
+            }
+        });
     }
 
     /**
@@ -93,6 +111,8 @@ public class UEventsActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     /**
      * Pushes the collected results onto the UI thread and refreshes the adapter.
