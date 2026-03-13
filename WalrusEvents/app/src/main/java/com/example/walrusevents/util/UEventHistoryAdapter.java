@@ -62,7 +62,7 @@ public class UEventHistoryAdapter extends ArrayAdapter<UEventHistoryAdapter.Hist
 
         eventTitle.setText(event.getTitle());
 
-        String desc = event.getDescription();
+        eventDescription.setText(event.getDescription());
 
         statusChip.setVisibility(View.VISIBLE);
         statusChip.setText(statusLabel(item.status));
