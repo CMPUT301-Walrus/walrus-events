@@ -47,11 +47,13 @@ public class OEventPoolActivity extends AppCompatActivity {
 
         view.getEditDetailsButton().setOnClickListener(v -> {
             Intent goEditDetails = new Intent(this, OEventEditActivity.class);
+            goEditDetails.putExtra("Event", eventModel);
             startActivity(goEditDetails);
         });
 
         view.getViewEventPageButton().setOnClickListener(v -> {
             Intent goEventPage = new Intent(this, UEventDetailsActivity.class);
+            goEventPage.putExtra("event", eventModel);
             startActivity(goEventPage);
         });
     }
