@@ -22,6 +22,8 @@ import com.example.walrusevents.model.Event;
 
 public class UEventDetailsActivity extends AppCompatActivity implements EntrantController.ActionCallback {
     private Event event;
+    private TextView event_name;
+    private ImageView event_poster;
     private Button backButton;
     private Button joinButton;
     private Button seePoolButton;
@@ -54,11 +56,11 @@ public class UEventDetailsActivity extends AppCompatActivity implements EntrantC
         /*
         * Display selected event information
          */
-        TextView event_name = findViewById(R.id.event_name);
+        event_name = findViewById(R.id.event_name);
         event_name.setText(event.getTitle());
 
         // TODO: add images
-        ImageView event_poster = findViewById(R.id.event_poster);
+        event_poster = findViewById(R.id.event_poster);
 
         TextView event_details = findViewById(R.id.Event_Details);
         event_details.setText(event.getDescription());
@@ -77,7 +79,11 @@ public class UEventDetailsActivity extends AppCompatActivity implements EntrantC
          */
         seePoolButton = findViewById(R.id.see_pool_button);
         seePoolButton.setOnClickListener(v -> {
-            Intent seePool = new Intent(UEventDetailsActivity.this, OEventPoolActivity.class);
+            Intent seePool = new Intent(UEventDetailsActivity.this, UViewWaitlistActivity.class);
+            // packaging serializable object into Intent referenced from Peter Mortensen in Stack Overflow https://stackoverflow.com/questions/14333449/passing-data-through-intent-using-serializable. March 12, 2026
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("Event", event);
+            seePool.putExtras(bundle);
             startActivity(seePool);
         });
 
