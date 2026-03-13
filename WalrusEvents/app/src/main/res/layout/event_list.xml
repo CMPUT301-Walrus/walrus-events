@@ -4,13 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#96E6F6">
 
     <Button
         android:id="@+id/changeRoleButton"
         android:layout_width="wrap_content"
         android:layout_height="36dp"
-        android:text="change" />
+        android:backgroundTint="#FFD24B"
+        android:text="change"
+        android:textColor="#000000" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,7 +26,9 @@
             android:layout_height="82dp"
             android:text="Event List"
             android:textAlignment="center"
-            android:textSize="30sp" />
+            android:textColor="#FFFFFF"
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/imageView"
@@ -49,14 +54,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="By Availability" />
+                android:backgroundTint="#FFD24B"
+                android:text="By Availability"
+                android:textColor="#000000" />
 
             <Button
                 android:id="@+id/interest_sort_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="By Interests" />
+                android:backgroundTint="#FFD24B"
+                android:text="By Interests"
+                android:textColor="#000000" />
         </LinearLayout>
 
         <ListView
@@ -75,21 +84,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Settings" />
+                android:backgroundTint="#FFD24B"
+                android:text="Settings"
+                android:textColor="#000000" />
 
             <Button
                 android:id="@+id/main_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Main" />
+                android:backgroundTint="#FFD24B"
+                android:text="Main"
+                android:textColor="#000000" />
 
             <Button
                 android:id="@+id/my_events_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="My Events" />
+                android:backgroundTint="#FFD24B"
+                android:text="My Events"
+                android:textColor="#000000" />
         </LinearLayout>
 
     </LinearLayout>
