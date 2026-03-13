@@ -95,7 +95,6 @@ public class UEventsActivity extends AppCompatActivity {
                 return;
             }
 
-            int total = entries.size();
             AtomicInteger remaining = new AtomicInteger(entries.size());
             ArrayList<UEventHistoryAdapter.HistoryItem> results = new ArrayList<>();
 
@@ -110,6 +109,12 @@ public class UEventsActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadHistory(); // refresh when returning to this Activity
     }
 
 
