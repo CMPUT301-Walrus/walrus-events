@@ -50,7 +50,7 @@ public class UEventDetailsActivity extends AppCompatActivity implements EntrantC
                 throw new NullPointerException("Selected Event not found");
             }
         } catch (NullPointerException e) {
-            Log.e("Walrus Events", "Missing Object", e);
+            Log.e("Event Details", "Missing Object", e);
         }
 
         /*
@@ -63,7 +63,10 @@ public class UEventDetailsActivity extends AppCompatActivity implements EntrantC
         event_poster = findViewById(R.id.event_poster);
 
         TextView event_details = findViewById(R.id.Event_Details);
-        event_details.setText(event.getDescription());
+        String desc = event.getDescription();
+        if(!desc.isEmpty()) {
+            event_details.setText(desc);
+        }
 
         /*
         * Set 'Back' button to return to MainActivity

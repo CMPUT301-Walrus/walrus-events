@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.walrusevents.EventRepository;
+import com.example.walrusevents.Lottery;
 import com.example.walrusevents.OEventPoolController;
 import com.example.walrusevents.R;
 import com.example.walrusevents.WaitlistEntry;
@@ -17,7 +19,7 @@ import com.example.walrusevents.ui.OEventPoolView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OEventPoolActivity extends AppCompatActivity {
+public class OEventPoolActivity extends AppCompatActivity implements WaitlistRepository.EntryListCallback {
     private Event eventModel;
     private OEventPoolView view;
     private OEventPoolController controller;
@@ -37,8 +39,14 @@ public class OEventPoolActivity extends AppCompatActivity {
             startActivity(goEvents);
         });
 
+        /*
+        * Currently draws the lottery automatically upon clicking. More deliberate forms of execution can be done later.
+         */
         view.getLotteryButton().setOnClickListener(v -> {
             //TODO: Do lottery
+            WaitlistRepository collectForLottery = new WaitlistRepository();
+            collectForLottery.getAllEntries(eventModel.getEventId(), this);
+
         });
 
         view.getShowQrCodeButton().setOnClickListener(v -> {
@@ -56,5 +64,16 @@ public class OEventPoolActivity extends AppCompatActivity {
             goEventPage.putExtra("event", eventModel);
             startActivity(goEventPage);
         });
+    }
+
+    @Override
+    public void onEntriesLoaded(List<WaitlistEntry> entries) {
+        Lottery lottery = new Lottery();
+        // Draw the lottery
+        lottery.drawToCapacity(entries, eventModel.getEntrantCapacity());
+        // Update the waitlist with the new state of the list
+        for(WaitlistEntry entrant: entries) {
+            lottery.updateWaitlist(eventModel.getEventId(), entrant, this);
+        }
     }
 }
