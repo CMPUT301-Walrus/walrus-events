@@ -26,17 +26,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * UEventsActivity
  * Shows the signed-in user's event history: every event they are (or were)
  * on a waitlist for, along with their current WaitlistEntry status.
- *
- * Data flow:
- *   1. Resolve the device ID — used as the entrant ID throughout the app.
- *   2. Load all events from EventRepository.
- *   3. For each event, call WaitlistRepository.getEntry() to check whether
- *      this user has a waitlist entry.
- *   4. Collect the (Event, Status) pairs and hand them to the adapter.
- *
- * Note: getEventsForEntrant() in EventRepository uses whereArrayContains()
- * on a field that doesn't exist in the Event model, so we fan out per-event
- * instead — which matches the actual Firestore subcollection schema.
  */
 public class UEventsActivity extends AppCompatActivity {
 

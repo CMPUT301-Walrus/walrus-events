@@ -90,7 +90,7 @@ public class UEventHistoryAdapter extends ArrayAdapter<UEventHistoryAdapter.Hist
             case ACCEPTED:  return 0xFF00BCD4; // teal
             case DECLINED:  return 0xFFB91C1C; // red
             case CANCELLED: return 0xFF6B7280; // grey
-            default:        return 0xFFD24B; // yellow (PENDING)
+            default:        return 0xFFFFD24B; // yellow (PENDING)
         }
     }
 }
