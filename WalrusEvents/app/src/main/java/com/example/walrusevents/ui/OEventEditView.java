@@ -98,6 +98,11 @@ public class OEventEditView implements OEventEditController.EventEditListener {
     public ImageView getBackButton() {
         return backButton;
     }
+
+    /**
+     * Updates the entrant capacity text if the entrant capacity is greater than 0
+     * @param capacity The set maximum amount of entrants
+     */
     public void updateEntrantCapacity(int capacity) {
         if (capacity > 0) {
             editEntrantCapacity.setText(String.format(Locale.CANADA, "%d", capacity));
@@ -107,6 +112,10 @@ public class OEventEditView implements OEventEditController.EventEditListener {
         }
     }
 
+    /**
+     * Updates the applicant capacity text if the applicant capacity is greater than 0
+     * @param capacity The set maximum amount of applicants
+     */
     public void updateApplicantCapacity(int capacity) {
         if (capacity > 0) {
             editApplicantCapacity.setText(String.format(Locale.CANADA, "%d", capacity));
@@ -115,6 +124,11 @@ public class OEventEditView implements OEventEditController.EventEditListener {
             editApplicantCapacity.setText("");
         }
     }
+
+    /**
+     * If the registration start time was set, display it
+     * @param dateTime The new registration period start time
+     */
     @Override
     public void updateRegistrationStart(LocalDateTime dateTime) {
         if (dateTime == null) {
@@ -126,6 +140,10 @@ public class OEventEditView implements OEventEditController.EventEditListener {
         }
     }
 
+    /**
+     * If the registration end time was set, display it
+     * @param dateTime The new registration period end time
+     */
     @Override
     public void updateRegistrationEnd(LocalDateTime dateTime) {
         if (dateTime == null) {
@@ -137,6 +155,10 @@ public class OEventEditView implements OEventEditController.EventEditListener {
         }
     }
 
+    /**
+     * If the confirmation start time was set, display it
+     * @param dateTime The new confirmation period start time
+     */
     @Override
     public void updateConfirmationStart(LocalDateTime dateTime) {
         if (dateTime == null) {
@@ -148,6 +170,10 @@ public class OEventEditView implements OEventEditController.EventEditListener {
         }
     }
 
+    /**
+     * If the confirmation end time was set, display it
+     * @param dateTime The new confirmation period end time
+     */
     @Override
     public void updateConfirmationEnd(LocalDateTime dateTime) {
         if (dateTime == null) {
