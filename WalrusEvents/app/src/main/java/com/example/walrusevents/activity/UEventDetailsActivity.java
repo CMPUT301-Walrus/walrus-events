@@ -18,6 +18,7 @@ import com.example.walrusevents.ProfileRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.WaitlistRepository;
 import com.example.walrusevents.model.Event;
+import com.example.walrusevents.util.DeviceIdManager;
 
 
 public class UEventDetailsActivity extends AppCompatActivity implements EntrantController.ActionCallback {
@@ -91,12 +92,12 @@ public class UEventDetailsActivity extends AppCompatActivity implements EntrantC
         });
 
         // Test Entrant. TODO: Implement full profile function
-        Entrant me = new Entrant("placeholderID", new Profile("placeholderDevice","placeholderName","placeholderEmail"));
+        String deviceId = DeviceIdManager.getOrCreate(this);
+        Entrant me = new Entrant(new Profile(deviceId,"placeholderName","placeholderEmail"));
 
         /*
         * Set joinButton to submit an Entrant to the Waitlist
          */
-
         joinButton = findViewById(R.id.join_event_button);
         joinButton.setOnClickListener(v -> {
             WaitlistRepository waitRep = new WaitlistRepository();

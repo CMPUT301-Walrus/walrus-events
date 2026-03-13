@@ -27,12 +27,12 @@ public class EntrantController {
      * Checks the entrant isn't already on it before writing.
      */
     public void joinWaitlist(String eventId, ActionCallback callback) {
-        waitlistRepository.getEntry(eventId, entrant.getEntrantId(), existing -> {
+        waitlistRepository.getEntry(eventId, entrant.getDeviceId(), existing -> {
             if (existing != null && existing.getStatus() != WaitlistEntry.Status.CANCELLED) {
                 callback.onFailure("Already on the waitlist for this event.");
                 return;
             }
-            WaitlistEntry entry = new WaitlistEntry(entrant.getEntrantId(), eventId);
+            WaitlistEntry entry = new WaitlistEntry(entrant.getDeviceId(), eventId);
             waitlistRepository.addEntry(entry, new WaitlistRepository.SaveCallback() {
                 @Override public void onSuccess() { callback.onSuccess(); }
                 @Override public void onFailure(String error) { callback.onFailure(error); }
@@ -45,12 +45,12 @@ public class EntrantController {
      */
     public void joinWaitlistWithLocation(String eventId, double latitude, double longitude,
                                          ActionCallback callback) {
-        waitlistRepository.getEntry(eventId, entrant.getEntrantId(), existing -> {
+        waitlistRepository.getEntry(eventId, entrant.getDeviceId(), existing -> {
             if (existing != null && existing.getStatus() != WaitlistEntry.Status.CANCELLED) {
                 callback.onFailure("Already on the waitlist for this event.");
                 return;
             }
-            WaitlistEntry entry = new WaitlistEntry(entrant.getEntrantId(), eventId);
+            WaitlistEntry entry = new WaitlistEntry(entrant.getDeviceId(), eventId);
             entry.setLocation(latitude, longitude);
             waitlistRepository.addEntry(entry, new WaitlistRepository.SaveCallback() {
                 @Override public void onSuccess() { callback.onSuccess(); }
@@ -64,7 +64,7 @@ public class EntrantController {
      * Entrants who have already ACCEPTED cannot self-cancel.
      */
     public void leaveWaitlist(String eventId, ActionCallback callback) {
-        waitlistRepository.getEntry(eventId, entrant.getEntrantId(), entry -> {
+        waitlistRepository.getEntry(eventId, entrant.getDeviceId(), entry -> {
             if (entry == null) {
                 callback.onFailure("Not on the waitlist for this event.");
                 return;
@@ -73,7 +73,7 @@ public class EntrantController {
                 callback.onFailure("Cannot leave, registration already confirmed.");
                 return;
             }
-            waitlistRepository.updateStatus(eventId, entrant.getEntrantId(),
+            waitlistRepository.updateStatus(eventId, entrant.getDeviceId(),
                     WaitlistEntry.Status.CANCELLED, new WaitlistRepository.SaveCallback() {
                         @Override public void onSuccess() { callback.onSuccess(); }
                         @Override public void onFailure(String error) { callback.onFailure(error); }
@@ -86,12 +86,12 @@ public class EntrantController {
      * Only valid if the entrant's current status is INVITED.
      */
     public void acceptInvitation(String eventId, ActionCallback callback) {
-        waitlistRepository.getEntry(eventId, entrant.getEntrantId(), entry -> {
+        waitlistRepository.getEntry(eventId, entrant.getDeviceId(), entry -> {
             if (entry == null || entry.getStatus() != WaitlistEntry.Status.INVITED) {
                 callback.onFailure("No pending invitation to accept.");
                 return;
             }
-            waitlistRepository.updateStatus(eventId, entrant.getEntrantId(),
+            waitlistRepository.updateStatus(eventId, entrant.getDeviceId(),
                     WaitlistEntry.Status.ACCEPTED, new WaitlistRepository.SaveCallback() {
                         @Override public void onSuccess() { callback.onSuccess(); }
                         @Override public void onFailure(String error) { callback.onFailure(error); }
@@ -104,12 +104,12 @@ public class EntrantController {
      * Only valid if the entrant's current status is INVITED.
      */
     public void declineInvitation(String eventId, ActionCallback callback) {
-        waitlistRepository.getEntry(eventId, entrant.getEntrantId(), entry -> {
+        waitlistRepository.getEntry(eventId, entrant.getDeviceId(), entry -> {
             if (entry == null || entry.getStatus() != WaitlistEntry.Status.INVITED) {
                 callback.onFailure("No pending invitation to decline.");
                 return;
             }
-            waitlistRepository.updateStatus(eventId, entrant.getEntrantId(),
+            waitlistRepository.updateStatus(eventId, entrant.getDeviceId(),
                     WaitlistEntry.Status.DECLINED, new WaitlistRepository.SaveCallback() {
                         @Override public void onSuccess() { callback.onSuccess(); }
                         @Override public void onFailure(String error) { callback.onFailure(error); }
@@ -157,7 +157,7 @@ public class EntrantController {
      */
     public void deleteProfile(ActionCallback callback) {
         entrant.requestProfileDeletion();
-        profileRepository.deleteProfile(entrant.getEntrantId(), new ProfileRepository.SaveCallback() {
+        profileRepository.deleteProfile(entrant.getDeviceId(), new ProfileRepository.SaveCallback() {
             @Override public void onSuccess() { callback.onSuccess(); }
             @Override public void onFailure(String error) { callback.onFailure(error); }
         });

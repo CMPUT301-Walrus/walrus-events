@@ -53,7 +53,7 @@ public class ProfileRepository {
                     Boolean notif = doc.getBoolean("notificationsEnabled");
                     profile.setNotificationsEnabled(notif != null ? notif : true);
 
-                    Entrant entrant = new Entrant(deviceId, profile);
+                    Entrant entrant = new Entrant(profile);
                     callback.onEntrantLoaded(entrant);
                 })
                 .addOnFailureListener(e -> {
@@ -84,7 +84,7 @@ public class ProfileRepository {
         data.put("notificationsEnabled", profile.isNotificationsEnabled());
 
         profileCollection
-                .document(entrant.getEntrantId())
+                .document(entrant.getDeviceId())
                 .set(data)
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> {

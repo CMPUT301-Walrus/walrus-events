@@ -7,22 +7,22 @@ package com.example.walrusevents;
 
 public class Entrant {
 
-    private String entrantId;
+    private String deviceId;
     private Profile profile;
 
-    public Entrant(String entrantId, Profile profile) {
-        this.entrantId = entrantId;
+    public Entrant(Profile profile) {
         this.profile = profile;
+        this.deviceId = profile.getDeviceId();
     }
 
     // ─── Getters & Setters ────────────────────────────────────────────────────
 
-    public String getEntrantId() {
-        return entrantId;
+    public String getDeviceId() {
+        return deviceId;
     }
 
-    public void setEntrantId(String entrantId) {
-        this.entrantId = entrantId;
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
 
     public Profile getProfile() {
