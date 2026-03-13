@@ -27,7 +27,7 @@ public class OEventEditView implements OEventEditController.EventEditListener {
     private EditText editEntrantCapacity;
     private EditText editApplicantCapacity;
     private Button doneButton;
-
+    private ImageView backButton;
     public OEventEditView(Activity activity, Event model) {
         titleView = activity.findViewById(R.id.eventName);
         titleView.setText(model.getTitle());
@@ -48,6 +48,7 @@ public class OEventEditView implements OEventEditController.EventEditListener {
         editApplicantCapacity = activity.findViewById(R.id.maxApplicantsText);
 
         doneButton = activity.findViewById(R.id.doneButton);
+        backButton = activity.findViewById(R.id.backButton);
     }
 
     public TextView getTitleView() {
@@ -94,6 +95,9 @@ public class OEventEditView implements OEventEditController.EventEditListener {
         return doneButton;
     }
 
+    public ImageView getBackButton() {
+        return backButton;
+    }
     public void updateEntrantCapacity(int capacity) {
         if (capacity > 0) {
             editEntrantCapacity.setText(String.format(Locale.CANADA, "%d", capacity));
