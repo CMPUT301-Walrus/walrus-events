@@ -31,10 +31,16 @@
             android:text="Event Title"
             android:textSize="24sp" />
 
-        <ListView
-            android:id="@+id/event_pool"
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:text="Current number of applicants:" />
+
+        <TextView
+            android:id="@+id/count_entrants"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="EntrantCount" />
 
     </LinearLayout>
 
