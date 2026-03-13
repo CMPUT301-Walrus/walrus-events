@@ -111,6 +111,12 @@ public class UEventsActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadHistory(); // refresh when returning to this Activity
+    }
+
 
 
     /**
