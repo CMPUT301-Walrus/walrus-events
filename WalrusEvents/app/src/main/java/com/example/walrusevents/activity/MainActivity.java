@@ -14,14 +14,17 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.walrusevents.Entrant;
 import com.example.walrusevents.EventRepository;
+import com.example.walrusevents.Profile;
+import com.example.walrusevents.ProfileRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.util.MainSEventListController;
 import com.example.walrusevents.util.UserRole;
 import com.example.walrusevents.util.UserRoleManager;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ProfileRepository.SaveCallback {
 
     private EventRepository eventRepository;
 
@@ -106,6 +109,9 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        ProfileRepository profileRepository = new ProfileRepository();
+        Profile placeholderProfile = new Profile("placeholderDevice","placeholderName","placeholderEmail");
+        profileRepository.saveProfile(new Entrant("placeholderID", placeholderProfile), this);
     }
 
     private void updateRoleText(){
@@ -114,5 +120,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+//TEMPORARY
+    @Override
+    public void onSuccess() {
 
+    }
+
+    @Override
+    public void onFailure(String error) {
+
+    }
 }

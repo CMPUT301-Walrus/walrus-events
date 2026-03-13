@@ -9,6 +9,7 @@ import android.widget.ListView;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.walrusevents.activity.OEventEditActivity;
+import com.example.walrusevents.activity.OEventPoolActivity;
 import com.example.walrusevents.activity.OEventsActivity;
 import com.example.walrusevents.data.FirebaseAPIManager;
 import com.example.walrusevents.model.Event;
@@ -68,7 +69,7 @@ public class OEventListController implements NameEventFragment.NameEventListener
      * @param position The position of the selected event in the list view
      */
     public void openEvent(Context context, int position) {
-        Intent goViewEventIntent = new Intent(context, OEventEditActivity.class);
+        Intent goViewEventIntent = new Intent(context, OEventPoolActivity.class);
         goViewEventIntent.putExtra("Event", eventList.get(position));
         context.startActivity(goViewEventIntent);
     }

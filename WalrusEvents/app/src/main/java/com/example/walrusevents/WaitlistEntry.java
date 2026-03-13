@@ -29,6 +29,8 @@ public class WaitlistEntry {
     private Double latitude;
     private Double longitude;
 
+    public WaitlistEntry() {}
+
     public WaitlistEntry(String entrantId, String eventId) {
         this.entrantId = entrantId;
         this.eventId = eventId;
