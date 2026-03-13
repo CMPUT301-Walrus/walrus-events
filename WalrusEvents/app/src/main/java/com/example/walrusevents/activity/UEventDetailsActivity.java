@@ -30,5 +30,5 @@ public class UEventDetailsActivity extends AppCompatActivity {
         });
     }
 
-
+    
 }
