@@ -81,7 +81,7 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
     public void onEntriesLoaded(List<WaitlistEntry> entries) {
         Lottery lottery = new Lottery();
         // Draw the lottery
-        lottery.drawToCapacity(entries, eventModel.getEntrantCapacity());
+        lottery.drawToCapacity(entries, eventModel.getApplicantCapacity());
         // Update the waitlist with the new state of the list
         for(WaitlistEntry entrant: entries) {
             lottery.updateWaitlist(eventModel.getEventId(), entrant, this);
