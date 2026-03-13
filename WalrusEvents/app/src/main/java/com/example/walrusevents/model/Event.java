@@ -27,11 +27,18 @@ public class Event implements Serializable {
     private Bitmap qrCodeImage;
     private boolean useGeolocation;
 
-    //No-argument constructor for database queries
+    /**
+     * Constructor for no args
+     */
     public Event() {
 
     }
 
+    /**
+     * Constructor with args
+     * @param title title of event set by organizer
+     * @param eventId unique id for event
+     */
     public Event(String title, String eventId) {
         this.eventId = eventId;
         this.title = title;
@@ -41,18 +48,50 @@ public class Event implements Serializable {
         applicantCapacity = 0;
     }
 
+    /**
+     * Gets unique id for event
+     * @return eventId
+     */
     public String getEventId() { return eventId; }
+
+    /**
+     * Sets id for event
+     * @param eventId unique identifier for event
+     */
     public void setEventId(String eventId) { this.eventId = eventId; }
 
+    /**
+     * Gets id of owner/organizer of the event
+     * @return ownerId
+     */
     public String getOwnerId() { return ownerId; }
+
+    /**
+     * Sets owner id, could be used for switching organizers for an event
+     * @param ownerId unique identifier for event
+     */
     public void setOwnerId(String ownerId) { this.ownerId = ownerId; }
+
+    /**
+     * Gets title for event set by organizer
+     * @return title
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * Used to edit title of event
+     * @param title event title set by organizer
+     */
     public void setTitle(String title) {
         this.title = title;
     }
+
+    /**
+     * Gets description for event set by organizer
+     * @return description
+     */
     public String getDescription() {
         return description;
     }
@@ -119,6 +158,12 @@ public class Event implements Serializable {
      * @param applicantCapacity
      * The new capacity that will be set
      */
+
+    /**
+     * Method for turning limit capacity for applicants for an event on/off
+     * @param applicantCapacity number of applicants allowed
+     * @return success ? true : false
+     */
     public boolean setApplicantCapacity(int applicantCapacity) {
         if (applicantCapacity < 0 || applicantCapacity > entrantCapacity) {
             return false;
@@ -127,34 +172,69 @@ public class Event implements Serializable {
         return true;
     }
 
+    /**
+     * Gets poster for event, used to retrieve poster
+     * @return poster (Bitmap format)
+     */
     public Bitmap getPoster() {
         return poster;
     }
 
+    /**
+     * Sets poster for event, used for initialization and editing the poster
+     * @param poster image poster for event
+     */
     public void setPoster(Bitmap poster) {
         this.poster = poster;
     }
 
+    /**
+     * Calls QR Code generators to make a unique QR code for event
+     */
     public void generateEventQRCode() {
         this.qrCodeImage = QRGenerator.generateQRCode("walrusevents://event/" + this.eventId);
     }
 
+    /**
+     * Retrieves QR code image
+     * @return qrCodeImage (Bitmap format)
+     */
     public Bitmap getQrCodeImage() { return qrCodeImage; }
 
+    /**
+     * Sets QR code, used to initialize and edit code
+     * @param qrCodeImage image of QR code
+     */
     public void setQrCodeImage(Bitmap qrCodeImage) { this.qrCodeImage = qrCodeImage; }
 
+    /**
+     * Gets promotional thumbnail for event
+     * @return thumbnail
+     */
     public Image getThumbnail() {
         return thumbnail;
     }
 
+    /**
+     * Sets promotional thumbnail for event
+     * @param thumbnail promotional event-related image
+     */
     public void setThumbnail(Image thumbnail) {
         this.thumbnail = thumbnail;
     }
 
+    /**
+     * Returns whether geolocation for the event is on or off
+     * @return whether geolocation is on or off
+     */
     public boolean getUseGeolocation() {
         return useGeolocation;
     }
 
+    /**
+     * Toggles geolocation for the event on/off
+     * @param useGeolocation On ? true : false
+     */
     public void setUseGeolocation(boolean useGeolocation) {
         this.useGeolocation = useGeolocation;
     }
