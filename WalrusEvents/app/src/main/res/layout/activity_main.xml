@@ -5,15 +5,69 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_gravity="bottom"
+    android:background="#96e6f6"
+    tools:context=".activity.MainActivity">
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="395dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/mainScreenEventList"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="WIP SCreen" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/mainScreenEventList"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:layout_height="545dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+
+    </ListView>
+
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="399dp"
+        android:layout_height="71dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="bottom"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/mainScreenEventList">
+
+        <Button
+            android:id="@+id/myEventsButton"
+            android:layout_width="183dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFD24B"
+            android:text="My Events"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/userSettingsButton"
+            android:layout_width="173dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFD24B"
+            android:text="Settings"
+            android:textColor="#000000" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
