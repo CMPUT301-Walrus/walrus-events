@@ -48,7 +48,7 @@ public class Event implements Serializable {
     public void setEventId(String eventId) { this.eventId = eventId; }
 
     public String getOwnerId() { return ownerId; }
-    public void setOwnerId(String eventId) { this.ownerId = ownerId; }
+    public void setOwnerId(String ownerId) { this.ownerId = ownerId; }
     public String getTitle() {
         return title;
     }
