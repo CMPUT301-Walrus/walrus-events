@@ -7,7 +7,6 @@ import android.widget.ListView;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.walrusevents.activity.OEventEditActivity;
-import com.example.walrusevents.activity.OEventsActivity;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.ui.NameEventFragment;
 
@@ -53,7 +52,7 @@ public class OEventListController implements NameEventFragment.NameEventListener
     public boolean inConfirmationPhase(int index) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime start = LocalDateTime.parse(eventList.get(index).getStartConfirmationTime());
-        LocalDateTime end = LocalDateTime.parse(eventList.get(index).getEndConfirmationTIme());
+        LocalDateTime end = LocalDateTime.parse(eventList.get(index).getEndConfirmationTime());
         return now.isAfter(start) && now.isBefore(end);
     }
 

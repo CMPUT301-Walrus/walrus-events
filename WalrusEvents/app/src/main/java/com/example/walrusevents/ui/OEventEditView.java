@@ -6,20 +6,24 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.walrusevents.OEventEditController;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.Event;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-public class OEventEditView {
+import java.time.LocalDateTime;
+import java.util.Locale;
+
+public class OEventEditView implements OEventEditController.EventEditListener {
     private TextView titleView;
     private ImageView editPosterImage;
     private ImageView editThumbnail;
     private TextInputEditText editDescription;
-    private EditText editRegistrationStart;
-    private EditText editRegistrationEnd;
-    private EditText editConfirmationStart;
-    private EditText editConfirmationEnd;
+    private TextView editRegistrationStart;
+    private TextView editRegistrationEnd;
+    private TextView editConfirmationStart;
+    private TextView editConfirmationEnd;
     private EditText editEntrantCapacity;
     private EditText editApplicantCapacity;
     private Button doneButton;
@@ -30,6 +34,7 @@ public class OEventEditView {
 
         editPosterImage = activity.findViewById(R.id.editPoster);
         editThumbnail = activity.findViewById(R.id.editThumbnail);
+
         editDescription = activity.findViewById(R.id.editDescription);
         editDescription.setText(model.getDescription());
 
@@ -37,8 +42,11 @@ public class OEventEditView {
         editRegistrationEnd = activity.findViewById(R.id.endRegistration);
         editConfirmationStart = activity.findViewById(R.id.startConfirmation);
         editConfirmationEnd = activity.findViewById(R.id.endConfirmation);
+
         editEntrantCapacity = activity.findViewById(R.id.maxEntrantsText);
+
         editApplicantCapacity = activity.findViewById(R.id.maxApplicantsText);
+
         doneButton = activity.findViewById(R.id.doneButton);
     }
 
@@ -58,19 +66,19 @@ public class OEventEditView {
         return editDescription;
     }
 
-    public EditText getEditRegistrationStart() {
+    public TextView getEditRegistrationStart() {
         return editRegistrationStart;
     }
 
-    public EditText getEditRegistrationEnd() {
+    public TextView getEditRegistrationEnd() {
         return editRegistrationEnd;
     }
 
-    public EditText getEditConfirmationStart() {
+    public TextView getEditConfirmationStart() {
         return editConfirmationStart;
     }
 
-    public EditText getEditConfirmationEnd() {
+    public TextView getEditConfirmationEnd() {
         return editConfirmationEnd;
     }
 
@@ -84,5 +92,66 @@ public class OEventEditView {
 
     public Button getDoneButton() {
         return doneButton;
+    }
+
+    public void updateEntrantCapacity(int capacity) {
+        if (capacity > 0) {
+            editEntrantCapacity.setText(String.format(Locale.CANADA, "%d", capacity));
+        }
+        else {
+            editEntrantCapacity.setText("");
+        }
+    }
+
+    public void updateApplicantCapacity(int capacity) {
+        if (capacity > 0) {
+            editApplicantCapacity.setText(String.format(Locale.CANADA, "%d", capacity));
+        }
+        else {
+            editApplicantCapacity.setText("");
+        }
+    }
+    @Override
+    public void updateRegistrationStart(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            editRegistrationStart.setText("START DATE");
+        }
+        else {
+            String displayText = dateTime.getMonth() + " " + dateTime.getDayOfMonth() + ", " + dateTime.getYear();
+            editRegistrationStart.setText(displayText);
+        }
+    }
+
+    @Override
+    public void updateRegistrationEnd(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            editRegistrationEnd.setText("END DATE");
+        }
+        else {
+            String displayText = dateTime.getMonth() + " " + dateTime.getDayOfMonth() + ", " + dateTime.getYear();
+            editRegistrationEnd.setText(displayText);
+        }
+    }
+
+    @Override
+    public void updateConfirmationStart(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            editConfirmationStart.setText("START DATE");
+        }
+        else {
+            String displayText = dateTime.getMonth() + " " + dateTime.getDayOfMonth() + ", " + dateTime.getYear();
+            editConfirmationStart.setText(displayText);
+        }
+    }
+
+    @Override
+    public void updateConfirmationEnd(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            editConfirmationEnd.setText("END DATE");
+        }
+        else {
+            String displayText = dateTime.getMonth() + " " + dateTime.getDayOfMonth() + ", " + dateTime.getYear();
+            editConfirmationEnd.setText(displayText);
+        }
     }
 }

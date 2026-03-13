@@ -3,7 +3,6 @@ package com.example.walrusevents.model;
 import android.media.Image;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 import android.graphics.Bitmap;
 import com.example.walrusevents.util.QRGenerator;
@@ -19,7 +18,7 @@ public class Event implements Serializable {
     private String startRegistrationTime;
     private String endRegistrationTime;
     private String startConfirmationTime;
-    private String endConfirmationTIme;
+    private String endConfirmationTime;
     private int entrantCapacity;    //Limits number of entrants. Set to 0 for no limit
     private int applicantCapacity;  //Number of applicants chosen by lottery. If 0, lottery should be disabled
     private Bitmap poster;
@@ -29,9 +28,7 @@ public class Event implements Serializable {
 
     //No-argument constructor for database queries
     public Event() {
-        this.eventId = "";
-        this.title = "";
-        this.ownerId = "";
+
     }
 
     public Event(String title, String eventId) {
@@ -41,14 +38,13 @@ public class Event implements Serializable {
         description = "";
         entrantCapacity = 0;
         applicantCapacity = 0;
-        setStartConfirmationTime(LocalDateTime.now().toString());
     }
 
     public String getEventId() { return eventId; }
     public void setEventId(String eventId) { this.eventId = eventId; }
 
     public String getOwnerId() { return ownerId; }
-    public void setOwnerId(String eventId) { this.ownerId = ownerId; }
+    public void setOwnerId(String ownerId) { this.ownerId = ownerId; }
     public String getTitle() {
         return title;
     }
@@ -88,12 +84,12 @@ public class Event implements Serializable {
         this.startConfirmationTime = startConfirmationTime;
     }
 
-    public String getEndConfirmationTIme() {
-        return endConfirmationTIme;
+    public String getEndConfirmationTime() {
+        return endConfirmationTime;
     }
 
-    public void setEndConfirmationTIme(String endConfirmationTIme) {
-        this.endConfirmationTIme = endConfirmationTIme;
+    public void setEndConfirmationTime(String endConfirmationTime) {
+        this.endConfirmationTime = endConfirmationTime;
     }
 
     public int getEntrantCapacity() {
@@ -113,6 +109,9 @@ public class Event implements Serializable {
         return true;
     }
 
+    public int getApplicantCapacity() {
+        return  applicantCapacity;
+    }
     /**
      * Sets the amount of applicants that can be chosen by the lottery. Must be greater than
      * 0 and less than entrant capacity.
@@ -139,9 +138,9 @@ public class Event implements Serializable {
         this.qrCodeImage = QRGenerator.generateQRCode("walrusevents://event/" + this.eventId);
     }
 
-    public Bitmap getQrCode() { return qrCodeImage; }
+    public Bitmap getQrCodeImage() { return qrCodeImage; }
 
-    public void setQRCodeImage(Bitmap qrCodeImage) { this.qrCodeImage = qrCodeImage; }
+    public void setQrCodeImage(Bitmap qrCodeImage) { this.qrCodeImage = qrCodeImage; }
 
     public Image getThumbnail() {
         return thumbnail;
