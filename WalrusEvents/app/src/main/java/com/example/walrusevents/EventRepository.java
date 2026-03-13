@@ -28,12 +28,13 @@ public class EventRepository {
      * Store a new event in the database
      * @param event The event being added
      */
-    public void addEvent(Event event) {
+    public String addEvent(Event event) {
         DocumentReference docRef = eventsCollection.document();
-        event.setEventId(docRef.getId());
+        String newId = docRef.getId(); // Grab the ID
+        event.setEventId(newId);
         docRef.set(event);
+        return newId; // Return it to the caller
     }
-
     /**
      * Sets an event in the database
      * @param event The event to be set/overwritten

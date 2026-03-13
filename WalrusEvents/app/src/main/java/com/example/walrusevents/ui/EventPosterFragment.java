@@ -90,4 +90,4 @@ public class EventPosterFragment extends Fragment {
             }
         });
     }
-    }
+}
