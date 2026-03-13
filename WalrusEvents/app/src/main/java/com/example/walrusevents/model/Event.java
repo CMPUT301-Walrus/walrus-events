@@ -110,7 +110,7 @@ public class Event implements Serializable {
     }
 
     public int getApplicantCapacity() {
-        return  applicantCapacity;
+        return applicantCapacity;
     }
     /**
      * Sets the amount of applicants that can be chosen by the lottery. Must be greater than

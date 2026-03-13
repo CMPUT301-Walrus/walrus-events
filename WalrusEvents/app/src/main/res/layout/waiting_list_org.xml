@@ -3,9 +3,66 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#96E6F6">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/settings_bar"
+        android:layout_width="200dp"
+        android:layout_height="300dp"
+        android:visibility="visible"
+        tools:layout_editor_absoluteX="210dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:clickable="false" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#FFFFFF"
+                android:orientation="vertical">
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp" />
+
+                <Button
+                    android:id="@+id/view_event_page_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#FFD24B"
+                    android:text="View Event Page"
+                    android:textColor="#000000" />
+
+                <Button
+                    android:id="@+id/edit_details_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#FFD24B"
+                    android:text="Edit Details"
+                    android:textColor="#000000" />
+
+                <Button
+                    android:id="@+id/show_qr_code_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#FFD24B"
+                    android:text="Show QR Code"
+                    android:textColor="#000000" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -19,22 +76,28 @@
                 android:id="@+id/back_waiting_list_org"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Back" />
+                android:backgroundTint="#FFD24B"
+                android:text="Back"
+                android:textColor="#000000" />
 
             <TextView
                 android:id="@+id/textView"
-                android:layout_width="match_parent"
+                android:layout_width="200sp"
                 android:layout_height="wrap_content"
                 android:text="Event Name"
                 android:textAlignment="center"
-                android:textSize="30sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="30sp"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/settings_org_button"
-                android:layout_width="wrap_content"
+                android:layout_width="124dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Settings" />
+                android:backgroundTint="#FFD24B"
+                android:text="Settings"
+                android:textColor="#000000" />
 
         </LinearLayout>
 
@@ -50,7 +113,9 @@
                 android:layout_weight="1"
                 android:text="The Pool"
                 android:textAlignment="center"
-                android:textSize="30sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/org_entrant_count"
@@ -77,14 +142,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Remove Applicant" />
+                android:backgroundTint="#FFD24B"
+                android:text="Remove Applicant"
+                android:textColor="#000000" />
 
             <Button
                 android:id="@+id/Lottery"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Lottery" />
+                android:backgroundTint="#FFD24B"
+                android:text="Lottery"
+                android:textColor="#000000" />
         </LinearLayout>
 
     </LinearLayout>
