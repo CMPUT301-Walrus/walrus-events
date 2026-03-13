@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:text="Your Events"
-            android:textColor="#FFFF"
+            android:textColor="#0F9BE7"
             android:textSize="48sp"
             android:textStyle="bold" />
 

@@ -11,6 +11,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.walrusevents.WaitlistEntry;
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.controllers.EntrantController;
 import com.example.walrusevents.model.Profile;
@@ -18,19 +19,26 @@ import com.example.walrusevents.ProfileRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.WaitlistRepository;
 import com.example.walrusevents.model.Event;
+import com.example.walrusevents.ui.AcceptInvitationFragment;
 import com.example.walrusevents.util.DeviceIdManager;
 
-
-public class UEventDetailsActivity extends AppCompatActivity implements EntrantController.ActionCallback {
+/**
+ * UEventDetails
+ * Handles the creation and linking of classes related to viewing the details of an event
+ * as a user.
+ */
+public class UEventDetailsActivity extends AppCompatActivity
+        implements EntrantController.ActionCallback, AcceptInvitationFragment.AcceptInvitationListener {
     private Event event;
+    private WaitlistEntry entry;
+
+    //TODO: Refactor these into a view class
     private TextView event_name;
     private ImageView event_poster;
     private Button backButton;
     private Button joinButton;
     private Button seePoolButton;
-    private Button acceptInvite;
-    private Button declineInvite;
-
+    private WaitlistRepository waitlistRepository;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,6 +46,7 @@ public class UEventDetailsActivity extends AppCompatActivity implements EntrantC
         EdgeToEdge.enable(this);
         setContentView(R.layout.event_details);
 
+        waitlistRepository = new WaitlistRepository();
         /*
         * Retrieve Event object that was clicked in MainActivity
         * Exception handling referenced from https://www.geeksforgeeks.org/android/exceptions-in-android-with-example/. March 12, 2026
@@ -155,6 +164,41 @@ public class UEventDetailsActivity extends AppCompatActivity implements EntrantC
             EntrantController entrantController = new EntrantController(me, waitRep, pfRep);
             entrantController.joinWaitlist(event.getEventId(), this);
         });
+
+        checkForInvitation();
+    }
+
+    private void checkForInvitation() {
+        if (!event.isInConfirmation()) {
+            return;
+        }
+
+        String deviceId = DeviceIdManager.getOrCreate(this);
+        String eventId = event.getEventId();
+
+        waitlistRepository.getEntry(eventId, deviceId, new WaitlistRepository.EntryCallback() {
+            @Override
+            public void onEntryLoaded(WaitlistEntry entry) {
+                if (entry != null) {
+                    AcceptInvitationFragment inviteFragment = new AcceptInvitationFragment();
+                    switch (entry.getStatus()) {
+                        case INVITED:
+                            inviteFragment =
+                                    AcceptInvitationFragment.newInstance(UEventDetailsActivity.this, true);
+                            inviteFragment.show(getSupportFragmentManager(), "Invited");
+                            break;
+                        case PENDING:
+                            inviteFragment =
+                                    AcceptInvitationFragment.newInstance(UEventDetailsActivity.this, false);
+                            inviteFragment.show(getSupportFragmentManager(), "Not Invited");
+                            break;
+                        default:
+                            break;
+                    }
+                    UEventDetailsActivity.this.entry = entry;
+                }
+            }
+        });
     }
 
     @Override
@@ -164,6 +208,40 @@ public class UEventDetailsActivity extends AppCompatActivity implements EntrantC
 
     @Override
     public void onFailure(String errorMessage) {
+        System.err.println(errorMessage);
+    }
 
+    @Override
+    public void acceptInvite() {
+        entry.setStatus(WaitlistEntry.Status.ACCEPTED);
+        waitlistRepository.updateStatus(entry.getEventId(), entry.getEntrantId(), WaitlistEntry.Status.ACCEPTED,
+                new WaitlistRepository.SaveCallback() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFailure(String error) {
+                System.err.println(error);
+            }
+        });
+    }
+
+    @Override
+    public void declineInvite() {
+        entry.setStatus(WaitlistEntry.Status.DECLINED);
+        waitlistRepository.updateStatus(entry.getEventId(), entry.getEntrantId(), WaitlistEntry.Status.DECLINED,
+                new WaitlistRepository.SaveCallback() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onFailure(String error) {
+                        System.err.println(error);
+                    }
+                });
     }
 }
