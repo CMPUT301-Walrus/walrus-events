@@ -95,7 +95,6 @@ public class UEventsActivity extends AppCompatActivity {
                 return;
             }
 
-            int total = entries.size();
             AtomicInteger remaining = new AtomicInteger(entries.size());
             ArrayList<UEventHistoryAdapter.HistoryItem> results = new ArrayList<>();
 

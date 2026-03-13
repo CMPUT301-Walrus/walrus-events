@@ -122,8 +122,7 @@ public class UEventDetailsActivity extends AppCompatActivity implements EntrantC
          */
         backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(v -> {
-            Intent back = new Intent(UEventDetailsActivity.this, MainActivity.class);
-            startActivity(back);
+            finish();
         });
 
         /*
