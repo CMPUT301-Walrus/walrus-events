@@ -1,6 +1,7 @@
 package com.example.walrusevents;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.Exclude;
 
 /**
  * WaitlistEntry
@@ -22,13 +23,15 @@ public class WaitlistEntry {
     }
 
     private String entrantId;
+    private String eventId;
     private Status status;
     private Timestamp joinedAt;
     private Double latitude;
     private Double longitude;
 
-    public WaitlistEntry(String entrantId) {
+    public WaitlistEntry(String entrantId, String eventId) {
         this.entrantId = entrantId;
+        this.eventId = eventId;
         this.status = Status.PENDING;
         this.joinedAt = Timestamp.now();
     }
@@ -37,6 +40,14 @@ public class WaitlistEntry {
 
     public String getEntrantId() { return entrantId; }
     public void setEntrantId(String entrantId) { this.entrantId = entrantId; }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
 
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }

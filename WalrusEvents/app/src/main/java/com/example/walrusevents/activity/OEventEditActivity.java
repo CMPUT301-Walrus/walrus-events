@@ -1,5 +1,6 @@
 package com.example.walrusevents.activity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,9 +30,10 @@ public class OEventEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.edit_event);
+        model = getIntent().getSerializableExtra("Event", Event.class);
 
-        eventEditView = new OEventEditView(this);
-        eventEditController = new OEventEditController(getIntent().getSerializableExtra("Event", Event.class));
+        eventEditView = new OEventEditView(this, model);
+        eventEditController = new OEventEditController(model, eventEditView);
 
         // Back to event list for organizer button
         ImageView backButton = findViewById(R.id.backButton_organizer_to_main);
@@ -85,6 +87,19 @@ public class OEventEditActivity extends AppCompatActivity {
 
         eventEditView.getEditThumbnail().setOnClickListener(v -> {
             //TODO: Allow for selection of thumbnail
+        });
+
+        eventEditView.getEditRegistrationStart().setOnClickListener(v -> {
+            eventEditController.openStartRegistrationDialog(this);
+        });
+        eventEditView.getEditRegistrationEnd().setOnClickListener(v -> {
+            eventEditController.openEndRegistrationDialog(this);
+        });
+        eventEditView.getEditConfirmationStart().setOnClickListener(v -> {
+            eventEditController.openStartConfirmationDialog(this);
+        });
+        eventEditView.getEditConfirmationEnd().setOnClickListener(v -> {
+            eventEditController.openEndConfirmationDialog(this);
         });
 
         eventEditView.getDoneButton().setOnClickListener(v -> {

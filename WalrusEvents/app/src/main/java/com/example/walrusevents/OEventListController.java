@@ -58,7 +58,7 @@ public class OEventListController implements NameEventFragment.NameEventListener
     public boolean inConfirmationPhase(int index) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime start = LocalDateTime.parse(eventList.get(index).getStartConfirmationTime());
-        LocalDateTime end = LocalDateTime.parse(eventList.get(index).getEndConfirmationTIme());
+        LocalDateTime end = LocalDateTime.parse(eventList.get(index).getEndConfirmationTime());
         return now.isAfter(start) && now.isBefore(end);
     }
 
@@ -132,7 +132,6 @@ public class OEventListController implements NameEventFragment.NameEventListener
     public void onEventsLoaded(ArrayList<Event> events) {
         eventList.clear();
         eventList.addAll(events);
-        System.out.printf("%d event(s) loaded", events.size());
         eventListAdapter.notifyDataSetChanged();
     }
 }

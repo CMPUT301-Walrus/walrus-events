@@ -76,28 +76,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <EditText
+                <TextView
                     android:id="@+id/startRegistration"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginBottom="20dp"
+                    android:clickable="true"
                     android:ems="10"
-                    android:hint="START DATE"
-                    android:inputType="text"
+                    android:text="START DATE"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <EditText
+                <TextView
                     android:id="@+id/endRegistration"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
                     android:layout_marginBottom="20dp"
                     android:ems="10"
-                    android:hint="END DATE"
-                    android:inputType="text"
+                    android:text="END DATE"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/startRegistration"
@@ -113,7 +112,7 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:inputType="text"
+                    android:inputType="number"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -143,28 +142,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <EditText
+                <TextView
                     android:id="@+id/startConfirmation"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginBottom="20dp"
                     android:ems="10"
-                    android:hint="START DATE"
-                    android:inputType="text"
+                    android:text="START DATE"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <EditText
+                <TextView
                     android:id="@+id/endConfirmation"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
                     android:layout_marginBottom="20dp"
                     android:ems="10"
-                    android:hint="END DATE"
-                    android:inputType="text"
+                    android:text="END DATE"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/startConfirmation"
@@ -180,7 +177,7 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:inputType="text"
+                    android:inputType="number"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"

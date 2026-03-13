@@ -29,7 +29,7 @@ public class OEventsActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.organizer_events);
 
-        eventListView = new OEventListView(findViewById(R.id.listView), findViewById(R.id.addButton));
+        eventListView = new OEventListView(this);
         eventRepository = new EventRepository();
         eventListController = new OEventListController(this, eventRepository, eventListView.getEventList());
         eventListController.loadEvents("ABCDEF");     //**Currently using a placeholder owner id
@@ -51,6 +51,11 @@ public class OEventsActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 eventListController.openEvent(OEventsActivity.this, position);
             }
+        });
+
+        eventListView.getBackButton().setOnClickListener(v -> {
+            Intent goBackIntent = new Intent(this, MainActivity.class);
+            startActivity(goBackIntent);
         });
     }
 }

@@ -32,8 +32,8 @@ public class EntrantController {
                 callback.onFailure("Already on the waitlist for this event.");
                 return;
             }
-            WaitlistEntry entry = new WaitlistEntry(entrant.getEntrantId());
-            waitlistRepository.addEntry(eventId, entry, new WaitlistRepository.SaveCallback() {
+            WaitlistEntry entry = new WaitlistEntry(entrant.getEntrantId(), eventId);
+            waitlistRepository.addEntry(entry, new WaitlistRepository.SaveCallback() {
                 @Override public void onSuccess() { callback.onSuccess(); }
                 @Override public void onFailure(String error) { callback.onFailure(error); }
             });
@@ -50,9 +50,9 @@ public class EntrantController {
                 callback.onFailure("Already on the waitlist for this event.");
                 return;
             }
-            WaitlistEntry entry = new WaitlistEntry(entrant.getEntrantId());
+            WaitlistEntry entry = new WaitlistEntry(entrant.getEntrantId(), eventId);
             entry.setLocation(latitude, longitude);
-            waitlistRepository.addEntry(eventId, entry, new WaitlistRepository.SaveCallback() {
+            waitlistRepository.addEntry(entry, new WaitlistRepository.SaveCallback() {
                 @Override public void onSuccess() { callback.onSuccess(); }
                 @Override public void onFailure(String error) { callback.onFailure(error); }
             });
