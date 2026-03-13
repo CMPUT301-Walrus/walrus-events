@@ -33,10 +33,10 @@ public class WaitlistRepository {
 
     // ─── Read ─────────────────────────────────────────────────────────────────
 
-    /**
-     * Fetches a single entrant's entry for a given event.
-     * Returns null if the entrant is not on the waitlist.
-     */
+        /**
+         * Fetches a single entrant's entry for a given event.
+         * Returns null if the entrant is not on the waitlist.
+         */
     public void getEntry(String eventId, String entrantId, EntryCallback callback) {
         waitListCollection
                 .document(entrantId + eventId)
@@ -85,6 +85,28 @@ public class WaitlistRepository {
     public void getAllEntries(String eventId, EntryListCallback callback) {
         waitListCollection
                 .whereEqualTo("eventId", eventId)
+                .get()
+                .addOnSuccessListener(query -> {
+                    List<WaitlistEntry> entries = new ArrayList<>();
+                    for (QueryDocumentSnapshot doc : query) {
+                        WaitlistEntry entry = doc.toObject(WaitlistEntry.class);
+                        entries.add(entry);
+                    }
+                    callback.onEntriesLoaded(entries);
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                    callback.onEntriesLoaded(new ArrayList<>());
+                });
+    }
+
+    /**
+     * Fetches all waitlist entries for a given entrant across all events.
+     * Used by the user history screen — replaces the old fan-out approach.
+     */
+    public void getEntriesByEntrant(String entrantId, EntryListCallback callback) {
+        waitListCollection
+                .whereEqualTo("entrantId", entrantId)
                 .get()
                 .addOnSuccessListener(query -> {
                     List<WaitlistEntry> entries = new ArrayList<>();
