@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="bottom"
+    android:background="#96e6f6"
     tools:context=".activity.MainActivity">
 
     <LinearLayout
@@ -55,13 +56,17 @@
             android:id="@+id/myEventsButton"
             android:layout_width="183dp"
             android:layout_height="wrap_content"
-            android:text="My Events" />
+            android:backgroundTint="#FFD24B"
+            android:text="My Events"
+            android:textColor="#000000" />
 
         <Button
             android:id="@+id/userSettingsButton"
             android:layout_width="173dp"
             android:layout_height="wrap_content"
-            android:text="Settings" />
+            android:backgroundTint="#FFD24B"
+            android:text="Settings"
+            android:textColor="#000000" />
 
     </LinearLayout>
 
