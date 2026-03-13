@@ -1,5 +1,6 @@
 package com.example.walrusevents.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -29,6 +30,29 @@ public class OEventPoolActivity extends AppCompatActivity {
         eventModel = getIntent().getSerializableExtra("Event", Event.class);
 
         view = new OEventPoolView(this);
-        controller = new OEventPoolController(this, eventModel.getEventId());
+        controller = new OEventPoolController(this, eventModel.getEventId(), view.getWaitingListView());
+
+        view.getBackButton().setOnClickListener(v -> {
+            Intent goEvents = new Intent(this, OEventsActivity.class);
+            startActivity(goEvents);
+        });
+
+        view.getLotteryButton().setOnClickListener(v -> {
+            //TODO: Do lottery
+        });
+
+        view.getShowQrCodeButton().setOnClickListener(v -> {
+            //TODO: Show QR code
+        });
+
+        view.getEditDetailsButton().setOnClickListener(v -> {
+            Intent goEditDetails = new Intent(this, OEventEditActivity.class);
+            startActivity(goEditDetails);
+        });
+
+        view.getViewEventPageButton().setOnClickListener(v -> {
+            Intent goEventPage = new Intent(this, UEventDetailsActivity.class);
+            startActivity(goEventPage);
+        });
     }
 }

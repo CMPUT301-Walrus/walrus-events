@@ -40,6 +40,7 @@ public class ProfileRepository {
                 .document(deviceId)
                 .get()
                 .addOnSuccessListener(doc -> {
+
                     if (!doc.exists()) {
                         callback.onEntrantLoaded(null);
                         return;

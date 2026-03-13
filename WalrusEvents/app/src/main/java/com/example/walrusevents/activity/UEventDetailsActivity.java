@@ -20,7 +20,7 @@ import com.example.walrusevents.WaitlistRepository;
 import com.example.walrusevents.model.Event;
 
 
-public class UEventDetailsActivity extends AppCompatActivity {
+public class UEventDetailsActivity extends AppCompatActivity implements EntrantController.ActionCallback {
     private Event event;
     private TextView event_name;
     private ImageView event_poster;
@@ -99,9 +99,17 @@ public class UEventDetailsActivity extends AppCompatActivity {
             WaitlistRepository waitRep = new WaitlistRepository();
             ProfileRepository pfRep = new ProfileRepository();
             EntrantController entrantController = new EntrantController(me, waitRep, pfRep);
-            entrantController.joinWaitlist(me.getEntrantId(), null);
+            entrantController.joinWaitlist(event.getEventId(), this);
         });
     }
 
-    
+    @Override
+    public void onSuccess() {
+
+    }
+
+    @Override
+    public void onFailure(String errorMessage) {
+
+    }
 }
