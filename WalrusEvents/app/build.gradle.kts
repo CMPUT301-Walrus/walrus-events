@@ -90,7 +90,14 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     androidTestImplementation("androidx.test:runner:1.6.2")
-    androidTestImplementation("androidx.test:rules:1.6.1")}
+    androidTestImplementation("androidx.test:rules:1.6.1")
+    // ADD THIS LINE for Intent recognition (Intents.init, intended, etc.)
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
+
+    // Recommended for ActivityScenarioRule
+    androidTestImplementation("androidx.test:rules:1.6.1")
+}
+
 
 configurations.all {
     resolutionStrategy {
