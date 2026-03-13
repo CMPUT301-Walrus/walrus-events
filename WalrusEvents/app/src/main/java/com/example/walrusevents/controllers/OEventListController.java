@@ -1,4 +1,4 @@
-package com.example.walrusevents;
+package com.example.walrusevents.controllers;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,9 +8,9 @@ import android.widget.ListView;
 
 import androidx.fragment.app.FragmentManager;
 
-import com.example.walrusevents.activity.OEventEditActivity;
+import com.example.walrusevents.EventRepository;
+import com.example.walrusevents.OEventArrayAdapter;
 import com.example.walrusevents.activity.OEventPoolActivity;
-import com.example.walrusevents.activity.OEventsActivity;
 import com.example.walrusevents.data.FirebaseAPIManager;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.ui.NameEventFragment;

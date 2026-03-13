@@ -1,5 +1,7 @@
 package com.example.walrusevents;
 
+import com.example.walrusevents.model.Lottery;
+
 import org.junit.Test;
 
 import java.util.ArrayList;

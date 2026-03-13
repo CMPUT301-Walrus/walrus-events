@@ -11,9 +11,9 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.walrusevents.Entrant;
-import com.example.walrusevents.EntrantController;
-import com.example.walrusevents.Profile;
+import com.example.walrusevents.model.Entrant;
+import com.example.walrusevents.controllers.EntrantController;
+import com.example.walrusevents.model.Profile;
 import com.example.walrusevents.ProfileRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.WaitlistRepository;

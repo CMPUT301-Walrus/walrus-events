@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.example.walrusevents.controllers.OEventDetailsController;
 import com.example.walrusevents.data.FirebaseAPIManager;
 import com.example.walrusevents.model.Event;
 

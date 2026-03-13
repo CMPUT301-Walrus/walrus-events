@@ -4,20 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.walrusevents.EventRepository;
-import com.example.walrusevents.Lottery;
-import com.example.walrusevents.OEventPoolController;
+import com.example.walrusevents.model.Lottery;
+import com.example.walrusevents.controllers.OEventPoolController;
 import com.example.walrusevents.R;
 import com.example.walrusevents.WaitlistEntry;
 import com.example.walrusevents.WaitlistRepository;
 import com.example.walrusevents.model.Event;
-import com.example.walrusevents.ui.EventPosterFragment;
 import com.example.walrusevents.ui.OEventPoolView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class OEventPoolActivity extends AppCompatActivity implements WaitlistRepository.EntryListCallback {

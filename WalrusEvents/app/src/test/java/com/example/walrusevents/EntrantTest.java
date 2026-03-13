@@ -5,6 +5,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import com.example.walrusevents.model.Entrant;
+import com.example.walrusevents.model.Profile;
+
 /**
  * Unit tests for the Entrant class.
  */

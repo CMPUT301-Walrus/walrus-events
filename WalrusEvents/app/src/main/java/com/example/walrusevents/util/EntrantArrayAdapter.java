@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.walrusevents.Entrant;
+import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.R;
 
 import java.util.ArrayList;
