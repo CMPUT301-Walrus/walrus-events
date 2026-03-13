@@ -4,12 +4,15 @@ package com.example.walrusevents.model;
  * Entrant
  * Represents a user who signs up for events through the lottery system.
  */
-
 public class Entrant {
 
     private String deviceId;
     private Profile profile;
 
+    /**
+     * Constructor method
+     * @param profile object container user specific data
+     */
     public Entrant(Profile profile) {
         this.profile = profile;
         this.deviceId = profile.getDeviceId();
@@ -17,18 +20,34 @@ public class Entrant {
 
     // ─── Getters & Setters ────────────────────────────────────────────────────
 
+    /**
+     * Returns unique ID of user's device
+     * @return deviceId which is the id of the device user is running the app on
+     */
     public String getDeviceId() {
         return deviceId;
     }
 
+    /**
+     * Sets unique ID of user's device
+     * @param deviceId ID of device user is running the app on
+     */
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
     }
 
+    /**
+     * Returns profile affiliated to the entrant
+     * @return profile object containing user specific data
+     */
     public Profile getProfile() {
         return profile;
     }
 
+    /**
+     * Sets profile affiliated with entrant
+     * @param profile object containing user specific data
+     */
     public void setProfile(Profile profile) {
         this.profile = profile;
     }
