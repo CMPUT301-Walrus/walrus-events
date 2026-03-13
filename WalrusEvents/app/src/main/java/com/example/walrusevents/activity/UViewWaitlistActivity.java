@@ -13,14 +13,20 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.walrusevents.Entrant;
 import com.example.walrusevents.R;
+import com.example.walrusevents.WaitlistEntry;
+import com.example.walrusevents.WaitlistRepository;
 import com.example.walrusevents.model.Event;
 
-public class UViewWaitlistActivity extends AppCompatActivity {
-    Event event;
-    Button backToEvent;
-    TextView eventTitle;
-    ListView waitList;
+import java.util.List;
+
+public class UViewWaitlistActivity extends AppCompatActivity implements WaitlistRepository.EntryListCallback {
+    private Event event;
+    private Button backToEvent;
+    private TextView eventTitle;
+    private TextView countEntrants;
+    private List<WaitlistEntry> waitlist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +49,7 @@ public class UViewWaitlistActivity extends AppCompatActivity {
             if (bundle == null) {
                 throw new NullPointerException("Bundle containing selected Event not found");
             }
-            event = bundle.getSerializable("event", Event.class);
+            event = bundle.getSerializable("Event", Event.class);
             if (event == null) { /* If event doesn't load, return to main activity */
                 throw new NullPointerException("Selected Event not found");
             }
@@ -64,5 +70,25 @@ public class UViewWaitlistActivity extends AppCompatActivity {
             goBack.putExtras(bundle);
             startActivity(goBack);
         });
+
+        // TODO: Display Waitlist entries in ListView
+        countEntrants = findViewById(R.id.count_entrants);
+        WaitlistRepository getWaitlist = new WaitlistRepository();
+        getWaitlist.getAllEntries(event.getEventId(), this);
+
+    }
+
+    public Integer countValidEntrants(List<WaitlistEntry> entries) {
+        Integer count = 0;
+        for(WaitlistEntry entry: entries) {
+            if(entry.getStatus() != WaitlistEntry.Status.DECLINED && entry.getStatus() != WaitlistEntry.Status.CANCELLED) count++;
+        }
+        return count;
+    }
+
+    @Override
+    public void onEntriesLoaded(List<WaitlistEntry> entries) {
+        Integer eCount = countValidEntrants(entries);
+        countEntrants.setText(eCount.toString());
     }
 }
