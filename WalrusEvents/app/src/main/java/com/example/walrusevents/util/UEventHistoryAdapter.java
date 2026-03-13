@@ -36,6 +36,10 @@ public class UEventHistoryAdapter extends ArrayAdapter<UEventHistoryAdapter.Hist
             this.event = event;
             this.status = status;
         }
+
+        public Event getEvent() {
+            return event;
+        }
     }
 
     private final ArrayList<HistoryItem> items;

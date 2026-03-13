@@ -1,5 +1,6 @@
 package com.example.walrusevents.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
@@ -25,6 +26,7 @@ public class OEventEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.edit_event);
+        // Take event class info and move it here
         model = getIntent().getSerializableExtra("Event", Event.class);
 
         eventEditView = new OEventEditView(this, model);
@@ -35,9 +37,6 @@ public class OEventEditActivity extends AppCompatActivity {
         backButton.setOnClickListener(v -> {
             finish();
         });
-
-        // Take event class info and move it here
-        model = getIntent().getSerializableExtra("Event", Event.class);
         
         if (model != null) {
             eventEditView = new OEventEditView(this, model); // Initialize View first
@@ -107,7 +106,13 @@ public class OEventEditActivity extends AppCompatActivity {
             // Update local info and Firebase info
             eventEditController.setTitle(newTitle);
             eventEditController.setDescription(newDescription);
+            eventEditController.setEntrantCapacity(eventEditView.getEditEntrantCapacity().getText().toString());
+            eventEditController.setApplicantCapacity(eventEditView.getEditApplicantCapacity().getText().toString());
             eventEditController.saveModel();
+
+            Intent goPool = new Intent(this, OEventPoolActivity.class);
+            goPool.putExtra("Event", model);
+            startActivity(goPool);
         });
     }
 }
