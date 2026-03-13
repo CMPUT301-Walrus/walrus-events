@@ -6,11 +6,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.walrusevents.OEventEditController;
+import com.example.walrusevents.controllers.OEventEditController;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.Event;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 
 import java.time.LocalDateTime;
 import java.util.Locale;

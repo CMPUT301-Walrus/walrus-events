@@ -10,7 +10,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.walrusevents.EventRepository;
-import com.example.walrusevents.OEventListController;
+import com.example.walrusevents.controllers.OEventListController;
 import com.example.walrusevents.R;
 import com.example.walrusevents.ui.OEventListView;
 

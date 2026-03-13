@@ -1,4 +1,4 @@
-package com.example.walrusevents;
+package com.example.walrusevents.controllers;
 
 import android.graphics.Bitmap;
 

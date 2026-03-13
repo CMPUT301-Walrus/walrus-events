@@ -1,5 +1,7 @@
 package com.example.walrusevents;
 
+import com.example.walrusevents.model.Entrant;
+import com.example.walrusevents.model.Profile;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 

@@ -1,4 +1,9 @@
-package com.example.walrusevents;
+package com.example.walrusevents.controllers;
+
+import com.example.walrusevents.ProfileRepository;
+import com.example.walrusevents.WaitlistEntry;
+import com.example.walrusevents.WaitlistRepository;
+import com.example.walrusevents.model.Entrant;
 
 /**
  * EntrantController
