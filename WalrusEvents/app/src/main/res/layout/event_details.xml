@@ -27,7 +27,10 @@
                 android:id="@+id/event_name"
                 android:layout_width="300dp"
                 android:layout_height="92dp"
-                android:text="Event Name" />
+                android:autoSizeMinTextSize="24sp"
+                android:text="Event Name"
+                android:textAlignment="center"
+                android:textAppearance="@style/Base.Theme.WalrusEvents" />
         </LinearLayout>
 
         <ImageView
