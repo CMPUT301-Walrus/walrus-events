@@ -72,30 +72,6 @@ public class OEventEditController {
     public void setQRCode(Bitmap QRCodeImage) {
         model.setQRCodeImage(QRCodeImage);
     }
-    public void generateQRAndPoster() {
-        /**
-         * This function is called when an organizer creates an event
-         * It will generate the QR code and poster for the event
-         */
-        // create link for poster
-        String eventLink = "walrusevents://event/" + model.getEventId();
-
-        // Generate QR code using method in util, set destination as the link for the event
-        Bitmap qrCode = QRGenerator.generateQRCode(eventLink);
-
-
-        // Generate the poster
-        // Needs event title & description, and QR code
-        Bitmap poster = PosterGenerator.createEventPoster(
-                model.getTitle(),
-                model.getDescription(),
-                qrCode
-        );
-
-        // Update the Event
-        model.setQRCodeImage(qrCode);
-        model.setPoster(poster);
-    }
 
     /**
      * This method stores event posters to Firebase
