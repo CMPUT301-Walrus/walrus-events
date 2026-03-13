@@ -1,5 +1,9 @@
 package com.example.walrusevents;
 
+import android.util.Log;
+
+import com.example.walrusevents.activity.OEventPoolActivity;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -19,7 +23,7 @@ What we need:
 /**
  * This is a class that handles the drawing of invitations for entrants.
  */
-public class Lottery {
+public class Lottery implements WaitlistRepository.SaveCallback {
     /**
      * This method performs a draw to invite a randomly selected number of entrants from a list to enroll in an event.
      * @param entrants
@@ -53,6 +57,7 @@ public class Lottery {
             for (WaitlistEntry entrant : pending) {
                 if (invite(entrant) < 0)
                     return false; /* Draw failed: non-PENDING entrant found in the draw */
+
             }
             return true;
         }
@@ -70,6 +75,11 @@ public class Lottery {
         return true;
     }
 
+    public void updateWaitlist(String event_id, WaitlistEntry entrant, OEventPoolActivity callback) {
+        WaitlistRepository repo = new WaitlistRepository();
+        repo.updateStatus(event_id, entrant.getEntrantId(), entrant.getStatus(), this);
+    }
+
     /**
      * This method is used to set an entrant in a waitlist as INVITED
      * @param entrant
@@ -81,5 +91,15 @@ public class Lottery {
         if(entrant.getStatus() != WaitlistEntry.Status.PENDING) return -1;
         entrant.setStatus(WaitlistEntry.Status.INVITED);
         return 0;
+    }
+
+    @Override
+    public void onSuccess() {
+
+    }
+
+    @Override
+    public void onFailure(String error) {
+        Log.e("Lottery.updateWaitlist()", error);
     }
 }
