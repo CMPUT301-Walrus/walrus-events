@@ -9,10 +9,11 @@
     <Button
         android:id="@+id/changeRoleButton"
         android:layout_width="wrap_content"
-        android:layout_height="36dp"
+        android:layout_height="0dp"
         android:text="change" />
 
     <LinearLayout
+        android:id="@+id/linearLayout5"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -23,7 +24,8 @@
             android:layout_height="82dp"
             android:text="Event List"
             android:textAlignment="center"
-            android:textSize="30sp" />
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/imageView"
@@ -82,7 +84,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Main" />
+                android:text="Main"
+                android:visibility="invisible" />
 
             <Button
                 android:id="@+id/my_events_button"

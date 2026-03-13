@@ -3,6 +3,7 @@ package com.example.walrusevents.activity;
 import android.app.role.RoleManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -49,14 +50,38 @@ public class MainActivity extends AppCompatActivity {
         eventListController = new MainSEventListController(this, eventRepository, eventListView);
         eventListController.loadEvents();
 
-        //TODO: Button to change between admin / user / organizer(?)
-            // Ex: admin - leave blank for now, organizer - OEventActivity, user - UEventActivity
+        /*
+        * Admin View Button
+        * CURRENTLY connected to MAin Button (instead of back button in StoryBoards)
+         */
+        //nav bar - basically useless, it needs its admin view which will have every admin task
+        Button adminViewButton = findViewById(R.id.main_button);
+        adminViewButton.setOnClickListener(v -> {
+            //Go to "Admin View" from this button
+            Intent goAdminViewActivityIntent = new Intent(MainActivity.this,AdminViewActivity.class);
+            System.out.println("Went to admin");
+            startActivity(goAdminViewActivityIntent);
+
+        });
+
+        /*
+        * Button to change between admin / user / organizer
+         */
         changeUserRoleButton = findViewById(R.id.changeRoleButton);
         updateRoleText();
         changeUserRoleButton.setOnClickListener(v -> {
             //Changes role in a loop user-organizer-admin
             UserRoleManager.nextRole();
             updateRoleText();
+
+            //Handling the View for Admin
+            if(UserRoleManager.getRole()==UserRole.ADMIN){
+                //show button for adminView
+                adminViewButton.setVisibility(View.VISIBLE);
+                adminViewButton.setText("Admin");
+            } else {
+                adminViewButton.setVisibility(View.INVISIBLE);
+            }
         });
 
         //TODO: Main Buttons for MainView - Settings, MainScreen, MyEvents
@@ -65,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             //MainScreen - go to main screen?? (even though youre on the main screen... - change that
         //TODO: Views for User:  Settings(Profile), MyEvents(Signed in Events)
 
-
+        //My Events Button
         Button eventsButton = findViewById(R.id.my_events_button);
         eventsButton.setOnClickListener(v -> {
             //Button goes to "My Events" activity for organizer
@@ -82,6 +107,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+
+
+
 
     }
 

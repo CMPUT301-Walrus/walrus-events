@@ -1,7 +1,7 @@
 package com.example.walrusevents.util;
 
 /*
-* The roles for testing
+* Enum used for handling the roles of users
  */
 public enum UserRole {
     USER,

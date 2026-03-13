@@ -3,6 +3,7 @@ package com.example.walrusevents.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
@@ -25,13 +26,12 @@ public class UEventsActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.user_history_events);
 
-        /*
-        Button backButtonWIP=findViewById(R.id.backButtonWIP);
-        backButtonWIP.setOnClickListener(v -> {
-            Intent goBackToMainscreenIntent = new Intent(UEventsActivity.this,MainActivity.class);
-            startActivity(goBackToMainscreenIntent);
-        *});
-        */
+
+        Button backButton = findViewById(R.id.historyEventsBackButton);
+        backButton.setOnClickListener(v -> {
+            finish();
+        });
+
 
     }
 }
