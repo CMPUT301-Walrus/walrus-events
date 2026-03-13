@@ -77,6 +77,12 @@ public class Lottery implements WaitlistRepository.SaveCallback {
         return true;
     }
 
+    /**
+     * Update wait list status for an entrant
+     * @param event_id id of event in question
+     * @param entrant  entrant being updated
+     * @param callback callback to OEventPoolActivity
+     */
     public void updateWaitlist(String event_id, WaitlistEntry entrant, OEventPoolActivity callback) {
         WaitlistRepository repo = new WaitlistRepository();
         repo.updateStatus(event_id, entrant.getEntrantId(), entrant.getStatus(), this);
@@ -95,11 +101,18 @@ public class Lottery implements WaitlistRepository.SaveCallback {
         return 0;
     }
 
+    /**
+     * N/A
+     */
     @Override
     public void onSuccess() {
 
     }
 
+    /**
+     * If program fails log error
+     * @param error what went wrong
+     */
     @Override
     public void onFailure(String error) {
         Log.e("Lottery.updateWaitlist()", error);
