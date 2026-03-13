@@ -28,6 +28,8 @@ public class UEventDetailsActivity extends AppCompatActivity implements EntrantC
     private Button backButton;
     private Button joinButton;
     private Button seePoolButton;
+    private Button acceptInvite;
+    private Button declineInvite;
 
 
     @Override
