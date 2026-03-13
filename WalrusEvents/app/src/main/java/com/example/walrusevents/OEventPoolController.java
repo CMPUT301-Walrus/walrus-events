@@ -1,6 +1,7 @@
 package com.example.walrusevents;
 
 import android.app.Activity;
+import android.widget.ListView;
 
 import com.example.walrusevents.util.EntrantArrayAdapter;
 
@@ -13,9 +14,10 @@ public class OEventPoolController implements ProfileRepository.ProfileCallback, 
     private WaitlistRepository waitlistRepository;
     private ProfileRepository profileRepository;
 
-    public OEventPoolController(Activity context, String eventId) {
+    public OEventPoolController(Activity context, String eventId, ListView entrantListView) {
         entrantList = new ArrayList<>();
         eventListAdapter = new EntrantArrayAdapter(context, entrantList);
+        entrantListView.setAdapter(eventListAdapter);
 
         waitlistRepository = new WaitlistRepository();
         profileRepository = new ProfileRepository();
@@ -25,13 +27,19 @@ public class OEventPoolController implements ProfileRepository.ProfileCallback, 
     @Override
     public void onEntriesLoaded(List<WaitlistEntry> entries) {
         for (WaitlistEntry entry: entries) {
-            profileRepository.getProfile(entry.getEventId(), this);
+            profileRepository.getProfile(entry.getEntrantId(), this);
         }
     }
 
     @Override
     public void onEntrantLoaded(Entrant entrant) {
-        entrantList.add(entrant);
-        eventListAdapter.notifyDataSetChanged();
+        if (entrant == null)
+        {
+            System.out.println("null entrant");
+        }
+        else {
+            entrantList.add(entrant);
+            eventListAdapter.notifyDataSetChanged();
+        }
     }
 }
