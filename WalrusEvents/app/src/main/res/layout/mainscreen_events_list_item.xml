@@ -64,5 +64,8 @@
         android:text="Registration Deadline"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintTop_toBottomOf="@+id/description"
-        tools:layout_editor_absoluteX="222dp" />
+        app:layout_constraintStart_toEndOf="@+id/thumbnail"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintHorizontal_bias="0.08"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
