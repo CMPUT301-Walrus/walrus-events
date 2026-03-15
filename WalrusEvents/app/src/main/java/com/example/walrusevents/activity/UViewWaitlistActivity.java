@@ -61,11 +61,7 @@ public class UViewWaitlistActivity extends AppCompatActivity implements Waitlist
         backToEvent = findViewById(R.id.back_to_event);
         backToEvent.setOnClickListener(v -> {
             Intent goBack = new Intent(UViewWaitlistActivity.this, UEventDetailsActivity.class);
-
-            // packaging serializable object into Intent referenced from Peter Mortensen in Stack Overflow https://stackoverflow.com/questions/14333449/passing-data-through-intent-using-serializable. March 12, 2026
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("Event", event);
-            goBack.putExtras(bundle);
+            goBack.putExtra("Event", event);
             startActivity(goBack);
         });
 

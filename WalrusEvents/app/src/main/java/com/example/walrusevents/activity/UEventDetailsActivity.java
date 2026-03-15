@@ -52,12 +52,7 @@ public class UEventDetailsActivity extends AppCompatActivity
         * Exception handling referenced from https://www.geeksforgeeks.org/android/exceptions-in-android-with-example/. March 12, 2026
          */
         try {
-            Intent retrieveEvent = this.getIntent();
-            Bundle bundle = retrieveEvent.getExtras();
-            if (bundle == null) {
-                throw new NullPointerException("Bundle containing selected Event not found");
-            }
-            event = bundle.getSerializable("event", Event.class);
+            event = getIntent().getSerializableExtra("Event", Event.class);
             if (event == null) { /* If event doesn't load, return to main activity */
                 throw new NullPointerException("Selected Event not found");
             }
@@ -142,10 +137,7 @@ public class UEventDetailsActivity extends AppCompatActivity
         seePoolButton = findViewById(R.id.see_pool_button);
         seePoolButton.setOnClickListener(v -> {
             Intent seePool = new Intent(UEventDetailsActivity.this, UViewWaitlistActivity.class);
-            // packaging serializable object into Intent referenced from Peter Mortensen in Stack Overflow https://stackoverflow.com/questions/14333449/passing-data-through-intent-using-serializable. March 12, 2026
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("Event", event);
-            seePool.putExtras(bundle);
+            seePool.putExtra("Event", event);
             startActivity(seePool);
         });
 
