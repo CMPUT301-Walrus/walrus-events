@@ -60,9 +60,7 @@ public class UViewWaitlistActivity extends AppCompatActivity implements Waitlist
          */
         backToEvent = findViewById(R.id.back_to_event);
         backToEvent.setOnClickListener(v -> {
-            Intent goBack = new Intent(UViewWaitlistActivity.this, UEventDetailsActivity.class);
-            goBack.putExtra("Event", event);
-            startActivity(goBack);
+            finish();
         });
 
         // TODO: Display Waitlist entries in ListView

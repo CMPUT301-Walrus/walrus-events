@@ -110,9 +110,7 @@ public class OEventEditActivity extends AppCompatActivity {
             eventEditController.setApplicantCapacity(eventEditView.getEditApplicantCapacity().getText().toString());
             eventEditController.saveModel();
 
-            Intent goPool = new Intent(this, OEventPoolActivity.class);
-            goPool.putExtra("Event", model);
-            startActivity(goPool);
+            finish();
         });
     }
 }

@@ -72,29 +72,6 @@
                 android:textSize="30sp" />
 
         </LinearLayout>
-        <Button
-            android:id="@+id/view_event_page_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#FFD24B"
-            android:text="View Event Page"
-            android:textColor="#000000" />
-
-        <Button
-            android:id="@+id/edit_details_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#FFD24B"
-            android:text="Edit Details"
-            android:textColor="#000000" />
-
-        <Button
-            android:id="@+id/show_qr_code_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#FFD24B"
-            android:text="Show QR Code"
-            android:textColor="#000000" />
         <ListView
             android:id="@+id/org_entrant_list_view"
             android:layout_width="match_parent"

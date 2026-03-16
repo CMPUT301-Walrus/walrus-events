@@ -54,8 +54,7 @@ public class OEventsActivity extends AppCompatActivity {
         });
 
         eventListView.getBackButton().setOnClickListener(v -> {
-            Intent goBackIntent = new Intent(this, MainActivity.class);
-            startActivity(goBackIntent);
+            finish();
         });
     }
 }

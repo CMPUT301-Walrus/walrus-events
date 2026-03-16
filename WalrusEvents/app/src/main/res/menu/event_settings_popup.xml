@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <item
+        android:id="@+id/event_settings_view"
+        android:title="View Event Page"/>
+    <item
+        android:id="@+id/event_settings_edit"
+        android:title="Edit Details"/>
+    <item
+        android:id="@+id/event_settings_qr"
+        android:title="Show QR Code"/>
+</menu>
