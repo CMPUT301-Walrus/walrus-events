@@ -30,9 +30,11 @@ public class OEventPoolController implements ProfileRepository.ProfileCallback, 
 
     @Override
     public void onEntriesLoaded(List<WaitlistEntry> entries) {
+        ArrayList<String> deviceIds = new ArrayList<>();
         for (WaitlistEntry entry: entries) {
-            profileRepository.getProfile(entry.getEntrantId(), this);
+            deviceIds.add(entry.getEntrantId());
         }
+        profileRepository.getProfilesInList(deviceIds, this);
     }
 
     @Override

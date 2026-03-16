@@ -65,10 +65,7 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
                     Event event_selected = (Event) adapterView.getItemAtPosition(i);
                     Intent passToUserEventDetails = new Intent(MainActivity.this, UEventDetailsActivity.class);
 
-                    // packaging serializable object into Intent referenced from Peter Mortensen in Stack Overflow https://stackoverflow.com/questions/14333449/passing-data-through-intent-using-serializable. March 12, 2026
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("event", event_selected);
-                    passToUserEventDetails.putExtras(bundle);
+                    passToUserEventDetails.putExtra("Event", event_selected);
                     startActivity(passToUserEventDetails);
                 }
             }
