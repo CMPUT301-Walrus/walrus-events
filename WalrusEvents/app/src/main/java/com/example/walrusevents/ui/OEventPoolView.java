@@ -7,12 +7,12 @@ import android.widget.ListView;
 import com.example.walrusevents.R;
 
 public class OEventPoolView {
-    public ListView waitingList;
-    public Button backButton;
-    public Button lotteryButton;
-    public Button editDetailsButton;
-    public Button showQrCodeButton;
-    public Button viewEventPageButton;
+    private ListView waitingList;
+    private Button backButton;
+    private Button lotteryButton;
+    private Button editDetailsButton;
+    private Button showQrCodeButton;
+    private Button viewEventPageButton;
 
     public OEventPoolView(Activity context) {
         waitingList = context.findViewById(R.id.org_entrant_list_view);
