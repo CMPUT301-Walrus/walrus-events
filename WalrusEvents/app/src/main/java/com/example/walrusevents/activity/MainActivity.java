@@ -140,6 +140,9 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
         });
 
         ProfileRepository profileRepository = new ProfileRepository();
+
+        //String deviceId = DeviceIdManager.replaceId(this);
+
         String deviceId = DeviceIdManager.getOrCreate(this);
         Profile placeholderProfile = new Profile(deviceId,"placeholderName","placeholderEmail");
         profileRepository.saveProfile(new Entrant(placeholderProfile), this);
