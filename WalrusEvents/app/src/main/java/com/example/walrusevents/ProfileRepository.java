@@ -3,9 +3,14 @@ package com.example.walrusevents;
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.model.Profile;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -64,6 +69,33 @@ public class ProfileRepository {
                 });
     }
 
+    /**
+     * Gets all the profiles with IDs specified in deviceIdList
+     * @param deviceIdList The IDs to look for
+     */
+    public void getProfilesInList(List<String> deviceIdList, ProfileCallback callback) {
+        //Must batch the IDs to look for in lists of size 30 due to Firebase limitations.
+        int batches = Math.ceilDiv(deviceIdList.size(), 30);
+        for (int i = 0; i < batches; i++)
+        {
+            List<String> batchList = deviceIdList.subList(i * 30, Math.min((i + 1) * 30, deviceIdList.size()));
+            profileCollection.
+                    whereIn("deviceId", batchList)
+                    .get()
+                    .addOnSuccessListener(query -> {
+                        for (QueryDocumentSnapshot doc : query) {
+                            Profile profile = doc.toObject(Profile.class);
+                            Entrant entrant = new Entrant(profile);
+                            callback.onEntrantLoaded(entrant);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        e.printStackTrace();
+                        callback.onEntrantLoaded(null);
+                    });
+        }
+    }
+
     // ─── Write ────────────────────────────────────────────────────────────────
 
     /**
@@ -79,15 +111,9 @@ public class ProfileRepository {
             return;
         }
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("name", profile.getName());
-        data.put("email", profile.getEmail());
-        data.put("phone", profile.getPhone());
-        data.put("notificationsEnabled", profile.isNotificationsEnabled());
-
         profileCollection
                 .document(entrant.getDeviceId())
-                .set(data)
+                .set(profile)
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> {
                     e.printStackTrace();

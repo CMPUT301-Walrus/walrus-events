@@ -2,6 +2,7 @@ package com.example.walrusevents.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.PopupMenu;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,49 +32,45 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
         view = new OEventPoolView(this);
         controller = new OEventPoolController(this, eventModel.getEventId(), view.getWaitingListView());
 
+        view.getSettingsButton().setOnClickListener(v -> {
+            //Followed popup menu example from: https://www.geeksforgeeks.org/android/popup-menu-in-android-with-example/
+            PopupMenu popupMenu = new PopupMenu(this, view.getSettingsButton());
+
+            popupMenu.getMenuInflater().inflate(R.menu.event_settings_popup, popupMenu.getMenu());
+
+            popupMenu.setOnMenuItemClickListener(menuItem -> {
+                if (menuItem.getItemId() == R.id.event_settings_view) {
+                    Intent goEventPage = new Intent(this, UEventDetailsActivity.class);
+                    goEventPage.putExtra("Event", eventModel);
+                    startActivity(goEventPage);
+                }
+                else if (menuItem.getItemId() == R.id.event_settings_edit) {
+                    Intent goEditDetails = new Intent(this, OEventEditActivity.class);
+                    goEditDetails.putExtra("Event", eventModel);
+                    startActivity(goEditDetails);
+                }
+                else if (menuItem.getItemId() == R.id.event_settings_qr) {
+                    Intent goQrCode = new Intent(this, QRCodeActivity.class);
+                    goQrCode.putExtra("EVENT_ID", eventModel.getEventId());
+                    goQrCode.putExtra("EVENT_NAME", eventModel.getTitle());
+                    startActivity(goQrCode);
+                }
+                return true;
+            });
+
+            popupMenu.show();
+        });
+
         view.getBackButton().setOnClickListener(v -> {
-            Intent goEvents = new Intent(this, OEventsActivity.class);
-            startActivity(goEvents);
+            finish();
         });
 
         /*
         * Currently draws the lottery automatically upon clicking. More deliberate forms of execution can be done later.
          */
         view.getLotteryButton().setOnClickListener(v -> {
-            //TODO: Do lottery
             WaitlistRepository collectForLottery = new WaitlistRepository();
             collectForLottery.getAllEntries(eventModel.getEventId(), this);
-
-        });
-
-        view.getShowQrCodeButton().setOnClickListener(v -> {
-            //TODO: Show QR code
-        });
-
-        view.getEditDetailsButton().setOnClickListener(v -> {
-            Intent goEditDetails = new Intent(this, OEventEditActivity.class);
-            goEditDetails.putExtra("Event", eventModel);
-            startActivity(goEditDetails);
-        });
-
-        view.getViewEventPageButton().setOnClickListener(v -> {
-            Intent goEventPage = new Intent(this, UEventDetailsActivity.class);
-            goEventPage.putExtra("event", eventModel);
-            startActivity(goEventPage);
-        });
-
-
-        view.getShowQrCodeButton().setOnClickListener(v -> {
-            if (eventModel != null) {
-                // Create intent to go to QRCode Activity
-                Intent intent = new Intent(OEventPoolActivity.this, QRCodeActivity.class);
-
-                // Pass eventId and eventName to new activity
-                intent.putExtra("EVENT_ID", eventModel.getEventId());
-                intent.putExtra("EVENT_NAME", eventModel.getTitle());
-
-                startActivity(intent);
-            }
         });
     }
 
