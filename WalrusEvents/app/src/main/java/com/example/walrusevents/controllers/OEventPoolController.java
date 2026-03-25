@@ -3,49 +3,32 @@ package com.example.walrusevents.controllers;
 import android.app.Activity;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentContainerView;
+
 import com.example.walrusevents.ProfileRepository;
+import com.example.walrusevents.R;
 import com.example.walrusevents.WaitlistEntry;
 import com.example.walrusevents.WaitlistRepository;
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.util.EntrantArrayAdapter;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OEventPoolController implements ProfileRepository.ProfileCallback, WaitlistRepository.EntryListCallback {
-    private ArrayList<Entrant> entrantList;
-    private EntrantArrayAdapter eventListAdapter;
+public class OEventPoolController {
     private WaitlistRepository waitlistRepository;
     private ProfileRepository profileRepository;
+    private boolean inConfirmationPhase;
+    private String eventId;
 
-    public OEventPoolController(Activity context, String eventId, ListView entrantListView) {
-        entrantList = new ArrayList<>();
-        eventListAdapter = new EntrantArrayAdapter(context, entrantList);
-        entrantListView.setAdapter(eventListAdapter);
+    public OEventPoolController(Activity context, String eventId, boolean inConfirmationPhase, FragmentContainerView fragmentContainerView, @NonNull Fragment fragment) {
+        this.inConfirmationPhase = inConfirmationPhase;
+        this.eventId = eventId;
 
         waitlistRepository = new WaitlistRepository();
         profileRepository = new ProfileRepository();
-        waitlistRepository.getAllEntries(eventId, this);
-    }
-
-    @Override
-    public void onEntriesLoaded(List<WaitlistEntry> entries) {
-        ArrayList<String> deviceIds = new ArrayList<>();
-        for (WaitlistEntry entry: entries) {
-            deviceIds.add(entry.getEntrantId());
-        }
-        profileRepository.getProfilesInList(deviceIds, this);
-    }
-
-    @Override
-    public void onEntrantLoaded(Entrant entrant) {
-        if (entrant == null)
-        {
-            System.out.println("null entrant");
-        }
-        else {
-            entrantList.add(entrant);
-            eventListAdapter.notifyDataSetChanged();
-        }
     }
 }

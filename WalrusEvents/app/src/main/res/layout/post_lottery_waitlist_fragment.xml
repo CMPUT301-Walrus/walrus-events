@@ -3,23 +3,66 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/accepted_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Accepted"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <ListView
+        android:id="@+id/accepted_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/accepted_text" />
+    <TextView
+        android:id="@+id/chosen_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chosen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/accepted_list" />
     <ListView
         android:id="@+id/chosen_list"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/canceled_list"/>
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chosen_text" />
+    <TextView
+        android:id="@+id/canceled_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Canceled"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chosen_list" />
     <ListView
         android:id="@+id/canceled_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/non_chosen_list"/>
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/canceled_text" />
+    <TextView
+        android:id="@+id/not_chosen_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Not Chosen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/canceled_list" />
     <ListView
-        android:id="@+id/non_chosen_list"
+        android:id="@+id/not_chosen_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/not_chosen_text"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

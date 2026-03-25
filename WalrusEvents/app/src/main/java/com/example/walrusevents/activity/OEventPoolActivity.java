@@ -6,7 +6,9 @@ import android.widget.PopupMenu;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
+import com.example.walrusevents.ProfileRepository;
 import com.example.walrusevents.model.Lottery;
 import com.example.walrusevents.controllers.OEventPoolController;
 import com.example.walrusevents.R;
@@ -14,6 +16,8 @@ import com.example.walrusevents.WaitlistEntry;
 import com.example.walrusevents.WaitlistRepository;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.ui.OEventPoolView;
+import com.example.walrusevents.ui.PostLotteryPoolFragment;
+import com.example.walrusevents.ui.PreLotteryPoolFragment;
 
 import java.util.List;
 
@@ -21,6 +25,8 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
     private Event eventModel;
     private OEventPoolView view;
     private OEventPoolController controller;
+    private PreLotteryPoolFragment preLotteryFragment;
+    private PostLotteryPoolFragment postLotteryFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +36,23 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
         eventModel = getIntent().getSerializableExtra("Event", Event.class);
 
         view = new OEventPoolView(this);
-        controller = new OEventPoolController(this, eventModel.getEventId(), view.getWaitingListView());
+
+        if (eventModel.isInConfirmation()) {
+            System.out.println("AAAAAA");
+            postLotteryFragment = new PostLotteryPoolFragment(eventModel);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.waiting_list_fragment, postLotteryFragment)
+                    .commit();
+            controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), postLotteryFragment);
+        }
+        else {
+            preLotteryFragment = new PreLotteryPoolFragment(eventModel);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.waiting_list_fragment, preLotteryFragment)
+                    .commit();
+            controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), preLotteryFragment);
+        }
+
 
         view.getSettingsButton().setOnClickListener(v -> {
             //Followed popup menu example from: https://www.geeksforgeeks.org/android/popup-menu-in-android-with-example/

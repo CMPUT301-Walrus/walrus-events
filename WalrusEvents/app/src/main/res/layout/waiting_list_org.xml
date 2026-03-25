@@ -72,6 +72,10 @@
                 android:textSize="30sp" />
 
         </LinearLayout>
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/waiting_list_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="600dp" />
         <ListView
             android:id="@+id/org_entrant_list_view"
             android:layout_width="match_parent"
