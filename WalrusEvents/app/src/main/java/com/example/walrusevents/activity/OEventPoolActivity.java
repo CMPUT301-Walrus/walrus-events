@@ -1,10 +1,17 @@
 package com.example.walrusevents.activity;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.PopupMenu;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -28,12 +35,35 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
     private PreLotteryPoolFragment preLotteryFragment;
     private PostLotteryPoolFragment postLotteryFragment;
 
+    ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult o) {
+                    if (o.getResultCode() == Activity.RESULT_OK) {
+                        Event updatedEvent = o.getData().getSerializableExtra("Event", Event.class);
+
+                        if (updatedEvent != null)
+                        {
+                            eventModel = updatedEvent;
+                        }
+                    }
+                    else if (o.getResultCode() == Activity.RESULT_CANCELED) {
+                        // If back button is pressed, do not update eventModel
+                    }
+                }
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.waiting_list_org);
-        eventModel = getIntent().getSerializableExtra("Event", Event.class);
+
+        if (eventModel == null)
+        {
+            eventModel = getIntent().getSerializableExtra("Event", Event.class);
+        }
 
         view = new OEventPoolView(this);
 
@@ -41,14 +71,14 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
             System.out.println("AAAAAA");
             postLotteryFragment = new PostLotteryPoolFragment(eventModel);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.waiting_list_fragment, postLotteryFragment)
+                    .replace(R.id.waiting_list_fragment, postLotteryFragment)
                     .commit();
             controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), postLotteryFragment);
         }
         else {
             preLotteryFragment = new PreLotteryPoolFragment(eventModel);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.waiting_list_fragment, preLotteryFragment)
+                    .replace(R.id.waiting_list_fragment, preLotteryFragment)
                     .commit();
             controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), preLotteryFragment);
         }
@@ -69,7 +99,8 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
                 else if (menuItem.getItemId() == R.id.event_settings_edit) {
                     Intent goEditDetails = new Intent(this, OEventEditActivity.class);
                     goEditDetails.putExtra("Event", eventModel);
-                    startActivity(goEditDetails);
+                    activityResultLauncher.launch(goEditDetails);
+                    //startActivity(goEditDetails);
                 }
                 else if (menuItem.getItemId() == R.id.event_settings_qr) {
                     Intent goQrCode = new Intent(this, QRCodeActivity.class);
