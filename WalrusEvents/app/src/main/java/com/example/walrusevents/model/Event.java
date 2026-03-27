@@ -4,6 +4,7 @@ import android.media.Image;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import android.graphics.Bitmap;
 import com.example.walrusevents.util.QRGenerator;
@@ -26,6 +27,7 @@ public class Event implements Serializable {
     private Image thumbnail;
     private Bitmap qrCodeImage;
     private boolean useGeolocation;
+    private ArrayList<Comment> comments;
 
     /**
      * Constructor for no args
@@ -237,6 +239,14 @@ public class Event implements Serializable {
      */
     public void setUseGeolocation(boolean useGeolocation) {
         this.useGeolocation = useGeolocation;
+    }
+
+    public ArrayList<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
     }
 
     public boolean isInRegistration() {
