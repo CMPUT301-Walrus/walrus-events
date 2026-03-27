@@ -249,6 +249,9 @@ public class Event implements Serializable {
         this.comments = comments;
     }
 
+    public void addComment(Comment comment) {
+        comments.add(comment);
+    }
     public boolean isInRegistration() {
         if (endRegistrationTime == null || startRegistrationTime == null
                 || endRegistrationTime.isBlank() || startRegistrationTime.isBlank()) {

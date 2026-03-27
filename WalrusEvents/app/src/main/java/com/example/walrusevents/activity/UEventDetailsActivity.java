@@ -8,10 +8,13 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
+import com.example.walrusevents.EventRepository;
 import com.example.walrusevents.WaitlistEntry;
 import com.example.walrusevents.data.FirebaseAPIManager;
 import com.example.walrusevents.data.ImageRepository;
+import com.example.walrusevents.model.Comment;
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.controllers.EntrantController;
 import com.example.walrusevents.model.Profile;
@@ -20,6 +23,7 @@ import com.example.walrusevents.R;
 import com.example.walrusevents.WaitlistRepository;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.ui.AcceptInvitationFragment;
+import com.example.walrusevents.ui.AddCommentFragment;
 import com.example.walrusevents.ui.EventPosterFragment;
 import com.example.walrusevents.ui.UEventDetailsView;
 import com.example.walrusevents.util.DeviceIdManager;
@@ -30,11 +34,12 @@ import com.example.walrusevents.util.DeviceIdManager;
  * as a user.
  */
 public class UEventDetailsActivity extends AppCompatActivity
-        implements EntrantController.ActionCallback, AcceptInvitationFragment.AcceptInvitationListener {
+        implements EntrantController.ActionCallback, AcceptInvitationFragment.AcceptInvitationListener, AddCommentFragment.AddCommentListener {
     private Event eventModel;
     private UEventDetailsView view;
     private WaitlistEntry entry;
     private WaitlistRepository waitlistRepository;
+    private EventRepository eventRepository;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,6 +48,7 @@ public class UEventDetailsActivity extends AppCompatActivity
         setContentView(R.layout.event_details);
 
         waitlistRepository = new WaitlistRepository();
+        eventRepository = new EventRepository();
         /*
         * Retrieve Event object that was clicked in MainActivity
         * Exception handling referenced from https://www.geeksforgeeks.org/android/exceptions-in-android-with-example/. March 12, 2026
@@ -171,8 +177,24 @@ public class UEventDetailsActivity extends AppCompatActivity
         });
     }
 
+    /**
+     * Opens up the popup for the user to write down their comment
+     */
     public void addComment() {
+        AddCommentFragment addCommentFragment = AddCommentFragment.newInstance(this);
+        addCommentFragment.show(getSupportFragmentManager(), "Add Comment");
+    }
 
+    /**
+     * Update the event in the database to add the user's comment
+     * @param bodyText
+     * The text that the user wrote as a comment
+     */
+    @Override
+    public void postComment(String bodyText) {
+        Comment comment = new Comment(DeviceIdManager.getOrCreate(this), bodyText, 0, 0);
+        eventModel.addComment(comment);
+        eventRepository.setEvent(eventModel);
     }
 
     @Override

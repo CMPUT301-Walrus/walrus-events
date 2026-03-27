@@ -6,6 +6,12 @@ public class Comment {
     private int likes;
     private int dislikes;
 
+    public Comment(String entrantId, String body, int likes, int dislikes) {
+        this.entrantId = entrantId;
+        this.body = body;
+        this.likes = likes;
+        this.dislikes = dislikes;
+    }
     public String getEntrantId() {
         return entrantId;
     }
