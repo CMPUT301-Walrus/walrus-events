@@ -2,7 +2,7 @@
     <string name="app_name">Walrus Events</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="settings_title">Settings</string>
-    <string name="settings_back">Go back</string>
+    <string name="settings_back">Go Back</string>
     <string name="settings_personal_info">Personal Info</string>
     <string name="settings_general">General Settings</string>
     <string name="settings_name_hint">Name</string>
