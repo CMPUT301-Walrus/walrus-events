@@ -5,11 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.walrusevents.KeywordSearchFilter;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.R;
 
@@ -21,13 +24,18 @@ import java.util.Locale;
  * Adapts an array of events to be properly shown in the main screen event list view
  */
 
-public class MainSEventArrayAdapter extends ArrayAdapter<Event> {
+public class MainSEventArrayAdapter extends ArrayAdapter<Event> implements Filterable {
     private ArrayList<Event> eventList;
     private Context context;
+
+    KeywordSearchFilter searchFilter;
+
+    private ArrayList<Event> filteredList;
     public MainSEventArrayAdapter(@NonNull Context context, ArrayList<Event> eventList){
         super(context, 0, eventList);
         this.eventList = eventList;
         this.context = context;
+        this.filteredList=eventList;
     }
 
     @NonNull
@@ -64,5 +72,12 @@ public class MainSEventArrayAdapter extends ArrayAdapter<Event> {
 
 
         return view;
+    }
+
+    @NonNull
+    @Override
+    public Filter getFilter() {
+        if(searchFilter==null) searchFilter = new KeywordSearchFilter(filteredList, this);
+        return searchFilter;
     }
 }

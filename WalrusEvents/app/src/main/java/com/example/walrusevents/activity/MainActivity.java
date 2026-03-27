@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -56,6 +58,34 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
         eventListController.loadEvents();
 
         /*
+         * Search Bar
+         * TODO: fix refresh issue with filter
+         *  (once you submit keyword, it will only refresh to all events when you close)
+         *
+         */
+        SearchView searchBar = findViewById(R.id.search_bar);
+        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                eventListController.loadEvents();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                eventListController.getFilter().filter(query);
+                return false;
+            }
+        });
+        searchBar.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                eventListController.loadEvents();
+                return false;
+            }
+        });
+
+        /*
         * When set to User, OnItemClick an event goes to event_details from eventListView
          */
         eventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -72,13 +102,10 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
         });
 
 
-
-        //TODO: Button to change between admin / user / organizer(?)
         /*
         * Admin View Button
         * CURRENTLY connected to MAin Button (instead of back button in StoryBoards)
          */
-        //nav bar - basically useless, it needs its admin view which will have every admin task
         Button adminViewButton = findViewById(R.id.main_button);
         adminViewButton.setOnClickListener(v -> {
             //Go to "Admin View" from this button
@@ -118,7 +145,6 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
             }
         });
 
-        //TODO: Views for User:  Settings(Profile), MyEvents(Signed in Events)
 
         /*
         * My Events onClick
