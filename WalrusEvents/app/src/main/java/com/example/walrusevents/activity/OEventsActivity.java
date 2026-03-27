@@ -57,4 +57,13 @@ public class OEventsActivity extends AppCompatActivity {
             finish();
         });
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (eventListController != null) {
+            eventListController.loadEvents("ABCDEF");
+        }
+    }
 }

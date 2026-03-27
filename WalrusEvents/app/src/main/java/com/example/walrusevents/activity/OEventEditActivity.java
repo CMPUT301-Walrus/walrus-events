@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -35,13 +36,12 @@ public class OEventEditActivity extends AppCompatActivity {
         // Back to event list for organizer button
         ImageView backButton = findViewById(R.id.backButton_organizer_to_main);
         backButton.setOnClickListener(v -> {
+            // Passes the updated model back to the previous activity (which should be OEventPoolActivity)
+            Intent saveIntent = new Intent();
+            saveIntent.putExtra("Event", model);
+            setResult(OEventEditActivity.RESULT_CANCELED, saveIntent);
             finish();
         });
-        
-        if (model != null) {
-            eventEditView = new OEventEditView(this, model); // Initialize View first
-            eventEditController = new OEventEditController(model, eventEditView); // Then Controller
-        }
 
         // Get event title text view and put actual event title in it
         TextView eventNameTitle = findViewById(R.id.eventName);
@@ -110,6 +110,10 @@ public class OEventEditActivity extends AppCompatActivity {
             eventEditController.setApplicantCapacity(eventEditView.getEditApplicantCapacity().getText().toString());
             eventEditController.saveModel();
 
+            // Passes the updated model back to the previous activity (which should be OEventPoolActivity)
+            Intent saveIntent = new Intent();
+            saveIntent.putExtra("Event", model);
+            setResult(OEventEditActivity.RESULT_OK, saveIntent);
             finish();
         });
     }
