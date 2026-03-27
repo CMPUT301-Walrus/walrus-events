@@ -160,6 +160,7 @@ public class UEventDetailsActivity extends AppCompatActivity
     }
 
     private void checkForInvitation() {
+        System.out.println("Checked for Invitation");
         if (!event.isInConfirmation()) {
             return;
         }

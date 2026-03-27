@@ -59,6 +59,7 @@ public class OEventEditController {
         if (model.getEndConfirmationTime() != null) {
             confirmationEnd = LocalDateTime.parse(model.getEndConfirmationTime());
             listener.updateConfirmationEnd(confirmationEnd);
+            System.out.println(confirmationEnd);
         }
 
         listener.updateEntrantCapacity(model.getEntrantCapacity());
