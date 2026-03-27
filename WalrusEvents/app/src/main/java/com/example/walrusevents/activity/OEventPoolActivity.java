@@ -46,6 +46,7 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
                         if (updatedEvent != null)
                         {
                             eventModel = updatedEvent;
+                            refresh();
                         }
                     }
                     else if (o.getResultCode() == Activity.RESULT_CANCELED) {
@@ -60,29 +61,11 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
         EdgeToEdge.enable(this);
         setContentView(R.layout.waiting_list_org);
 
-        if (eventModel == null)
-        {
-            eventModel = getIntent().getSerializableExtra("Event", Event.class);
-        }
+        eventModel = getIntent().getSerializableExtra("Event", Event.class);
 
         view = new OEventPoolView(this);
 
-        if (eventModel.isInConfirmation()) {
-            System.out.println("AAAAAA");
-            postLotteryFragment = new PostLotteryPoolFragment(eventModel);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.waiting_list_fragment, postLotteryFragment)
-                    .commit();
-            controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), postLotteryFragment);
-        }
-        else {
-            preLotteryFragment = new PreLotteryPoolFragment(eventModel);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.waiting_list_fragment, preLotteryFragment)
-                    .commit();
-            controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), preLotteryFragment);
-        }
-
+        refresh();
 
         view.getSettingsButton().setOnClickListener(v -> {
             //Followed popup menu example from: https://www.geeksforgeeks.org/android/popup-menu-in-android-with-example/
@@ -125,6 +108,27 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
             WaitlistRepository collectForLottery = new WaitlistRepository();
             collectForLottery.getAllEntries(eventModel.getEventId(), this);
         });
+    }
+
+    /**
+     * Updates the activity based on the stored event. Call when any event details may have changed.
+     */
+    public void refresh() {
+        if (eventModel.isInConfirmation()) {
+            System.out.println("AAAAAA");
+            postLotteryFragment = new PostLotteryPoolFragment(eventModel);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.waiting_list_fragment, postLotteryFragment)
+                    .commit();
+            controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), postLotteryFragment);
+        }
+        else {
+            preLotteryFragment = new PreLotteryPoolFragment(eventModel);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.waiting_list_fragment, preLotteryFragment)
+                    .commit();
+            controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), preLotteryFragment);
+        }
     }
 
     @Override
