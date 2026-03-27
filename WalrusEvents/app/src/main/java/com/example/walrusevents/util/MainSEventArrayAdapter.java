@@ -13,7 +13,9 @@ import androidx.annotation.Nullable;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.R;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Adapts an array of events to be properly shown in the main screen event list view
@@ -43,7 +45,23 @@ public class MainSEventArrayAdapter extends ArrayAdapter<Event> {
 
         eventTitle.setText(event.getTitle());
         eventDescription.setText(event.getDescription());
-        eventDeadline.setText(event.getEndRegistrationTime());
+
+        if (event.isInRegistration()) {
+            LocalDateTime endRegistration = LocalDateTime.parse(event.getEndRegistrationTime());
+            String formattedDeadline = String.format(Locale.CANADA, "Register until %s %d, %d",
+                    endRegistration.getMonth(), endRegistration.getDayOfMonth(), endRegistration.getYear());
+            eventDeadline.setText(formattedDeadline);
+        }
+        else if (event.isInConfirmation()) {
+            LocalDateTime endConfirmation = LocalDateTime.parse(event.getEndRegistrationTime());
+            String formattedDeadline = String.format(Locale.CANADA, "Confirming qpplicants until %s %d, %d",
+                    endConfirmation.getMonth(), endConfirmation.getDayOfMonth(), endConfirmation.getYear());
+            eventDeadline.setText(formattedDeadline);
+        }
+        else {
+            eventDeadline.setText("Application Period Ended");
+        }
+
 
         return view;
     }
