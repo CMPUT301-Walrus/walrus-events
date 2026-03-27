@@ -59,16 +59,21 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
 
         /*
          * Search Bar
+         * TODO: fix refresh issue with filter
+         *  (once you submit keyword, it will only refresh to all events when you close)
+         *
+         */
         SearchView searchBar = findViewById(R.id.search_bar);
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String newText) {
-                eventListController.getFilter().filter(newText);
+                eventListController.loadEvents();
                 return false;
             }
 
             @Override
             public boolean onQueryTextSubmit(String query) {
+                eventListController.getFilter().filter(query);
                 return false;
             }
         });
@@ -79,7 +84,6 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
                 return false;
             }
         });
-    */
 
         /*
         * When set to User, OnItemClick an event goes to event_details from eventListView
@@ -141,7 +145,6 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
             }
         });
 
-        //TODO: Views for User:  Settings(Profile), MyEvents(Signed in Events)
 
         /*
         * My Events onClick

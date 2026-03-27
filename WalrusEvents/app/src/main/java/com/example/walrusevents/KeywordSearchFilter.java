@@ -7,6 +7,10 @@ import com.example.walrusevents.util.MainSEventArrayAdapter;
 
 import java.util.ArrayList;
 
+/*
+* Class that adds keword search filter functionality
+*
+ */
 public class KeywordSearchFilter extends Filter {
     ArrayList<Event> originalList;
     MainSEventArrayAdapter adapter;
@@ -24,7 +28,7 @@ public class KeywordSearchFilter extends Filter {
 
             ArrayList<Event> filteredList = new ArrayList<>();
             for(int i=0;i<originalList.size();i++){
-                if(originalList.get(i).getTitle().toLowerCase().contains(constraint)){
+                if(originalList.get(i).getTitle().toLowerCase().contains(constraint)||originalList.get(i).getDescription().toLowerCase().contains(constraint)){
                     filteredList.add(originalList.get(i));
                 }
             }
