@@ -241,6 +241,14 @@ public class Event implements Serializable {
         this.useGeolocation = useGeolocation;
     }
 
+    public ArrayList<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
+    }
+
     public boolean isInRegistration() {
         if (endRegistrationTime == null || startRegistrationTime == null
                 || endRegistrationTime.isBlank() || startRegistrationTime.isBlank()) {

@@ -171,6 +171,10 @@ public class UEventDetailsActivity extends AppCompatActivity
         });
     }
 
+    public void addComment() {
+
+    }
+
     @Override
     public void onSuccess() {
 
