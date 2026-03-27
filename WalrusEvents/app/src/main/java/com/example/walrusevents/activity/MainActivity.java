@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
 
         /*
          * Search Bar
-         */
         SearchView searchBar = findViewById(R.id.search_bar);
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -80,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
                 return false;
             }
         });
-
+    */
 
         /*
         * When set to User, OnItemClick an event goes to event_details from eventListView

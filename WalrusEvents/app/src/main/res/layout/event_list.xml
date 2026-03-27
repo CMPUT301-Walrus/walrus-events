@@ -13,19 +13,15 @@
         android:layout_height="36dp"
         android:backgroundTint="#FFD24B"
         android:text="change"
-        android:textColor="#000000" /> 
-        android:text="change" />
+        android:textColor="#000000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout5"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <SearchView
-            android:id="@+id/search_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/textView2"
@@ -103,8 +99,6 @@
                 android:backgroundTint="#FFD24B"
                 android:text="Main"
                 android:textColor="#000000"
-                android:visibility="invisible" />
-              
                 android:visibility="invisible" />
 
             <Button
