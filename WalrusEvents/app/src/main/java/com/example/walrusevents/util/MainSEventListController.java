@@ -1,6 +1,7 @@
 package com.example.walrusevents.util;
 
 import android.content.Context;
+import android.widget.Filter;
 import android.widget.ListView;
 
 import com.example.walrusevents.model.Event;
@@ -59,6 +60,10 @@ public class MainSEventListController implements NameEventFragment.NameEventList
         eventList.addAll(events);
         System.out.printf("%d event(s) loaded", events.size());
         eventListAdapter.notifyDataSetChanged();
+    }
+
+    public Filter getFilter(){
+        return eventListAdapter.getFilter();
     }
 
 }
