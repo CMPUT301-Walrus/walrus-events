@@ -1,11 +1,16 @@
 package com.example.walrusevents.model;
 
-public class Comment {
+import java.io.Serializable;
+
+public class Comment implements Serializable {
     private String entrantId;
     private String body;
     private int likes;
     private int dislikes;
 
+    public Comment() {
+
+    }
     public Comment(String entrantId, String body, int likes, int dislikes) {
         this.entrantId = entrantId;
         this.body = body;

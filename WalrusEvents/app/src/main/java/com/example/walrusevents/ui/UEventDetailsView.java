@@ -3,6 +3,7 @@ package com.example.walrusevents.ui;
 import android.app.Activity;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.walrusevents.R;
@@ -15,6 +16,7 @@ public class UEventDetailsView {
     private Button backButton;
     private Button joinButton;
     private Button seePoolButton;
+    private Button viewCommentsButton;
 
     public UEventDetailsView(Activity activity, Event eventModel) {
         /*
@@ -27,6 +29,7 @@ public class UEventDetailsView {
         backButton = activity.findViewById(R.id.back_button);
         seePoolButton = activity.findViewById(R.id.see_pool_button);
         joinButton = activity.findViewById(R.id.join_event_button);
+        viewCommentsButton = activity.findViewById(R.id.view_comments_button);
     }
 
     public TextView getEventName() {
@@ -51,5 +54,9 @@ public class UEventDetailsView {
 
     public Button getSeePoolButton() {
         return seePoolButton;
+    }
+
+    public Button getViewCommentsButton() {
+        return viewCommentsButton;
     }
 }

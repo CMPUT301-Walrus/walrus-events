@@ -47,6 +47,7 @@ public class MainSEventArrayAdapter extends ArrayAdapter<Event> implements Filte
         }
 
         Event event = eventList.get(position);
+
         TextView eventTitle = view.findViewById(R.id.title);
         TextView eventDescription = view.findViewById(R.id.description);
         TextView eventDeadline = view.findViewById(R.id.registrationDeadline);
@@ -54,17 +55,31 @@ public class MainSEventArrayAdapter extends ArrayAdapter<Event> implements Filte
         eventTitle.setText(event.getTitle());
         eventDescription.setText(event.getDescription());
 
+        System.out.println(event.getEndRegistrationTime());
+
         if (event.isInRegistration()) {
-            LocalDateTime endRegistration = LocalDateTime.parse(event.getEndRegistrationTime());
-            String formattedDeadline = String.format(Locale.CANADA, "Register until %s %d, %d",
-                    endRegistration.getMonth(), endRegistration.getDayOfMonth(), endRegistration.getYear());
-            eventDeadline.setText(formattedDeadline);
+            if (event.getEndRegistrationTime() != null) {
+                LocalDateTime endRegistration = LocalDateTime.parse(event.getEndRegistrationTime());
+                String formattedDeadline = String.format(Locale.CANADA, "Register until %s %d, %d",
+                        endRegistration.getMonth(), endRegistration.getDayOfMonth(), endRegistration.getYear());
+                eventDeadline.setText(formattedDeadline);
+            }
+            else {
+                String formattedDeadline = "Registration open";
+                eventDeadline.setText(formattedDeadline);
+            }
         }
         else if (event.isInConfirmation()) {
-            LocalDateTime endConfirmation = LocalDateTime.parse(event.getEndRegistrationTime());
-            String formattedDeadline = String.format(Locale.CANADA, "Confirming qpplicants until %s %d, %d",
-                    endConfirmation.getMonth(), endConfirmation.getDayOfMonth(), endConfirmation.getYear());
-            eventDeadline.setText(formattedDeadline);
+            if (event.getEndConfirmationTime() != null) {
+                LocalDateTime endConfirmation = LocalDateTime.parse(event.getEndRegistrationTime());
+                String formattedDeadline = String.format(Locale.CANADA, "Confirming qpplicants until %s %d, %d",
+                        endConfirmation.getMonth(), endConfirmation.getDayOfMonth(), endConfirmation.getYear());
+                eventDeadline.setText(formattedDeadline);
+            }
+            else {
+                String formattedDeadline = "Confirming applicants";
+                eventDeadline.setText(formattedDeadline);
+            }
         }
         else {
             eventDeadline.setText("Application Period Ended");

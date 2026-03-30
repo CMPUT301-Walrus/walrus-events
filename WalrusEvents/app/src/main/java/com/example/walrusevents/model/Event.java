@@ -48,6 +48,7 @@ public class Event implements Serializable {
         description = "";
         entrantCapacity = 0;
         applicantCapacity = 0;
+        comments = new ArrayList<>();
     }
 
     /**
@@ -242,6 +243,9 @@ public class Event implements Serializable {
     }
 
     public ArrayList<Comment> getComments() {
+        if (comments == null) {
+            comments = new ArrayList<>();
+        }
         return comments;
     }
 

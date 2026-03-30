@@ -20,6 +20,7 @@ import com.example.walrusevents.model.Entrant;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class CommentsAdapter extends ArrayAdapter<Comment> implements ProfileRepository.ProfileCallback {
     private Context context;
@@ -41,9 +42,11 @@ public class CommentsAdapter extends ArrayAdapter<Comment> implements ProfileRep
         Comment comment = comments.get(position);
         TextView likesCounter = view.findViewById(R.id.likes_counter);
         TextView dislikesCounter = view.findViewById(R.id.dislikes_counter);
+        TextView bodyText = view.findViewById(R.id.comment_body);
 
-        likesCounter.setText(comment.getLikes());
-        dislikesCounter.setText(comment.getDislikes());
+        bodyText.setText(comment.getBody());
+        likesCounter.setText(String.format(Locale.CANADA, "%d", comment.getLikes()));
+        dislikesCounter.setText(String.format(Locale.CANADA, "%d", comment.getDislikes()));
 
         return view;
     }

@@ -171,6 +171,12 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
 
     }
 
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        eventListController.loadEvents();
+    }
+
     private void updateRoleText(){
         UserRole role = UserRoleManager.getRole();
         changeUserRoleButton.setText("Role:"+role.toString());

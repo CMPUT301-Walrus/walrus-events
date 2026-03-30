@@ -24,9 +24,13 @@ import com.example.walrusevents.WaitlistRepository;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.ui.AcceptInvitationFragment;
 import com.example.walrusevents.ui.AddCommentFragment;
+import com.example.walrusevents.ui.CommentsSectionFragment;
 import com.example.walrusevents.ui.EventPosterFragment;
 import com.example.walrusevents.ui.UEventDetailsView;
+import com.example.walrusevents.util.CommentsAdapter;
 import com.example.walrusevents.util.DeviceIdManager;
+
+import java.util.ArrayList;
 
 /**
  * UEventDetails
@@ -34,7 +38,7 @@ import com.example.walrusevents.util.DeviceIdManager;
  * as a user.
  */
 public class UEventDetailsActivity extends AppCompatActivity
-        implements EntrantController.ActionCallback, AcceptInvitationFragment.AcceptInvitationListener, AddCommentFragment.AddCommentListener {
+        implements EntrantController.ActionCallback, AcceptInvitationFragment.AcceptInvitationListener {
     private Event eventModel;
     private UEventDetailsView view;
     private WaitlistEntry entry;
@@ -115,6 +119,12 @@ public class UEventDetailsActivity extends AppCompatActivity
             view.getDescription().setText(desc);
         }
 
+        CommentsSectionFragment commentsSectionFragment = CommentsSectionFragment.newInstance(this, eventModel, getSupportFragmentManager());
+
+        view.getViewCommentsButton().setOnClickListener(v -> {
+            commentsSectionFragment.show(getSupportFragmentManager(), "View Comments");
+        });
+
         //Set 'Back' button to return to MainActivity
         view.getBackButton().setOnClickListener(v -> {
             finish();
@@ -175,26 +185,6 @@ public class UEventDetailsActivity extends AppCompatActivity
                 }
             }
         });
-    }
-
-    /**
-     * Opens up the popup for the user to write down their comment
-     */
-    public void addComment() {
-        AddCommentFragment addCommentFragment = AddCommentFragment.newInstance(this);
-        addCommentFragment.show(getSupportFragmentManager(), "Add Comment");
-    }
-
-    /**
-     * Update the event in the database to add the user's comment
-     * @param bodyText
-     * The text that the user wrote as a comment
-     */
-    @Override
-    public void postComment(String bodyText) {
-        Comment comment = new Comment(DeviceIdManager.getOrCreate(this), bodyText, 0, 0);
-        eventModel.addComment(comment);
-        eventRepository.setEvent(eventModel);
     }
 
     @Override
