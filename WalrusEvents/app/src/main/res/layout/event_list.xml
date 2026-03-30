@@ -10,109 +10,113 @@
     <LinearLayout
         android:id="@+id/linearLayout7"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:background="#FFFFFF"
         android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp">
 
         <Button
             android:id="@+id/changeRoleButton"
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:backgroundTint="#FFD24B"
-            android:text="change"
-            android:textColor="#000000" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Button" />
 
         <SearchView
             android:id="@+id/search_bar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/linearLayout5"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="60dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout7">
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            app:srcCompat="@android:drawable/ic_menu_gallery" />
-
-        <LinearLayout
-            android:id="@+id/sort_bar"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Sort:" />
-
-            <Button
-                android:id="@+id/availability_sort_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:backgroundTint="#FFD24B"
-                android:text="By Availability"
-                android:textColor="#000000" />
-
-            <Button
-                android:id="@+id/interest_sort_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:backgroundTint="#FFD24B"
-                android:text="By Interests"
-                android:textColor="#000000" />
-        </LinearLayout>
-
-        <ListView
-            android:id="@+id/event_list_view"
-            android:layout_width="match_parent"
-            android:layout_height="300dp" />
-
-        <LinearLayout
-            android:id="@+id/nav_bar"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/settings_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:backgroundTint="#FFD24B"
-                android:text="Settings"
-                android:textColor="#000000" />
-
-            <Button
-                android:id="@+id/main_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:backgroundTint="#FFD24B"
-                android:text="Main"
-                android:textColor="#000000" />
-
-            <Button
-                android:id="@+id/my_events_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:backgroundTint="#FFD24B"
-                android:text="My Events"
-                android:textColor="#000000" />
-        </LinearLayout>
+            android:layout_weight="1" />
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginBottom="500dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout7"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/image_not_found_placeholder" />
+
+    <LinearLayout
+        android:id="@+id/sort_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView6"
+        app:layout_constraintVertical_bias="0.0">
+
+        <TextView
+            android:id="@+id/main_sort_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Sort By:" />
+
+        <Button
+            android:id="@+id/availability_sort_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="By Availability" />
+
+        <Button
+            android:id="@+id/interest_sort_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="By Interest" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/event_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/nav_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sort_bar" />
+
+    <LinearLayout
+        android:id="@+id/nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/settings_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Settings" />
+
+        <Button
+            android:id="@+id/main_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Main" />
+
+        <Button
+            android:id="@+id/my_events_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="My Events" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
