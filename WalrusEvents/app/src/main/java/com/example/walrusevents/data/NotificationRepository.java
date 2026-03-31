@@ -9,6 +9,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class NotificationRepository {
     private final FirebaseFirestore db;
@@ -29,6 +30,18 @@ public class NotificationRepository {
         db.collection(collectionPath)
                 .whereEqualTo("eventId", eventId)
                 .whereIn("targetGroup", Arrays.asList("all", userStatus))
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(listener);
+    }
+
+    public void getNotificationsForUser(List<String> eventIds, OnSuccessListener<QuerySnapshot> listener) {
+        if (eventIds == null || eventIds.isEmpty()) return;
+
+        // Fetch notifications where the eventId is in the user's list
+        // and the targetGroup is "all" (for everyone in those events)
+        db.collection(collectionPath)
+                .whereIn("eventId", eventIds)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(listener);
