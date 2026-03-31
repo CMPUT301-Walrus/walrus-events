@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
 
     private Button changeUserRoleButton;
 
+    private Button scanQRCodeButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +89,13 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
 
         });
 
+        // Click listener for qr code scanner button
+        scanQRCodeButton = findViewById(R.id.scan_qr_code_button);
+        scanQRCodeButton.setOnClickListener(v -> {
+            Intent goScannerIntent = new Intent(MainActivity.this, UQRCodeScannerActivity.class);
+            startActivity(goScannerIntent);
+        });
+
         //TODO: Main Buttons for MainView - Settings, MainScreen, MyEvents
         Button settingsButton = findViewById(R.id.settings_button);
         Button eventsButton = findViewById(R.id.my_events_button);
@@ -97,25 +106,15 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
          */
         changeUserRoleButton = findViewById(R.id.changeRoleButton);
         updateRoleText();
+
+        // Display UI depending on which role is currently selected
+        updateVisibility(adminViewButton, settingsButton, eventsButton);
+
         changeUserRoleButton.setOnClickListener(v -> {
-            //Changes role in a loop user-organizer-admin
+            // Changes role in a loop user-organizer-admin
             UserRoleManager.nextRole();
             updateRoleText();
-
-            //Handling the View for Admin
-            if(UserRoleManager.getRole()==UserRole.ADMIN){
-                //show button for adminView
-                adminViewButton.setVisibility(View.VISIBLE);
-                adminViewButton.setText("Admin");
-                settingsButton.setVisibility(View.INVISIBLE);
-                eventsButton.setVisibility(View.INVISIBLE);
-
-            } else {
-                adminViewButton.setVisibility(View.INVISIBLE);
-                settingsButton.setVisibility(View.VISIBLE);
-                eventsButton.setVisibility(View.VISIBLE);
-
-            }
+            updateVisibility(adminViewButton, settingsButton, eventsButton);
         });
 
         //TODO: Views for User:  Settings(Profile), MyEvents(Signed in Events)
@@ -151,6 +150,34 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
             startActivity(goUSettingsActivityIntent);
         });
 
+    }
+
+    /**
+     * This method handles displaying the correct UI depending on which role is active
+     * @param adminBtn Button should be dispalyed admin role only
+     * @param settingsBtn button to access settings
+     * @param eventsBtn button to access my events
+     */
+    private void updateVisibility(Button adminBtn, Button settingsBtn, Button eventsBtn) {
+        UserRole currentRole = UserRoleManager.getRole();
+
+        if(currentRole == UserRole.ADMIN) {
+            adminBtn.setVisibility(View.VISIBLE);
+            adminBtn.setText("Admin");
+            scanQRCodeButton.setVisibility(View.VISIBLE);
+            settingsBtn.setVisibility(View.INVISIBLE);
+            eventsBtn.setVisibility(View.INVISIBLE);
+        } else if (currentRole == UserRole.USER) {
+            adminBtn.setVisibility(View.GONE);
+            scanQRCodeButton.setVisibility(View.VISIBLE);
+            settingsBtn.setVisibility(View.VISIBLE);
+            eventsBtn.setVisibility(View.VISIBLE);
+        } else {
+            adminBtn.setVisibility(View.GONE);
+            scanQRCodeButton.setVisibility(View.VISIBLE);
+            settingsBtn.setVisibility(View.VISIBLE);
+            eventsBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     private void updateRoleText(){

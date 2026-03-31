@@ -49,24 +49,30 @@ public class EventRepository {
      * Retrieve one event by its ID
      * @param eventId The ID of the event being retrieved
      * @param callback Callback to pass the event to (Firestore is asynchronous)
+     * Returns event information for given id, or null if event does not exist or retrieval fails
      */
     public void getEvent(String eventId, EventCallback callback) {
+        // Make sure event with given id exists
+        if (eventId == null || eventId.isEmpty()) {
+            callback.onEventLoaded(null);
+            return;
+        }
 
         eventsCollection
                 .document(eventId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
-
                     if (documentSnapshot.exists()) {
-
                         // converting doc to event object
                         Event event = documentSnapshot.toObject(Event.class);
-
                         callback.onEventLoaded(event);
+                    } else {
+                        callback.onEventLoaded(null);
                     }
                 })
                 .addOnFailureListener(e -> {
                     e.printStackTrace();
+                    callback.onEventLoaded(null);
                 });
     }
 
