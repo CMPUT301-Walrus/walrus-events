@@ -64,9 +64,13 @@ dependencies {
     // https://firebase.google.com/docs/android/setup#available-libraries
 
 
-    // Dependencies for ZXing (used for generating QR codes
-    implementation("com.google.zxing:core:3.5.3") // Check for the latest version
-    implementation("com.journeyapps:zxing-android-embedded:4.3.0") // Simplifies bitmap generation
+    // Dependencies for ZXing (used for generating QR codes)
+    // Code and logic for QR code were taken from a Reintech article provided by our TA
+    // https://reintech.io/blog/implementing-android-app-qr-code-scanner
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation("com.google.zxing:core:3.5.3")
+    // Required for camera functionality
+    implementation("androidx.appcompat:appcompat:1.6.1")
 
     // Dependencies for Glide (used for converting a URI into a Bitmap
     implementation("com.github.bumptech.glide:glide:4.16.0")
