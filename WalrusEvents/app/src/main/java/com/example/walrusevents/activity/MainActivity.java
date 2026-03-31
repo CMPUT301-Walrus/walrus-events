@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,6 +60,34 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
         eventListController.loadEvents();
 
         /*
+         * Search Bar
+         * TODO: fix refresh issue with filter
+         *  (once you submit keyword, it will only refresh to all events when you close)
+         *
+         */
+        SearchView searchBar = findViewById(R.id.search_bar);
+        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                eventListController.loadEvents();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                eventListController.getFilter().filter(query);
+                return false;
+            }
+        });
+        searchBar.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                eventListController.loadEvents();
+                return false;
+            }
+        });
+
+        /*
         * When set to User, OnItemClick an event goes to event_details from eventListView
          */
         eventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -74,13 +104,10 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
         });
 
 
-
-        //TODO: Button to change between admin / user / organizer(?)
         /*
         * Admin View Button
         * CURRENTLY connected to MAin Button (instead of back button in StoryBoards)
          */
-        //nav bar - basically useless, it needs its admin view which will have every admin task
         Button adminViewButton = findViewById(R.id.main_button);
         adminViewButton.setOnClickListener(v -> {
             //Go to "Admin View" from this button
@@ -106,18 +133,27 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
          */
         changeUserRoleButton = findViewById(R.id.changeRoleButton);
         updateRoleText();
-
-        // Display UI depending on which role is currently selected
-        updateVisibility(adminViewButton, settingsButton, eventsButton);
-
         changeUserRoleButton.setOnClickListener(v -> {
             // Changes role in a loop user-organizer-admin
             UserRoleManager.nextRole();
             updateRoleText();
-            updateVisibility(adminViewButton, settingsButton, eventsButton);
+
+            //Handling the View for Admin
+            if(UserRoleManager.getRole()==UserRole.ADMIN){
+                //show button for adminView
+                adminViewButton.setVisibility(View.VISIBLE);
+                adminViewButton.setText("Admin");
+                settingsButton.setVisibility(View.INVISIBLE);
+                eventsButton.setVisibility(View.INVISIBLE);
+
+            } else {
+                adminViewButton.setVisibility(View.INVISIBLE);
+                settingsButton.setVisibility(View.VISIBLE);
+                eventsButton.setVisibility(View.VISIBLE);
+
+            }
         });
 
-        //TODO: Views for User:  Settings(Profile), MyEvents(Signed in Events)
 
         /*
         * My Events onClick
@@ -140,8 +176,12 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
 
         ProfileRepository profileRepository = new ProfileRepository();
         String deviceId = DeviceIdManager.getOrCreate(this);
-        Profile placeholderProfile = new Profile(deviceId,"placeholderName","placeholderEmail");
-        profileRepository.saveProfile(new Entrant(placeholderProfile), this);
+        profileRepository.getProfile(deviceId, entrant -> {
+            if (entrant == null) {
+                Profile placeholderProfile = new Profile(deviceId,"placeholderName","placeholderEmail");
+                profileRepository.saveProfile(new Entrant(placeholderProfile), MainActivity.this);
+            }
+        });
         /*
         * Settings onClick
          */
@@ -180,10 +220,28 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
         }
     }
 
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        eventListController.loadEvents();
+    }
+
     private void updateRoleText(){
         UserRole role = UserRoleManager.getRole();
         changeUserRoleButton.setText("Role:"+role.toString());
+    }
 
+    private void applyRoleVisibility(Button adminViewButton, Button settingsButton, Button eventsButton) {
+        if (UserRoleManager.getRole() == UserRole.ADMIN) {
+            adminViewButton.setVisibility(View.VISIBLE);
+            adminViewButton.setText("Admin");
+            settingsButton.setVisibility(View.INVISIBLE);
+            eventsButton.setVisibility(View.INVISIBLE);
+        } else {
+            adminViewButton.setVisibility(View.INVISIBLE);
+            settingsButton.setVisibility(View.VISIBLE);
+            eventsButton.setVisibility(View.VISIBLE);
+        }
     }
 
 //TEMPORARY

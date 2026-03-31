@@ -90,7 +90,6 @@ public class EventRepository {
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
 
                         Event event = doc.toObject(Event.class);
-                        //event.setOwnerId(id);
                         events.add(event);
                         event.setOwnerId(doc.get("ownerId").toString());
                         System.out.println(event.getOwnerId());
