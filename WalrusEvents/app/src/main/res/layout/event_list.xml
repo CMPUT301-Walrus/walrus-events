@@ -18,10 +18,12 @@
 
         <Button
             android:id="@+id/changeRoleButton"
-            android:layout_width="wrap_content"
+            android:layout_width="400dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Button" />
+            android:backgroundTint="@color/yellow"
+            android:text="Change"
+            android:textColor="@color/black" />
 
         <SearchView
             android:id="@+id/search_bar"
@@ -69,14 +71,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="By Availability" />
+            android:backgroundTint="@color/yellow"
+            android:text="By Availability"
+            android:textColor="@color/black" />
 
         <Button
             android:id="@+id/interest_sort_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="By Interest" />
+            android:backgroundTint="@color/yellow"
+            android:text="By Interest"
+            android:textColor="@color/black" />
     </LinearLayout>
 
     <ListView
@@ -103,20 +109,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Settings" />
+            android:backgroundTint="@color/yellow"
+            android:text="Settings"
+            android:textColor="@color/black" />
 
         <Button
             android:id="@+id/main_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Main" />
+            android:backgroundTint="@color/yellow"
+            android:text="Main"
+            android:textColor="@color/black" />
 
         <Button
             android:id="@+id/my_events_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="My Events" />
+            android:backgroundTint="@color/yellow"
+            android:text="My Events"
+            android:textColor="@color/black" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
