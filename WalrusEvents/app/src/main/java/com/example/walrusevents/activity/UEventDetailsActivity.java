@@ -28,9 +28,8 @@ import com.example.walrusevents.ui.UEventDetailsView;
 import com.example.walrusevents.util.DeviceIdManager;
 
 /**
- * UEventDetails
- * Handles viewing event details via both direct list clicks (Serialization)
- * and QR scans (Firestore retrieval) using a Model-View architecture.
+ * Class handles displaying event details for a particular event
+ * Handles whether event was clicked on or scanned to go to event page
  */
 public class UEventDetailsActivity extends AppCompatActivity
         implements EntrantController.ActionCallback, AcceptInvitationFragment.AcceptInvitationListener {
@@ -50,14 +49,15 @@ public class UEventDetailsActivity extends AppCompatActivity
         waitlistRepository = new WaitlistRepository();
         eventRepository = new EventRepository();
 
-        // Check if we arrived via QR Scanner (ID String) or ListView (Serialized Object)
+        // Get scann id (will be null if user clicked event)
         String scannedId = getIntent().getStringExtra("EVENT_ID");
 
+        // Initialize UI depending on whether user clicked event or scanned qr code
         if (scannedId != null) {
-            // Path 1: QR Scanner (Requires network fetch)
+            // Scanned QR code
             fetchEventFromFirestore(scannedId);
         } else {
-            // Path 2: ListView click (Direct object)
+            // Clicked event
             try {
                 eventModel = (Event) getIntent().getSerializableExtra("Event");
                 if (eventModel != null) {
@@ -74,8 +74,8 @@ public class UEventDetailsActivity extends AppCompatActivity
     }
 
     /**
-     * Fetches the full Event object from Firestore.
-     * Essential for the QR Scan path where we only have the ID.
+     * Retrieves event details from the database
+     * Used for when a user scans a QR code
      */
     private void fetchEventFromFirestore(String eventId) {
         eventRepository.getEvent(eventId, new EventRepository.EventCallback() {
@@ -93,7 +93,7 @@ public class UEventDetailsActivity extends AppCompatActivity
     }
 
     /**
-     * Initializes the View wrapper and sets up all UI-dependent listeners.
+     * Initialize UI for the event details
      */
     private void setupUI() {
         if (eventModel == null) return;
@@ -201,8 +201,6 @@ public class UEventDetailsActivity extends AppCompatActivity
             }
         });
     }
-
-    // --- Controller Callbacks ---
 
     @Override
     public void onSuccess() {
