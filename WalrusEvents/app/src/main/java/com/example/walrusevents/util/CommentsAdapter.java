@@ -6,7 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +18,7 @@ import com.example.walrusevents.ProfileRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.Comment;
 import com.example.walrusevents.model.Entrant;
+import com.example.walrusevents.ui.AddCommentFragment;
 
 import org.w3c.dom.Text;
 
@@ -25,11 +28,13 @@ import java.util.Locale;
 public class CommentsAdapter extends ArrayAdapter<Comment> implements ProfileRepository.ProfileCallback {
     private Context context;
     private ArrayList<Comment> comments;
+    private AddCommentFragment.AddCommentListener addCommentListener;
 
-    public CommentsAdapter(@NonNull Context context, ArrayList<Comment> comments) {
+    public CommentsAdapter(@NonNull Context context, ArrayList<Comment> comments, AddCommentFragment.AddCommentListener addCommentListener) {
         super(context, 0, comments);
         this.comments = comments;
         this.context = context;
+        this.addCommentListener = addCommentListener;
     }
 
     @NonNull
@@ -43,6 +48,15 @@ public class CommentsAdapter extends ArrayAdapter<Comment> implements ProfileRep
         TextView likesCounter = view.findViewById(R.id.likes_counter);
         TextView dislikesCounter = view.findViewById(R.id.dislikes_counter);
         TextView bodyText = view.findViewById(R.id.comment_body);
+        Button replyButton = view.findViewById(R.id.reply_button);
+        ListView repliesView = view.findViewById(R.id.replies_view);
+        CommentsAdapter commentsAdapter = new CommentsAdapter(context, comment.getReplies(), addCommentListener);
+        repliesView.setAdapter(commentsAdapter);
+
+        replyButton.setOnClickListener(v -> {
+            addCommentListener.addComment(comment);
+            commentsAdapter.notifyDataSetChanged();
+        });
 
         bodyText.setText(comment.getBody());
         likesCounter.setText(String.format(Locale.CANADA, "%d", comment.getLikes()));
