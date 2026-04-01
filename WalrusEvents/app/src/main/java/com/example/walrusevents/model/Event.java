@@ -28,6 +28,7 @@ public class Event implements Serializable {
     private Bitmap qrCodeImage;
     private boolean useGeolocation;
     private ArrayList<Comment> comments;
+    private int openAvailability;
 
     /**
      * Constructor for no args

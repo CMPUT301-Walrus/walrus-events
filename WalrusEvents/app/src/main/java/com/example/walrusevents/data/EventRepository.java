@@ -181,11 +181,6 @@ public class EventRepository {
      */
     public void getEventsByCapacity(EventListCallback callback,String keyword){
         eventsCollection
-                .where(Filter
-                        .or(
-                                Filter.arrayContains("title",keyword),
-                                Filter.arrayContains("description",keyword))
-                )
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
 
