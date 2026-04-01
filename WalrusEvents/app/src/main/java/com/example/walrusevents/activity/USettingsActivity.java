@@ -29,10 +29,10 @@ import com.example.walrusevents.util.DeviceIdManager;
  * Activity that allows a user to view and edit their profile settings.
  * <p>
  * Users can update their name, email, and phone number, toggle notification
- * preferences, or permanently delete their profile. Profile changes are only
- * saved when the user navigates away from the screen (via back button or swipe
- * gesture). If validation fails, the user is kept on the screen so they can
- * correct the errors before leaving.
+ * preferences, or permanently delete their profile. Profile changes can be
+ * saved from the dedicated save button and are also persisted when the user
+ * navigates away from the screen. If validation fails, the user is kept on the
+ * screen so they can correct the errors before leaving.
  * </p>
  * <p>
  * Notification preference changes are saved immediately when toggled, since
@@ -54,6 +54,8 @@ public class USettingsActivity extends AppCompatActivity {
     private EditText phoneInput;
     /** Checkbox for opting out of notifications. Checked means opted-out. */
     private CheckBox notificationsCheckbox;
+    /** Button that saves the current profile edits. */
+    private Button saveProfileButton;
     /** Button that triggers the profile deletion flow. */
     private Button deleteProfileButton;
 
@@ -86,6 +88,7 @@ public class USettingsActivity extends AppCompatActivity {
         emailInput = findViewById(R.id.email_input);
         phoneInput = findViewById(R.id.phone_input);
         notificationsCheckbox = findViewById(R.id.notifications_checkbox);
+        saveProfileButton = findViewById(R.id.save_profile_button);
         deleteProfileButton = findViewById(R.id.delete_profile_button);
         deleteProfileButton.setVisibility(initialProfileSetup ? View.GONE : View.VISIBLE);
         title = findViewById(R.id.settings_title);
@@ -100,6 +103,7 @@ public class USettingsActivity extends AppCompatActivity {
             }
             updateNotificationsPreference(isChecked);
         });
+        saveProfileButton.setOnClickListener(v -> saveProfileAndFinish());
         deleteProfileButton.setOnClickListener(v -> showDeleteConfirmation());
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -152,7 +156,7 @@ public class USettingsActivity extends AppCompatActivity {
     }
 
     /**
-     * Validates and saves the profile when the user navigates back.
+     * Validates and saves the profile before leaving the screen.
      * <p>
      * Performs the following steps:
      * <ol>
@@ -336,6 +340,7 @@ public class USettingsActivity extends AppCompatActivity {
         setFieldEnabled(emailInput, enabled);
         setFieldEnabled(phoneInput, enabled);
         notificationsCheckbox.setEnabled(enabled);
+        saveProfileButton.setEnabled(enabled);
         deleteProfileButton.setEnabled(enabled);
     }
 
