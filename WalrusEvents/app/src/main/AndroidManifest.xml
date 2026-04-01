@@ -50,6 +50,22 @@
         <activity
             android:name=".activity.QRCodeActivity"
             android:exported="false" />
+        <activity
+            android:name=".activity.UQRCodeScannerActivity"
+            android:stateNotNeeded="true"
+            android:theme="@style/zxing_CaptureTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            tools:ignore="Instantiatable" />
     </application>
+
+    <!--Code and logic for QR code were taken from a Reintech article provided by our TA
+        https://reintech.io/blog/implementing-android-app-qr-code-scanner-->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
 
 </manifest>

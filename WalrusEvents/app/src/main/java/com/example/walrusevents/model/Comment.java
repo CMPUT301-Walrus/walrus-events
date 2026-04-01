@@ -1,12 +1,14 @@
 package com.example.walrusevents.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Comment implements Serializable {
     private String entrantId;
     private String body;
     private int likes;
     private int dislikes;
+    private ArrayList<Comment> replies;
 
     public Comment() {
 
@@ -55,5 +57,23 @@ public class Comment implements Serializable {
 
     public void addDislike() {
         dislikes += 1;
+    }
+
+    public ArrayList<Comment> getReplies() {
+        if (replies == null) {
+            replies = new ArrayList<>();
+        }
+        return replies;
+    }
+
+    public void setReplies(ArrayList<Comment> replies) {
+        this.replies = replies;
+    }
+
+    public void addReply(Comment reply) {
+        if (replies == null) {
+            replies = new ArrayList<>();
+        }
+        replies.add(reply);
     }
 }

@@ -105,4 +105,14 @@
         app:layout_constraintBottom_toBottomOf="@+id/comment_like_button"
         app:layout_constraintStart_toEndOf="@+id/comment_like_button"
         app:layout_constraintTop_toTopOf="@+id/comment_like_button" />
+
+    <ListView
+        android:id="@+id/replies_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/comment_profile_pic"
+        app:layout_constraintTop_toBottomOf="@+id/dislike_button"
+        app:layout_constraintVertical_bias="0.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>
