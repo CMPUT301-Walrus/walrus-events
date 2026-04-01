@@ -11,10 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.walrusevents.ProfileRepository;
+import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.R;
-import com.example.walrusevents.WaitlistEntry;
-import com.example.walrusevents.WaitlistRepository;
+import com.example.walrusevents.model.WaitlistEntry;
+import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.util.EntrantArrayAdapter;

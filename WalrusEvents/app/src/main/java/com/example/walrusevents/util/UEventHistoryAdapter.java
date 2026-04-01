@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.walrusevents.R;
-import com.example.walrusevents.WaitlistEntry;
+import com.example.walrusevents.model.WaitlistEntry;
 import com.example.walrusevents.model.Event;
 
 import java.util.ArrayList;

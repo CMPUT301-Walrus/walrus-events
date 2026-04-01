@@ -13,8 +13,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.walrusevents.R;
-import com.example.walrusevents.WaitlistEntry;
-import com.example.walrusevents.WaitlistRepository;
+import com.example.walrusevents.model.WaitlistEntry;
+import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Event;
 
 import java.util.List;
