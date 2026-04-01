@@ -44,7 +44,7 @@ import com.example.walrusevents.util.DeviceIdManager;
  */
 public class USettingsActivity extends AppCompatActivity {
     public static final String INITIAL_PROFILE_SETUP =
-            "com.example.walrusevents.activity.USettingsActivity.EXTRA_INITIAL_PROFILE_SETUP";
+            "com.example.walrusevents.activity.USettingsActivity.INITIAL_PROFILE_SETUP";
 
     /** Input field for the user's display name. */
     private EditText nameInput;
