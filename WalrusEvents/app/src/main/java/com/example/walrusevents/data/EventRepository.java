@@ -1,4 +1,4 @@
-package com.example.walrusevents;
+package com.example.walrusevents.data;
 
 import com.example.walrusevents.model.Event;
 import com.google.firebase.firestore.DocumentReference;

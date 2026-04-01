@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 import android.media.Image;
 import android.widget.DatePicker;
 
-import com.example.walrusevents.EventRepository;
+import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.data.FirebaseAPIManager;
 import com.example.walrusevents.data.ImageRepository;
 import com.example.walrusevents.model.Event;

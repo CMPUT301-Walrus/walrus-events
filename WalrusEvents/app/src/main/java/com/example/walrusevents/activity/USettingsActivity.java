@@ -15,9 +15,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.walrusevents.ProfileRepository;
+import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.R;
-import com.example.walrusevents.WaitlistRepository;
+import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.controllers.EntrantController;
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.model.Profile;

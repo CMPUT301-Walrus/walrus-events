@@ -1,6 +1,7 @@
 package com.example.walrusevents;
 
 import com.example.walrusevents.model.Lottery;
+import com.example.walrusevents.model.WaitlistEntry;
 
 import org.junit.Test;
 
