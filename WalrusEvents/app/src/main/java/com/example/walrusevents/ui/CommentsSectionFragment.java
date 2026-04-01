@@ -64,11 +64,11 @@ public class CommentsSectionFragment extends BottomSheetDialogFragment implement
 
         commentsList = eventModel.getComments();
 
-        commentsAdapter = new CommentsAdapter(getActivity(), commentsList);
+        commentsAdapter = new CommentsAdapter(getActivity(), commentsList, this);
         commentsView.setAdapter(commentsAdapter);
 
         addCommentButton.setOnClickListener(v -> {
-            addComment();
+            addComment(null);
         });
 
         closeButton.setOnClickListener(v -> {
@@ -79,8 +79,9 @@ public class CommentsSectionFragment extends BottomSheetDialogFragment implement
     /**
      * Opens up the popup for the user to write down their comment
      */
-    public void addComment() {
-        AddCommentFragment addCommentFragment = AddCommentFragment.newInstance(this);
+    @Override
+    public void addComment(Comment parent) {
+        AddCommentFragment addCommentFragment = AddCommentFragment.newInstance(this, parent);
         addCommentFragment.show(fragmentManager, "Add Comment");
     }
 
@@ -90,10 +91,10 @@ public class CommentsSectionFragment extends BottomSheetDialogFragment implement
      * The text that the user wrote as a comment
      */
     @Override
-    public void postComment(String bodyText) {
+    public void postComment(Comment parent, String bodyText) {
         Comment comment = new Comment(DeviceIdManager.getOrCreate(getActivity()), bodyText, 0, 0);
         EventRepository eventRepository = new EventRepository();
-        eventModel.addComment(comment);
+        eventModel.addComment(parent, comment);
         eventRepository.setEvent(eventModel);
         commentsAdapter.notifyDataSetChanged();
     }

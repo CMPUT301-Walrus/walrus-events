@@ -251,8 +251,13 @@ public class Event implements Serializable {
         this.comments = comments;
     }
 
-    public void addComment(Comment comment) {
-        comments.add(comment);
+    public void addComment(Comment parent, Comment comment) {
+        if (parent == null) {
+            comments.add(comment);
+        }
+        else {
+            parent.addReply(comment);
+        }
     }
     public boolean isInRegistration() {
         if (endRegistrationTime == null || startRegistrationTime == null
