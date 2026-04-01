@@ -82,22 +82,22 @@
             android:layout_weight="1"
             android:text="Sort By:" />
 
-        <Button
+        <CheckBox
+            android:id="@+id/capacity_sort_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/yellow"
+            android:text="Capacity"
+            android:textColor="@color/black" />
+
+        <CheckBox
             android:id="@+id/availability_sort_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="@color/yellow"
-            android:text="By Availability"
-            android:textColor="@color/black" />
-
-        <Button
-            android:id="@+id/interest_sort_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/yellow"
-            android:text="By Interest"
+            android:text="Availability"
             android:textColor="@color/black" />
     </LinearLayout>
 
