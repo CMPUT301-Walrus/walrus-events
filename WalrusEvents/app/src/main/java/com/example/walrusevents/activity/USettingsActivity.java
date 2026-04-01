@@ -65,9 +65,6 @@ public class USettingsActivity extends AppCompatActivity {
     private EntrantController entrantController;
     /** The currently loaded entrant whose profile is being edited. */
     private Entrant currentEntrant;
-    /** Whether the screen was opened to complete initial profile setup. */
-    private TextView title;
-    private boolean initialProfileSetup;
 
     /**
      * Initializes the activity, binds UI components, registers the back-navigation
@@ -81,7 +78,12 @@ public class USettingsActivity extends AppCompatActivity {
         setContentView(R.layout.general_settings);
 
         profileRepository = new ProfileRepository();
-        initialProfileSetup = getIntent().getBooleanExtra(INITIAL_PROFILE_SETUP, false);
+
+        boolean initialProfileSetup = getIntent().getBooleanExtra(INITIAL_PROFILE_SETUP, false);
+        TextView title = findViewById(R.id.settings_title);
+        if(initialProfileSetup){
+            title.setText("Profile Setup");
+        }
 
         ImageButton backButton = findViewById(R.id.settings_back_button);
         nameInput = findViewById(R.id.name_input);
@@ -91,10 +93,6 @@ public class USettingsActivity extends AppCompatActivity {
         saveProfileButton = findViewById(R.id.save_profile_button);
         deleteProfileButton = findViewById(R.id.delete_profile_button);
         deleteProfileButton.setVisibility(initialProfileSetup ? View.GONE : View.VISIBLE);
-        title = findViewById(R.id.settings_title);
-        if(initialProfileSetup){
-            title.setText("Profile Setup");
-        }
 
         backButton.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
         notificationsCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
