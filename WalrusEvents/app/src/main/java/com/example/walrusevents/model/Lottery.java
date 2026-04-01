@@ -2,8 +2,7 @@ package com.example.walrusevents.model;
 
 import android.util.Log;
 
-import com.example.walrusevents.WaitlistEntry;
-import com.example.walrusevents.WaitlistRepository;
+import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.activity.OEventPoolActivity;
 
 import java.util.ArrayList;

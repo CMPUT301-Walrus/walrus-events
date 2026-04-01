@@ -1,26 +1,22 @@
 package com.example.walrusevents.util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.walrusevents.ProfileRepository;
+import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.Comment;
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.ui.AddCommentFragment;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Locale;

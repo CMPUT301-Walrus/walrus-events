@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 
@@ -16,9 +15,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.walrusevents.model.Entrant;
-import com.example.walrusevents.EventRepository;
+import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.model.Profile;
-import com.example.walrusevents.ProfileRepository;
+import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.util.DeviceIdManager;

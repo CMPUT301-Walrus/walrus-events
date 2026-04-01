@@ -1,17 +1,12 @@
-package com.example.walrusevents;
+package com.example.walrusevents.data;
 
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.model.Profile;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * ProfileRepository

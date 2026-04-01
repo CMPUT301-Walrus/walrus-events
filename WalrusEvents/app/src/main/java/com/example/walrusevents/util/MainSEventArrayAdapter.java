@@ -12,7 +12,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.walrusevents.KeywordSearchFilter;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.R;
 
