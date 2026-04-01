@@ -34,6 +34,23 @@ public class ProfileTest {
     }
 
     @Test
+    public void profile_hasRequiredContactInfo_whenNameAndEmailPresent() {
+        assertTrue(profile.hasRequiredContactInfo());
+    }
+
+    @Test
+    public void profile_hasRequiredContactInfo_falseWhenNameMissing() {
+        profile.setName("   ");
+        assertFalse(profile.hasRequiredContactInfo());
+    }
+
+    @Test
+    public void profile_hasRequiredContactInfo_falseWhenEmailMissing() {
+        profile.setEmail(null);
+        assertFalse(profile.hasRequiredContactInfo());
+    }
+
+    @Test
     public void profile_canSetPhone() {
         profile.setPhone("555-1234");
         assertEquals("555-1234", profile.getPhone());

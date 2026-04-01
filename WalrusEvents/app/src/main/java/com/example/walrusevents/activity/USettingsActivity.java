@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -41,6 +43,9 @@ import com.example.walrusevents.util.DeviceIdManager;
  * @see ProfileRepository
  */
 public class USettingsActivity extends AppCompatActivity {
+    public static final String INITIAL_PROFILE_SETUP =
+            "com.example.walrusevents.activity.USettingsActivity.EXTRA_INITIAL_PROFILE_SETUP";
+
     /** Input field for the user's display name. */
     private EditText nameInput;
     /** Input field for the user's email address. */
@@ -58,6 +63,9 @@ public class USettingsActivity extends AppCompatActivity {
     private EntrantController entrantController;
     /** The currently loaded entrant whose profile is being edited. */
     private Entrant currentEntrant;
+    /** Whether the screen was opened to complete initial profile setup. */
+    private TextView title;
+    private boolean initialProfileSetup;
 
     /**
      * Initializes the activity, binds UI components, registers the back-navigation
@@ -71,6 +79,7 @@ public class USettingsActivity extends AppCompatActivity {
         setContentView(R.layout.general_settings);
 
         profileRepository = new ProfileRepository();
+        initialProfileSetup = getIntent().getBooleanExtra(INITIAL_PROFILE_SETUP, false);
 
         ImageButton backButton = findViewById(R.id.settings_back_button);
         nameInput = findViewById(R.id.name_input);
@@ -78,6 +87,11 @@ public class USettingsActivity extends AppCompatActivity {
         phoneInput = findViewById(R.id.phone_input);
         notificationsCheckbox = findViewById(R.id.notifications_checkbox);
         deleteProfileButton = findViewById(R.id.delete_profile_button);
+        deleteProfileButton.setVisibility(initialProfileSetup ? View.GONE : View.VISIBLE);
+        title = findViewById(R.id.settings_title);
+        if(initialProfileSetup){
+            title.setText("Profile Setup");
+        }
 
         backButton.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
         notificationsCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
