@@ -1,7 +1,6 @@
-package com.example.walrusevents;
+package com.example.walrusevents.model;
 
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.Exclude;
 
 /**
  * WaitlistEntry

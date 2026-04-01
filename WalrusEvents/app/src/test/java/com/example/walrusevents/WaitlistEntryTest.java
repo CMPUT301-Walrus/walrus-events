@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import com.example.walrusevents.model.WaitlistEntry;
+
 /**
  * Unit tests for the WaitlistEntry class.
  */
