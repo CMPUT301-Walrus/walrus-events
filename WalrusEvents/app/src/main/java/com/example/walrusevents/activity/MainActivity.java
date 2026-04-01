@@ -131,25 +131,14 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
          */
         changeUserRoleButton = findViewById(R.id.changeRoleButton);
         updateRoleText();
+        applyRoleVisibility(adminViewButton, settingsButton, eventsButton);
         changeUserRoleButton.setOnClickListener(v -> {
             // Changes role in a loop user-organizer-admin
             UserRoleManager.nextRole();
             updateRoleText();
 
             //Handling the View for Admin
-            if(UserRoleManager.getRole()==UserRole.ADMIN){
-                //show button for adminView
-                adminViewButton.setVisibility(View.VISIBLE);
-                adminViewButton.setText("Admin");
-                settingsButton.setVisibility(View.INVISIBLE);
-                eventsButton.setVisibility(View.INVISIBLE);
-
-            } else {
-                adminViewButton.setVisibility(View.INVISIBLE);
-                settingsButton.setVisibility(View.VISIBLE);
-                eventsButton.setVisibility(View.VISIBLE);
-
-            }
+            applyRoleVisibility(adminViewButton, settingsButton, eventsButton);
         });
 
 
