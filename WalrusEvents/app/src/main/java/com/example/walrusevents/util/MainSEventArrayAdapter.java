@@ -95,4 +95,12 @@ public class MainSEventArrayAdapter extends ArrayAdapter<Event> implements Filte
         if(searchFilter==null) searchFilter = new KeywordSearchFilter(filteredList, this);
         return searchFilter;
     }
+
+    public ArrayList<Event> getFilteredList(){
+        return filteredList;
+    }
+
+    public void resetFilteredList(){
+        filteredList=eventList;
+    }
 }

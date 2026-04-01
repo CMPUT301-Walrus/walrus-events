@@ -2,6 +2,7 @@ package com.example.walrusevents.util;
 
 import android.content.Context;
 import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ListView;
 
 import com.example.walrusevents.model.Event;
@@ -62,8 +63,21 @@ public class MainSEventListController implements NameEventFragment.NameEventList
         eventListAdapter.notifyDataSetChanged();
     }
 
-    public Filter getFilter(){
+
+    public Filter getSearchFilter(){
+
         return eventListAdapter.getFilter();
+    }
+
+    public Filter getCapacityFilter(){
+        return null;
+    }
+
+    /*
+    * Easier Query Way to do Filters
+     */
+    public void loadEventsbyKeyword(String keyword){
+        //eventRepository.getEventsByKeyword(this,keyword);
     }
 
 }

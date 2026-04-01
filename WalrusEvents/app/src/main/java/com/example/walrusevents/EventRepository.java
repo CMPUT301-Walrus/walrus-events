@@ -2,6 +2,7 @@ package com.example.walrusevents;
 
 import com.example.walrusevents.model.Event;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -174,4 +175,35 @@ public class EventRepository {
                 })
                 .addOnFailureListener(Throwable::printStackTrace);
     }
+
+    /*
+    * Another way to get keyword search
+     */
+    public void getEventsByCapacity(EventListCallback callback,String keyword){
+        eventsCollection
+                .where(Filter
+                        .or(
+                                Filter.arrayContains("title",keyword),
+                                Filter.arrayContains("description",keyword))
+                )
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+
+                    ArrayList<Event> events = new ArrayList<>();
+
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+
+                        Event event = doc.toObject(Event.class);
+
+                        events.add(event);
+                    }
+
+                    callback.onEventsLoaded(events);
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                });
+    }
+
+    //For filtering - get a copy of the collections
 }
