@@ -10,24 +10,31 @@
     <LinearLayout
         android:id="@+id/linearLayout7"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:background="#FFFFFF"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="0dp">
+        android:padding="4dp"
+        app:layout_constraintTop_toTopOf="parent">
 
         <Button
             android:id="@+id/changeRoleButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Button" />
+            android:text="Change" />
 
         <SearchView
             android:id="@+id/search_bar"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:queryHint="Search Events..." />
+
+        <Button
+            android:id="@+id/scan_qr_code_button"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="Scan"/>
 
     </LinearLayout>
 
@@ -119,4 +126,5 @@
             android:layout_weight="1"
             android:text="My Events" />
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

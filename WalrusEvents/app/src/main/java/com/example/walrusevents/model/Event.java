@@ -152,15 +152,13 @@ public class Event implements Serializable {
         return true;
     }
 
+    /**
+     * Gets the amount of applicants that can be chosen by the lottery.
+     * @return applicantCapacity the current capacity of applicants
+     */
     public int getApplicantCapacity() {
         return applicantCapacity;
     }
-    /**
-     * Sets the amount of applicants that can be chosen by the lottery. Must be greater than
-     * 0 and less than entrant capacity.
-     * @param applicantCapacity
-     * The new capacity that will be set
-     */
 
     /**
      * Method for turning limit capacity for applicants for an event on/off
