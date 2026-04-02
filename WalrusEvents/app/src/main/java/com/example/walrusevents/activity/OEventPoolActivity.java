@@ -3,6 +3,7 @@ package com.example.walrusevents.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.PopupMenu;
 
 import androidx.activity.EdgeToEdge;
@@ -104,6 +105,16 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
             WaitlistRepository collectForLottery = new WaitlistRepository();
             collectForLottery.getAllEntries(eventModel.getEventId(), this);
         });
+
+        /**
+         * Uncomment and implement once XML is initialized
+         */
+        // Inside your Event Details setup
+        // if (currentEvent.getGeolocationEnabled()) {
+        //     viewMapButton.setVisibility(View.VISIBLE);
+        // } else {
+        //     viewMapButton.setVisibility(View.GONE);
+        // }
     }
 
     /**

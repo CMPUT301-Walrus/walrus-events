@@ -159,6 +159,14 @@ public class UEventDetailsActivity extends AppCompatActivity
         Entrant me = new Entrant(new Profile(deviceId, "User", "email@uab.ca"));
 
         view.getJoinButton().setOnClickListener(v -> {
+            // Check if geolocation is enabled
+            // If enabled, fetch location and then join, join without getting location data otherwise
+            if (eventModel.getGeolocationEnabled()) {
+                fetchLocationAndJoin();
+            } else {
+                performJoin(null, null);
+            }
+
             WaitlistRepository waitRep = new WaitlistRepository();
             ProfileRepository pfRep = new ProfileRepository();
             EntrantController entrantController = new EntrantController(me, waitRep, pfRep);
@@ -247,5 +255,47 @@ public class UEventDetailsActivity extends AppCompatActivity
                         Log.e("Invite", error);
                     }
                 });
+    }
+
+    private void fetchLocationAndJoin() {
+        com.google.android.gms.location.FusedLocationProviderClient fusedLocationClient =
+                com.google.android.gms.location.LocationServices.getFusedLocationProviderClient(this);
+
+        // Ensure permissions are granted (Check for CAMERA and LOCATION)
+        if (androidx.core.app.ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+
+            // Request permissions if not granted
+            androidx.core.app.ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 101);
+            return;
+        }
+
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+            if (location != null) {
+                performJoin(location.getLatitude(), location.getLongitude());
+            } else {
+                Toast.makeText(this, "Could not capture location. Please try again.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void performJoin(Double lat, Double lon) {
+        String deviceId = DeviceIdManager.getOrCreate(this);
+        // You might need to update your EntrantController.joinWaitlist method
+        // signature to accept lat/lon, or set them on the 'me' object.
+
+        WaitlistRepository waitRep = new WaitlistRepository();
+        ProfileRepository pfRep = new ProfileRepository();
+
+        // Create the entry object first to attach the location
+        WaitlistEntry newEntry = new WaitlistEntry(deviceId, eventModel.getEventId());
+        if (lat != null && lon != null) {
+            newEntry.setLocation(lat, lon);
+        }
+
+        EntrantController entrantController = new EntrantController(me, waitRep, pfRep);
+        entrantController.joinWaitlist(eventModel.getEventId(), this);
+        // Note: Make sure entrantController actually saves the lat/lon from the entry!
     }
 }

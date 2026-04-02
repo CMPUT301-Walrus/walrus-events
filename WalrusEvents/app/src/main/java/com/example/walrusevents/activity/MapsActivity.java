@@ -1,9 +1,12 @@
-package com.example.walrusevents;
+package com.example.walrusevents.activity;
 
 import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
 
+import com.example.walrusevents.R;
+import com.example.walrusevents.data.WaitlistRepository;
+import com.example.walrusevents.model.WaitlistEntry;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -15,6 +18,7 @@ import com.example.walrusevents.databinding.ActivityMapsBinding;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private String eventId;  // Store eventId that is passed from previous activity/fragment
     private ActivityMapsBinding binding;
 
     @Override
@@ -22,7 +26,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
 
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        setContentView(R.layout.activity_maps);
+
+        // Get eventId from previous activity/fragment
+        eventId = getIntent().getStringExtra("eventId");
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -43,9 +50,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        // Get coordinates for each entrant from waitlist
+        WaitlistRepository waitlistRepo = new WaitlistRepository();
+        waitlistRepo.getAllEntries(eventId, entries -> {
+            for (WaitlistEntry entry : entries) {
+                // Loop through entrants and get location if stored
+                if (entry.hasLocation()) {
+                    // Create location object with specified latitude and longitude
+                    LatLng location = new LatLng(entry.getLatitude(), entry.getLongitude());
+                    // Place marker on map titled with entrant's ID
+                    mMap.addMarker(new MarkerOptions()
+                            .position(location)
+                            .title(entry.getEntrantId()));
+                    // Move camera to last added entrant
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+                }
+            }
+        });
     }
 }
