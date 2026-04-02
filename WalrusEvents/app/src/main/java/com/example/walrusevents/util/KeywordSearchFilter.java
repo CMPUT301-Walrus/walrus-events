@@ -1,9 +1,8 @@
-package com.example.walrusevents;
+package com.example.walrusevents.util;
 
 import android.widget.Filter;
 
 import com.example.walrusevents.model.Event;
-import com.example.walrusevents.util.MainSEventArrayAdapter;
 
 import java.util.ArrayList;
 

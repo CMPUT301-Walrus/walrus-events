@@ -7,36 +7,47 @@
     android:layout_height="match_parent"
     android:background="#96E6F6">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout7"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <Button
             android:id="@+id/changeRoleButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Change" />
+            android:layout_marginStart="8dp"
+            android:backgroundTint="@color/yellow"
+            android:text="Change"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/search_bar" />
 
         <SearchView
             android:id="@+id/search_bar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:queryHint="Search Events..." />
+            android:queryHint="Search Events..."
+            app:layout_constraintEnd_toStartOf="@+id/scan_qr_code_button"
+            app:layout_constraintStart_toEndOf="@+id/changeRoleButton"
+            app:layout_constraintTop_toTopOf="@+id/scan_qr_code_button" />
 
         <Button
             android:id="@+id/scan_qr_code_button"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:text="Scan"/>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="Scan"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/search_bar" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView
         android:id="@+id/imageView6"
@@ -71,19 +82,23 @@
             android:layout_weight="1"
             android:text="Sort By:" />
 
-        <Button
+        <CheckBox
+            android:id="@+id/capacity_sort_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/yellow"
+            android:text="Capacity"
+            android:textColor="@color/black" />
+
+        <CheckBox
             android:id="@+id/availability_sort_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="By Availability" />
-
-        <Button
-            android:id="@+id/interest_sort_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="By Interest" />
+            android:backgroundTint="@color/yellow"
+            android:text="Availability"
+            android:textColor="@color/black" />
     </LinearLayout>
 
     <ListView
@@ -110,21 +125,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Settings" />
+            android:backgroundTint="@color/yellow"
+            android:text="Settings"
+            android:textColor="@color/black" />
 
         <Button
             android:id="@+id/main_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Main" />
+            android:backgroundTint="@color/yellow"
+            android:text="Main"
+            android:textColor="@color/black" />
 
         <Button
             android:id="@+id/my_events_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="My Events" />
+            android:backgroundTint="@color/yellow"
+            android:text="My Events"
+            android:textColor="@color/black" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

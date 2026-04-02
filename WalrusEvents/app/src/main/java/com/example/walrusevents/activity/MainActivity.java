@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,10 +15,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.model.Entrant;
-import com.example.walrusevents.EventRepository;
 import com.example.walrusevents.model.Profile;
-import com.example.walrusevents.ProfileRepository;
+import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.util.DeviceIdManager;
@@ -26,9 +26,10 @@ import com.example.walrusevents.util.MainSEventListController;
 import com.example.walrusevents.util.UserRole;
 import com.example.walrusevents.util.UserRoleManager;
 
-public class MainActivity extends AppCompatActivity implements ProfileRepository.SaveCallback {
+public class MainActivity extends AppCompatActivity {
 
     private EventRepository eventRepository;
+    private ProfileRepository profileRepository;
 
     private ListView eventListView;
 
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
     private Button changeUserRoleButton;
 
     private Button scanQRCodeButton;
+    private boolean initialProfileSetupLaunched;
 
 
     @Override
@@ -56,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
          */
         eventListView = findViewById(R.id.event_list_view);
         eventRepository = new EventRepository();
+        profileRepository = new ProfileRepository();
         eventListController = new MainSEventListController(this, eventRepository, eventListView);
         eventListController.loadEvents();
 
@@ -133,25 +136,14 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
          */
         changeUserRoleButton = findViewById(R.id.changeRoleButton);
         updateRoleText();
+        updateVisibility(adminViewButton, settingsButton, eventsButton);
         changeUserRoleButton.setOnClickListener(v -> {
             // Changes role in a loop user-organizer-admin
             UserRoleManager.nextRole();
             updateRoleText();
 
             //Handling the View for Admin
-            if(UserRoleManager.getRole()==UserRole.ADMIN){
-                //show button for adminView
-                adminViewButton.setVisibility(View.VISIBLE);
-                adminViewButton.setText("Admin");
-                settingsButton.setVisibility(View.INVISIBLE);
-                eventsButton.setVisibility(View.INVISIBLE);
-
-            } else {
-                adminViewButton.setVisibility(View.INVISIBLE);
-                settingsButton.setVisibility(View.VISIBLE);
-                eventsButton.setVisibility(View.VISIBLE);
-
-            }
+            updateVisibility(adminViewButton, settingsButton, eventsButton);
         });
 
 
@@ -174,14 +166,7 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
 
         });
 
-        ProfileRepository profileRepository = new ProfileRepository();
-        String deviceId = DeviceIdManager.getOrCreate(this);
-        profileRepository.getProfile(deviceId, entrant -> {
-            if (entrant == null) {
-                Profile placeholderProfile = new Profile(deviceId,"placeholderName","placeholderEmail");
-                profileRepository.saveProfile(new Entrant(placeholderProfile), MainActivity.this);
-            }
-        });
+        ensureProfileSetupState();
         /*
         * Settings onClick
          */
@@ -223,7 +208,9 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
     @Override
     public void onRestart() {
         super.onRestart();
+        initialProfileSetupLaunched = false;
         eventListController.loadEvents();
+        ensureProfileSetupState();
     }
 
     private void updateRoleText(){
@@ -231,27 +218,51 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
         changeUserRoleButton.setText("Role:"+role.toString());
     }
 
-    private void applyRoleVisibility(Button adminViewButton, Button settingsButton, Button eventsButton) {
-        if (UserRoleManager.getRole() == UserRole.ADMIN) {
-            adminViewButton.setVisibility(View.VISIBLE);
-            adminViewButton.setText("Admin");
-            settingsButton.setVisibility(View.INVISIBLE);
-            eventsButton.setVisibility(View.INVISIBLE);
-        } else {
-            adminViewButton.setVisibility(View.INVISIBLE);
-            settingsButton.setVisibility(View.VISIBLE);
-            eventsButton.setVisibility(View.VISIBLE);
+    private void ensureProfileSetupState() {
+        String deviceId = DeviceIdManager.getOrCreate(this);
+        profileRepository.getProfile(deviceId, entrant -> runOnUiThread(() -> {
+            if (entrant == null) {
+                createProfileAndLaunchSettings(deviceId);
+                return;
+            }
+
+            Profile profile = entrant.getProfile();
+            if (profile == null || !profile.hasRequiredContactInfo()) {
+                launchSettings();
+            }
+        }));
+    }
+
+    private void createProfileAndLaunchSettings(String deviceId) {
+        Profile profile = new Profile(deviceId);
+        profileRepository.saveProfile(new Entrant(profile), new ProfileRepository.SaveCallback() {
+            @Override
+            public void onSuccess() {
+                runOnUiThread(() -> launchSettings());
+            }
+
+            @Override
+            public void onFailure(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(
+                            MainActivity.this,
+                            error != null ? error : "Unable to create profile.",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                    launchSettings();
+                });
+            }
+        });
+    }
+
+    private void launchSettings() {
+        if (initialProfileSetupLaunched || isFinishing() || isDestroyed()) {
+            return;
         }
-    }
 
-//TEMPORARY
-    @Override
-    public void onSuccess() {
-
-    }
-
-    @Override
-    public void onFailure(String error) {
-
+        initialProfileSetupLaunched = true;
+        Intent intent = new Intent(MainActivity.this, USettingsActivity.class);
+        intent.putExtra(USettingsActivity.INITIAL_PROFILE_SETUP, initialProfileSetupLaunched);
+        startActivity(intent);
     }
 }

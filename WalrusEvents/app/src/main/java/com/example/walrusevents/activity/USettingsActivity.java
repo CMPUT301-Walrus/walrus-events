@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -15,9 +17,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.walrusevents.ProfileRepository;
+import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.R;
-import com.example.walrusevents.WaitlistRepository;
+import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.controllers.EntrantController;
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.model.Profile;
@@ -27,10 +29,10 @@ import com.example.walrusevents.util.DeviceIdManager;
  * Activity that allows a user to view and edit their profile settings.
  * <p>
  * Users can update their name, email, and phone number, toggle notification
- * preferences, or permanently delete their profile. Profile changes are only
- * saved when the user navigates away from the screen (via back button or swipe
- * gesture). If validation fails, the user is kept on the screen so they can
- * correct the errors before leaving.
+ * preferences, or permanently delete their profile. Profile changes can be
+ * saved from the dedicated save button and are also persisted when the user
+ * navigates away from the screen. If validation fails, the user is kept on the
+ * screen so they can correct the errors before leaving.
  * </p>
  * <p>
  * Notification preference changes are saved immediately when toggled, since
@@ -41,6 +43,9 @@ import com.example.walrusevents.util.DeviceIdManager;
  * @see ProfileRepository
  */
 public class USettingsActivity extends AppCompatActivity {
+    public static final String INITIAL_PROFILE_SETUP =
+            "com.example.walrusevents.activity.USettingsActivity.EXTRA_INITIAL_PROFILE_SETUP";
+
     /** Input field for the user's display name. */
     private EditText nameInput;
     /** Input field for the user's email address. */
@@ -49,6 +54,8 @@ public class USettingsActivity extends AppCompatActivity {
     private EditText phoneInput;
     /** Checkbox for opting out of notifications. Checked means opted-out. */
     private CheckBox notificationsCheckbox;
+    /** Button that saves the current profile edits. */
+    private Button saveProfileButton;
     /** Button that triggers the profile deletion flow. */
     private Button deleteProfileButton;
 
@@ -58,6 +65,9 @@ public class USettingsActivity extends AppCompatActivity {
     private EntrantController entrantController;
     /** The currently loaded entrant whose profile is being edited. */
     private Entrant currentEntrant;
+    /** Whether the screen was opened to complete initial profile setup. */
+    private TextView title;
+    private boolean initialProfileSetup;
 
     /**
      * Initializes the activity, binds UI components, registers the back-navigation
@@ -71,13 +81,20 @@ public class USettingsActivity extends AppCompatActivity {
         setContentView(R.layout.general_settings);
 
         profileRepository = new ProfileRepository();
+        initialProfileSetup = getIntent().getBooleanExtra(INITIAL_PROFILE_SETUP, false);
 
         ImageButton backButton = findViewById(R.id.settings_back_button);
         nameInput = findViewById(R.id.name_input);
         emailInput = findViewById(R.id.email_input);
         phoneInput = findViewById(R.id.phone_input);
         notificationsCheckbox = findViewById(R.id.notifications_checkbox);
+        saveProfileButton = findViewById(R.id.save_profile_button);
         deleteProfileButton = findViewById(R.id.delete_profile_button);
+        deleteProfileButton.setVisibility(initialProfileSetup ? View.GONE : View.VISIBLE);
+        title = findViewById(R.id.settings_title);
+        if(initialProfileSetup){
+            title.setText("Profile Setup");
+        }
 
         backButton.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
         notificationsCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -86,6 +103,7 @@ public class USettingsActivity extends AppCompatActivity {
             }
             updateNotificationsPreference(isChecked);
         });
+        saveProfileButton.setOnClickListener(v -> saveProfileAndFinish());
         deleteProfileButton.setOnClickListener(v -> showDeleteConfirmation());
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -138,7 +156,7 @@ public class USettingsActivity extends AppCompatActivity {
     }
 
     /**
-     * Validates and saves the profile when the user navigates back.
+     * Validates and saves the profile before leaving the screen.
      * <p>
      * Performs the following steps:
      * <ol>
@@ -322,6 +340,7 @@ public class USettingsActivity extends AppCompatActivity {
         setFieldEnabled(emailInput, enabled);
         setFieldEnabled(phoneInput, enabled);
         notificationsCheckbox.setEnabled(enabled);
+        saveProfileButton.setEnabled(enabled);
         deleteProfileButton.setEnabled(enabled);
     }
 

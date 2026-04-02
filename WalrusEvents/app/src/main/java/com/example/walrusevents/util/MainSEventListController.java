@@ -5,7 +5,7 @@ import android.widget.Filter;
 import android.widget.ListView;
 
 import com.example.walrusevents.model.Event;
-import com.example.walrusevents.EventRepository;
+import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.ui.NameEventFragment;
 
 import java.util.ArrayList;
