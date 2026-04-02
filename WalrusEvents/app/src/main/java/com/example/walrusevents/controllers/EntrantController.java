@@ -1,8 +1,8 @@
 package com.example.walrusevents.controllers;
 
-import com.example.walrusevents.ProfileRepository;
-import com.example.walrusevents.WaitlistEntry;
-import com.example.walrusevents.WaitlistRepository;
+import com.example.walrusevents.data.ProfileRepository;
+import com.example.walrusevents.model.WaitlistEntry;
+import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Entrant;
 
 /**

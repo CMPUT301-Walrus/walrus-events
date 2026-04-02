@@ -1,17 +1,13 @@
-package com.example.walrusevents;
+package com.example.walrusevents.data;
 
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.model.Profile;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * ProfileRepository
@@ -24,13 +20,16 @@ import java.util.Map;
 public class ProfileRepository {
 
     private static final String COLLECTION = "profiles";
+    private static final String WAITLIST_COLLECTION = "waitlist";
 
     private final FirebaseFirestore db;
     private final CollectionReference profileCollection;
+    private final CollectionReference waitlistCollection;
 
     public ProfileRepository() {
         db = FirebaseFirestore.getInstance();
         profileCollection = db.collection(COLLECTION);
+        waitlistCollection = db.collection(WAITLIST_COLLECTION);
     }
 
     // ─── Read ─────────────────────────────────────────────────────────────────
@@ -126,16 +125,32 @@ public class ProfileRepository {
 
     /**
      * Completely deletes an entrant's profile document from Firestore.
+     * Also removes any waitlist entries tied to the same device ID.
      * This satisfies the entrant's "right to be forgotten" and admin removal.
      *
      * @param deviceId The ID of the entrant to delete
      * @param callback Reports success or failure
      */
     public void deleteProfile(String deviceId, SaveCallback callback) {
-        profileCollection
-                .document(deviceId)
-                .delete()
-                .addOnSuccessListener(aVoid -> callback.onSuccess())
+        waitlistCollection
+                .whereEqualTo("entrantId", deviceId)
+                .get()
+                .addOnSuccessListener(query -> {
+                    WriteBatch batch = db.batch();
+
+                    for (QueryDocumentSnapshot doc : query) {
+                        batch.delete(doc.getReference());
+                    }
+
+                    batch.delete(profileCollection.document(deviceId));
+
+                    batch.commit()
+                            .addOnSuccessListener(aVoid -> callback.onSuccess())
+                            .addOnFailureListener(e -> {
+                                e.printStackTrace();
+                                callback.onFailure(e.getMessage());
+                            });
+                })
                 .addOnFailureListener(e -> {
                     e.printStackTrace();
                     callback.onFailure(e.getMessage());

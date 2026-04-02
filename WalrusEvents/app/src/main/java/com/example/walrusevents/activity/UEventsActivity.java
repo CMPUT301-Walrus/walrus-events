@@ -16,10 +16,10 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.walrusevents.EventRepository;
+import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.R;
-import com.example.walrusevents.WaitlistEntry;
-import com.example.walrusevents.WaitlistRepository;
+import com.example.walrusevents.model.WaitlistEntry;
+import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.util.UEventHistoryAdapter;
 
 import java.util.ArrayList;

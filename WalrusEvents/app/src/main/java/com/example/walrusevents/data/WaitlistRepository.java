@@ -1,5 +1,6 @@
-package com.example.walrusevents;
+package com.example.walrusevents.data;
 
+import com.example.walrusevents.model.WaitlistEntry;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.QueryDocumentSnapshot;

@@ -113,6 +113,13 @@ public class Profile {
     }
 
     /**
+     * Returns whether the profile has the required fields needed for setup.
+     */
+    public boolean hasRequiredContactInfo() {
+        return hasValue(name) && hasValue(email);
+    }
+
+    /**
      * Wipes all personal data from this profile object.
      * Should be called before deleting the profile from the database.
      */
@@ -120,6 +127,10 @@ public class Profile {
         this.name = null;
         this.email = null;
         this.phone = null;
+    }
+
+    private boolean hasValue(String value) {
+        return value != null && !value.trim().isEmpty();
     }
 
     /**

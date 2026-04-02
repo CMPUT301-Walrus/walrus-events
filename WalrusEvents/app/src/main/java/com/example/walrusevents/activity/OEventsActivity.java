@@ -1,6 +1,5 @@
 package com.example.walrusevents.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -9,7 +8,7 @@ import android.widget.ImageView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.walrusevents.EventRepository;
+import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.controllers.OEventListController;
 import com.example.walrusevents.R;
 import com.example.walrusevents.ui.OEventListView;

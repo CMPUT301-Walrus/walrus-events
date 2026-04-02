@@ -2,7 +2,6 @@ package com.example.walrusevents.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.widget.PopupMenu;
 
@@ -10,17 +9,14 @@ import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
-import com.example.walrusevents.ProfileRepository;
 import com.example.walrusevents.model.Lottery;
 import com.example.walrusevents.controllers.OEventPoolController;
 import com.example.walrusevents.R;
-import com.example.walrusevents.WaitlistEntry;
-import com.example.walrusevents.WaitlistRepository;
+import com.example.walrusevents.model.WaitlistEntry;
+import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.ui.OEventPoolView;
 import com.example.walrusevents.ui.PostLotteryPoolFragment;

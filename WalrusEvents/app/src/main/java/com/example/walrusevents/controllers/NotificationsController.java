@@ -3,9 +3,9 @@ package com.example.walrusevents.controllers;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.example.walrusevents.EventRepository;
-import com.example.walrusevents.WaitlistEntry;
-import com.example.walrusevents.WaitlistRepository;
+import com.example.walrusevents.data.EventRepository;
+import com.example.walrusevents.model.WaitlistEntry;
+import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.data.NotificationRepository;
 import com.example.walrusevents.model.Notification;
 

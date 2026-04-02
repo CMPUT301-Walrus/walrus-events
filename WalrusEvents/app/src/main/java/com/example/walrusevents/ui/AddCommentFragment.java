@@ -16,24 +16,32 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.walrusevents.R;
+import com.example.walrusevents.model.Comment;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class AddCommentFragment extends DialogFragment {
 
     public interface AddCommentListener {
-        void postComment(String bodyText);
+        void addComment(Comment parent);
+        void postComment(Comment parent, String bodyText);
     }
 
+    private Comment parent;
     private AddCommentListener listener;
 
     public void setListener(AddCommentListener listener) {
         this.listener = listener;
     }
 
-    public static AddCommentFragment newInstance(AddCommentListener listener){
+    public static AddCommentFragment newInstance(AddCommentListener listener, Comment parent){
         AddCommentFragment fragment = new AddCommentFragment();
+        fragment.setParent(parent);
         fragment.setListener(listener);
         return fragment;
+    }
+
+    private void setParent(Comment parent) {
+        this.parent = parent;
     }
 
     @Override
@@ -49,7 +57,7 @@ public class AddCommentFragment extends DialogFragment {
 
         postButton.setEnabled(false);
         postButton.setOnClickListener(v -> {
-            listener.postComment(commentBody.getText().toString());
+            listener.postComment(parent, commentBody.getText().toString());
             dismiss();
         });
 
