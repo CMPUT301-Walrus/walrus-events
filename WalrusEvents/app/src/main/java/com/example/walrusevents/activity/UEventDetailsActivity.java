@@ -140,7 +140,7 @@ public class UEventDetailsActivity extends AppCompatActivity
         }
 
         CommentsSectionFragment commentsSectionFragment =
-                CommentsSectionFragment.newInstance(this, eventModel, getSupportFragmentManager());
+                CommentsSectionFragment.newInstance(this, eventModel, null, getSupportFragmentManager());
 
         view.getViewCommentsButton().setOnClickListener(v -> {
             commentsSectionFragment.show(getSupportFragmentManager(), "View Comments");
