@@ -5,6 +5,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ListView;
 
+import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.ui.NameEventFragment;
@@ -39,7 +40,8 @@ public class MainSEventListController implements NameEventFragment.NameEventList
         eventRepository.addEvent(event);
 
         eventList.add(event);
-        eventListAdapter.notifyDataSetChanged();
+        eventListAdapter.applyFilters();
+        //eventListAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -48,6 +50,7 @@ public class MainSEventListController implements NameEventFragment.NameEventList
      */
     public void loadEvents() {
         eventRepository.getAllEvents(this);
+        eventListAdapter.applyFilters();
     }
 
     /**
@@ -59,7 +62,17 @@ public class MainSEventListController implements NameEventFragment.NameEventList
         eventList.clear();
         eventList.addAll(events);
         System.out.printf("%d event(s) loaded", events.size());
-        eventListAdapter.notifyDataSetChanged();
+        //eventListAdapter.applyFilters();
+        //eventListAdapter.notifyDataSetChanged();
+        eventListAdapter.updateData(events);
+    }
+
+    public void setKeyword(String keyword) {
+        eventListAdapter.setKeyword(keyword);
+    }
+
+    public void setOpenSeatsFilter(boolean onlyOpenSeats) {
+        eventListAdapter.setOnlyOpenSeats(onlyOpenSeats);
     }
 
 
@@ -71,6 +84,8 @@ public class MainSEventListController implements NameEventFragment.NameEventList
     public Filter getCapacityFilter(){
         return null;
     }
+
+
 
     /*
     * Easier Query Way to do Filters

@@ -2,9 +2,11 @@ package com.example.walrusevents.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.SearchView;
 
@@ -14,16 +16,20 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.model.Profile;
 import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.Event;
+import com.example.walrusevents.model.WaitlistEntry;
 import com.example.walrusevents.util.DeviceIdManager;
 import com.example.walrusevents.util.MainSEventListController;
 import com.example.walrusevents.util.UserRole;
 import com.example.walrusevents.util.UserRoleManager;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ProfileRepository.SaveCallback {
 
@@ -36,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
     private Button changeUserRoleButton;
 
     private Button scanQRCodeButton;
+
+    private WaitlistRepository waitlistRepo;
 
 
     @Override
@@ -72,7 +80,8 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                eventListController.getSearchFilter().filter(query);
+                //eventListController.getSearchFilter().filter(query);
+                eventListController.setKeyword(query);
                 //eventListController.loadEventsbyKeyword(query);
                 return false;
             }
@@ -80,8 +89,34 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
         searchBar.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+
+                eventListController.setKeyword("");
                 eventListController.loadEvents();
                 return false;
+            }
+        });
+
+        /*
+        * Capacity and Availability Filters
+         */
+        CheckBox capacitySortCheckbox=findViewById(R.id.capacity_sort_button);
+        CheckBox availabilitySortCheckbox=findViewById(R.id.availability_sort_button);
+
+        // Issue : once you filter by capacity & keyword, it does not revert back
+
+
+
+        capacitySortCheckbox.setOnCheckedChangeListener((buttonView, isChecked) ->{
+            if(isChecked){
+                Log.d("checkbox","filter by capacity");
+                eventListController.setOpenSeatsFilter(true);
+
+            }
+            else{
+                Log.d("checkbox","filter");
+                eventListController.setOpenSeatsFilter(false);
+                eventListController.loadEvents();
+
             }
         });
 
@@ -228,4 +263,5 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
     public void onFailure(String error) {
 
     }
+
 }

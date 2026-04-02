@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import android.graphics.Bitmap;
+
+import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.util.QRGenerator;
 
 /**
@@ -28,7 +30,9 @@ public class Event implements Serializable {
     private Bitmap qrCodeImage;
     private boolean useGeolocation;
     private ArrayList<Comment> comments;
-    private int openAvailability;
+    private int numParticipants;
+
+    private WaitlistRepository waitlistRepository;
 
     /**
      * Constructor for no args
@@ -50,6 +54,7 @@ public class Event implements Serializable {
         entrantCapacity = 0;
         applicantCapacity = 0;
         comments = new ArrayList<>();
+        numParticipants=1; //TEMP num Participants
     }
 
     /**
@@ -172,6 +177,19 @@ public class Event implements Serializable {
         }
         this.applicantCapacity = applicantCapacity;
         return true;
+    }
+
+    public void setNumParticipants(int numOpenSeats){
+
+        this.numParticipants=numOpenSeats;
+    }
+
+    public int getNumParticipants(){
+        return numParticipants;
+    }
+
+    public boolean hasOpenSeats(){
+        return numParticipants<entrantCapacity;
     }
 
     /**
