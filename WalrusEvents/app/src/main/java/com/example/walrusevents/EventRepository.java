@@ -19,10 +19,23 @@ public class EventRepository {
 
     private CollectionReference eventsCollection;   // Reference to the events collection
 
+    private DocumentSnapshot lastFetchedDocument;
+
+    private int batchSize;
+
     // Constructor: connects to Firestore
     public EventRepository() {
         db = FirebaseFirestore.getInstance();
         eventsCollection = db.collection("events");
+        batchSize = 2;
+    }
+
+    /**
+     * Set the batch size limiting the number of events that can be retrieved at time from the database
+     * @param batchSize Batch size when getting events from the database
+     */
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
     }
 
     /**
@@ -102,17 +115,49 @@ public class EventRepository {
     }
 
     /**
-     * Retrieve all events in the database
+     * Initiate retrieval of all events in the database
      * @param callback Callback to pass the events to (Firestore is asynchronous)
      */
-    public void getAllEvents(EventListCallback callback) {
-
+    public void initiateGetAllEvents(EventListCallback callback) {
         eventsCollection
+                .limit(batchSize)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    ArrayList<Event> events = new ArrayList<>();
+
+                    lastFetchedDocument = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+
+                        Event event = doc.toObject(Event.class);
+
+                        events.add(event);
+                    }
+
+                    callback.onEventsLoaded(events);
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                });
+    }
+
+    /**
+     * Get the next batch of events from the database, starting from the last fetched document
+     * @param callback Callback to pass the events to
+     */
+    public void getNextEventBatch(EventListCallback callback) {
+        eventsCollection
+                .limit(batchSize)
+                .startAfter(lastFetchedDocument)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
 
+                    if (querySnapshot == null || querySnapshot.isEmpty())
+                    {
+                        return;
+                    }
                     ArrayList<Event> events = new ArrayList<>();
 
+                    lastFetchedDocument = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
 
                         Event event = doc.toObject(Event.class);
