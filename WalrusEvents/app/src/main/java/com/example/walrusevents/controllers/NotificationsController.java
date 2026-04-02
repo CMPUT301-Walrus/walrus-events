@@ -7,8 +7,12 @@ import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.model.WaitlistEntry;
 import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.data.NotificationRepository;
+import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.model.Notification;
 
+import org.checkerframework.common.returnsreceiver.qual.This;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,75 +21,65 @@ import java.util.List;
  * EventRepository, WaitlistRepository, and NotificationRepository.
  */
 public class NotificationsController {
-    private final EventRepository eventRepo;
     private final NotificationRepository notifRepo;
     private final WaitlistRepository waitlistRepo;
+    private final ProfileRepository profileRepo;
 
     public NotificationsController() {
-        this.eventRepo = new EventRepository();
         this.notifRepo = new NotificationRepository();
         this.waitlistRepo = new WaitlistRepository();
+        this.profileRepo = new ProfileRepository();
     }
 
     /**
-     * Checks if there is a notification for the user for the particular event
+     * Organizer can send a message, this function finds all eligible users
+     * and puts the message into their inbox
      */
-    public void checkForEventNotification(String userId, String eventId, NotificationCallback callback) {
-        // 1. Get user status for this specific event
-        waitlistRepo.getEntry(eventId, userId, entry -> {
-            if (entry != null) {
-                String targetGroup = mapStatusToGroup(entry.getStatus());
+    public void sendNotifications(Context context, String eventId, String title, String message, String targetGroup) {
+        Notification notification = new Notification(title, message, eventId, targetGroup);
 
-                // 2. Look for messages for this event/status
-                notifRepo.getNotificationsForEvent(eventId, targetGroup, result -> {
-                    if (result != null && !result.isEmpty()) {
-                        // Send back the most recent notification
-                        List<Notification> notifs = result.toObjects(Notification.class);
-                        callback.onNotificationsLoaded(notifs);
-                    }
-                });
+        // Find all users in this event who match the target group
+        waitlistRepo.getAllEntries(eventId, entries -> {
+            final int[] processedCount = {0};
+            for (WaitlistEntry entry : entries) {
+                String userGroup = mapStatusToGroup(entry.getStatus());
+
+                // If the message is for 'all' or matches their specific status
+                if (targetGroup.equals("all") || targetGroup.equals(userGroup)) {
+                    profileRepo.getProfile(entry.getEntrantId(), profile -> {
+                        if (profile != null && profile.hasNotificationsEnabled()) {
+                            // Only send if the user has opted-in
+                            notifRepo.sendNotificationToUser(entry.getEntrantId(), notification);
+                            processedCount[0]++;
+                        }
+                    });
+                }
             }
+            Toast.makeText(context, "Sent to " + targetGroup +  " users", Toast.LENGTH_SHORT).show();
         });
     }
+
+    /**
+     * Called by the Fragment to load the Universal Inbox
+     */
+    public void fetchUniversalInbox(String userId, NotificationCallback callback) {
+        notifRepo.getNotificationsForUser(userId, result -> {
+            List<Notification> inbox = result.toObjects(Notification.class);
+            callback.onNotificationsLoaded(inbox);
+        });
+    }
+
+    public interface NotificationCallback {
+        void onNotificationsLoaded(List<Notification> notifications);
+    }
+
     private String mapStatusToGroup(WaitlistEntry.Status status) {
         if (status == null) return "all";
         switch (status) {
             case INVITED:
-            case ACCEPTED:
-                return "selected";
-            case PENDING:
-                return "waiting_list";
-            default:
-                return "all";
+            case ACCEPTED: return "selected";
+            case PENDING: return "waiting_list";
+            default: return "all";
         }
-    }
-
-    /**
-     * This method is used when the organizer wants to send notifications to entrants
-     * @param eventId
-     * @param title
-     * @param message
-     * @param targetGroup Must be "waiting_list", "selected", or "all"
-     */
-    public void sendBroadcast(Context context, String eventId, String title, String message, String targetGroup) {
-        // Create the notification
-        Notification notification = new Notification(title, message, eventId, targetGroup);
-
-        // Save to the repository
-        notifRepo.sendNotification(notification, task -> {
-            if (task.isSuccessful()) {
-                // Optional: You could add a callback here to tell the UI it sent successfully
-                Toast.makeText(context, "Notification has been sent to " + targetGroup, Toast.LENGTH_SHORT);
-            } else {
-                Toast.makeText(context, "Notification failed to send :(", Toast.LENGTH_SHORT);
-            }
-        });
-    }
-
-    /**
-     * Interface to communicate results back to the Fragment/UI
-     */
-    public interface NotificationCallback {
-        void onNotificationsLoaded(List<Notification> notifications);
     }
 }

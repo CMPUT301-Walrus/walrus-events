@@ -120,6 +120,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
+        <ImageButton
+            android:id="@+id/inbox_button"
+            android:layout_width="53dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:contentDescription="Inbox Button Image"
+            app:srcCompat="@drawable/inbox_image" />
+
         <Button
             android:id="@+id/settings_button"
             android:layout_width="wrap_content"
@@ -147,5 +155,13 @@
             android:text="My Events"
             android:textColor="@color/black" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send"
+        tools:layout_editor_absoluteX="9dp"
+        tools:layout_editor_absoluteY="59dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
