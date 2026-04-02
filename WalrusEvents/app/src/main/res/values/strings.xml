@@ -14,6 +14,7 @@
     <string name="settings_notifications_opt_out">Opt out of receiving notifications</string>
     <string name="settings_delete_profile">Delete Profile</string>
     <string name="settings_loading_error">Unable to load your profile.</string>
+    <string name="settings_save_changes">Save Changes</string>
     <string name="settings_save_success">Profile Updated.</string>
     <string name="settings_save_error">Unable to save profile.</string>
     <string name="settings_notifications_error">Unable to update notification preference.</string>
@@ -26,4 +27,5 @@
     <string name="settings_delete_cancel_action">Cancel</string>
     <string name="settings_delete_success">Profile deleted.</string>
     <string name="settings_delete_error">Unable to delete profile.</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>
