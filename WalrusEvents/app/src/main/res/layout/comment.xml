@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:paddingVertical="10dp">
 
     <TextView
         android:id="@+id/dislikes_counter"
@@ -106,14 +107,28 @@
         app:layout_constraintStart_toEndOf="@+id/comment_like_button"
         app:layout_constraintTop_toTopOf="@+id/comment_like_button" />
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/replies_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:nestedScrollingEnabled="true"
+        android:layout_marginStart="-15dp"
+        android:nestedScrollingEnabled="false"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/comment_profile_pic"
         app:layout_constraintTop_toBottomOf="@+id/dislike_button"
         app:layout_constraintVertical_bias="0.0" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="20dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toBottomOf="@+id/replies_view"
+        app:layout_constraintEnd_toStartOf="@+id/replies_view"
+        app:layout_constraintHorizontal_bias="0.68"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/comment_profile_pic" />
 </androidx.constraintlayout.widget.ConstraintLayout>
