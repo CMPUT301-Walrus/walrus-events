@@ -59,6 +59,7 @@ public class ProfileRepository {
                     profile.setPhone(doc.getString("phone"));
                     Boolean notif = doc.getBoolean("notificationsEnabled");
                     profile.setNotificationsEnabled(notif != null ? notif : true);
+                    // TODO: notifications
 
                     Entrant entrant = new Entrant(profile);
                     callback.onEntrantLoaded(entrant);
