@@ -1,6 +1,5 @@
 package com.example.walrusevents.ui;
 
-import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.walrusevents.R;
-import com.example.walrusevents.WaitlistEntry;
 
 public class AcceptInvitationFragment extends DialogFragment {
     public interface AcceptInvitationListener {

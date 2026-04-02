@@ -1,22 +1,13 @@
 package com.example.walrusevents.controllers;
 
 import android.app.Activity;
-import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 
-import com.example.walrusevents.ProfileRepository;
-import com.example.walrusevents.R;
-import com.example.walrusevents.WaitlistEntry;
-import com.example.walrusevents.WaitlistRepository;
-import com.example.walrusevents.model.Entrant;
-import com.example.walrusevents.util.EntrantArrayAdapter;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
+import com.example.walrusevents.data.ProfileRepository;
+import com.example.walrusevents.data.WaitlistRepository;
 
 public class OEventPoolController {
     private WaitlistRepository waitlistRepository;

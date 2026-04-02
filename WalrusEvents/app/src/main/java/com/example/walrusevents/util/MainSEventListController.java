@@ -5,8 +5,7 @@ import android.widget.Filter;
 import android.widget.ListView;
 
 import com.example.walrusevents.model.Event;
-import com.example.walrusevents.EventRepository;
-import com.example.walrusevents.OEventArrayAdapter;
+import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.ui.NameEventFragment;
 
 import java.util.ArrayList;
@@ -15,6 +14,7 @@ public class MainSEventListController implements NameEventFragment.NameEventList
     private ArrayList<Event> eventList;
     private MainSEventArrayAdapter eventListAdapter;
     private EventRepository eventRepository;
+    private Context context;
 
     /**
      * Constructor for the Main Screen Event List
@@ -28,6 +28,7 @@ public class MainSEventListController implements NameEventFragment.NameEventList
         eventListAdapter = new MainSEventArrayAdapter(context, eventList);
         eventListView.setAdapter(eventListAdapter);
         this.eventRepository = eventRepository;
+        this.context = context;
     }
 
     /**
@@ -47,7 +48,8 @@ public class MainSEventListController implements NameEventFragment.NameEventList
      *
      */
     public void loadEvents() {
-        eventRepository.getAllEvents(this);
+        eventList.clear();
+        eventRepository.initiateGetAllEvents(this);
     }
 
     /**
@@ -56,10 +58,12 @@ public class MainSEventListController implements NameEventFragment.NameEventList
      */
     @Override
     public void onEventsLoaded(ArrayList<Event> events) {
-        eventList.clear();
+        if (events == null || events.isEmpty()) {
+            return;
+        }
         eventList.addAll(events);
-        System.out.printf("%d event(s) loaded", events.size());
         eventListAdapter.notifyDataSetChanged();
+        eventRepository.getNextEventBatch(this);
     }
 
     public Filter getFilter(){

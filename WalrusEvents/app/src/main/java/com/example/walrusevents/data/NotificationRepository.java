@@ -19,29 +19,27 @@ public class NotificationRepository {
         this.db = FirebaseFirestore.getInstance();
     }
 
-    public void sendNotification(Notification notification, OnCompleteListener<DocumentReference> listener) {
-        db.collection(collectionPath)
-                .add(notification)
-                .addOnCompleteListener(listener);
+    /**
+     * Sends a notification to specified user
+     * @param userId
+     * @param notification
+     */
+    public void sendNotificationToUser(String userId, Notification notification) {
+        db.collection("profiles")
+                .document(userId)
+                .collection(collectionPath)
+                .add(notification);
     }
 
-    // This is what the "Inbox" will call while syncing after refresh
-    public void getNotificationsForEvent(String eventId, String userStatus, OnSuccessListener<QuerySnapshot> listener) {
-        db.collection(collectionPath)
-                .whereEqualTo("eventId", eventId)
-                .whereIn("targetGroup", Arrays.asList("all", userStatus))
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .get()
-                .addOnSuccessListener(listener);
-    }
-
-    public void getNotificationsForUser(List<String> eventIds, OnSuccessListener<QuerySnapshot> listener) {
-        if (eventIds == null || eventIds.isEmpty()) return;
-
-        // Fetch notifications where the eventId is in the user's list
-        // and the targetGroup is "all" (for everyone in those events)
-        db.collection(collectionPath)
-                .whereIn("eventId", eventIds)
+    /**
+     * Gets all notifications for specified user
+     * @param userId
+     * @param listener
+     */
+    public void getNotificationsForUser(String userId, OnSuccessListener<QuerySnapshot> listener) {
+        db.collection("profiles")
+                .document(userId)
+                .collection(collectionPath)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(listener);

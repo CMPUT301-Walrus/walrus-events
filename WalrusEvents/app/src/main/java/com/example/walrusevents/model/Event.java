@@ -27,7 +27,6 @@ public class Event implements Serializable {
     private Image thumbnail;
     private Bitmap qrCodeImage;
     private boolean useGeolocation;
-    private ArrayList<Comment> comments;
 
     /**
      * Constructor for no args
@@ -48,7 +47,6 @@ public class Event implements Serializable {
         description = "";
         entrantCapacity = 0;
         applicantCapacity = 0;
-        comments = new ArrayList<>();
     }
 
     /**
@@ -240,25 +238,6 @@ public class Event implements Serializable {
         this.useGeolocation = useGeolocation;
     }
 
-    public ArrayList<Comment> getComments() {
-        if (comments == null) {
-            comments = new ArrayList<>();
-        }
-        return comments;
-    }
-
-    public void setComments(ArrayList<Comment> comments) {
-        this.comments = comments;
-    }
-
-    public void addComment(Comment parent, Comment comment) {
-        if (parent == null) {
-            comments.add(comment);
-        }
-        else {
-            parent.addReply(comment);
-        }
-    }
     public boolean isInRegistration() {
         if (endRegistrationTime == null || startRegistrationTime == null
                 || endRegistrationTime.isBlank() || startRegistrationTime.isBlank()) {

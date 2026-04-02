@@ -1,4 +1,4 @@
-package com.example.walrusevents;
+package com.example.walrusevents.util;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.walrusevents.R;
 import com.example.walrusevents.model.Event;
 
 import java.util.ArrayList;
