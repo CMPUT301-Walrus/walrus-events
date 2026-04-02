@@ -37,23 +37,31 @@ public class NotificationInboxFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // 1. Initialize the controller here
         controller = new NotificationsController();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // 2. Inflate the layout
+        // Inflate layout
         View view = inflater.inflate(R.layout.fragment_notification_inbox, container, false);
 
-        // 3. Bind UI components
+        // Bind the Back Button
+        View backButton = view.findViewById(R.id.back_button);
+        backButton.setOnClickListener(v -> {
+            if (getActivity() != null) {
+                // This returns to the previous state (MainActivity's event list)
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
+
+        // Get both inbox and empty views
         recyclerView = view.findViewById(R.id.notification_inbox);
         emptyStateText = view.findViewById(R.id.empty_inbox);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // 4. Load the data using the deviceId
+        // Load the inbox
         loadInbox();
 
         return view;

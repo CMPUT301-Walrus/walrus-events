@@ -7,6 +7,7 @@ import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.model.WaitlistEntry;
 import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.data.NotificationRepository;
+import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.model.Notification;
 
 import org.checkerframework.common.returnsreceiver.qual.This;
@@ -22,32 +23,39 @@ import java.util.List;
 public class NotificationsController {
     private final NotificationRepository notifRepo;
     private final WaitlistRepository waitlistRepo;
+    private final ProfileRepository profileRepo;
 
     public NotificationsController() {
         this.notifRepo = new NotificationRepository();
         this.waitlistRepo = new WaitlistRepository();
+        this.profileRepo = new ProfileRepository();
     }
 
     /**
-     * Organizer sends a message. The controller finds all eligible users
-     * and "dumps" the notification into their individual inboxes.
+     * Organizer can send a message, this function finds all eligible users
+     * and puts the message into their inbox
      */
     public void sendNotifications(Context context, String eventId, String title, String message, String targetGroup) {
         Notification notification = new Notification(title, message, eventId, targetGroup);
 
-        // 1. Find all users in this event who match the target group
+        // Find all users in this event who match the target group
         waitlistRepo.getAllEntries(eventId, entries -> {
-            int count = 0;
+            final int[] processedCount = {0};
             for (WaitlistEntry entry : entries) {
                 String userGroup = mapStatusToGroup(entry.getStatus());
 
                 // If the message is for 'all' or matches their specific status
                 if (targetGroup.equals("all") || targetGroup.equals(userGroup)) {
-                    notifRepo.sendNotificationToUser(entry.getEntrantId(), notification);
-                    count++;
+                    profileRepo.getProfile(entry.getEntrantId(), profile -> {
+                        if (profile != null && profile.hasNotificationsEnabled()) {
+                            // Only send if the user has opted-in
+                            notifRepo.sendNotificationToUser(entry.getEntrantId(), notification);
+                            processedCount[0]++;
+                        }
+                    });
                 }
             }
-            Toast.makeText(context, "Sent to " + count + " users", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Sent to " + targetGroup +  " users", Toast.LENGTH_SHORT).show();
         });
     }
 
