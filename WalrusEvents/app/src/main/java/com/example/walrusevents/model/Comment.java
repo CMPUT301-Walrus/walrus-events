@@ -4,21 +4,40 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Comment implements Serializable {
+    private String commentId;
+    private String parentId;
     private String entrantId;
     private String body;
     private int likes;
     private int dislikes;
-    private ArrayList<Comment> replies;
 
     public Comment() {
 
     }
-    public Comment(String entrantId, String body, int likes, int dislikes) {
+    public Comment(String parentId, String entrantId, String body, int likes, int dislikes) {
+        this.parentId = parentId;
         this.entrantId = entrantId;
         this.body = body;
         this.likes = likes;
         this.dislikes = dislikes;
     }
+
+    public String getCommentId() {
+        return commentId;
+    }
+
+    public void setCommentId(String commentId) {
+        this.commentId = commentId;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
     public String getEntrantId() {
         return entrantId;
     }
@@ -57,23 +76,5 @@ public class Comment implements Serializable {
 
     public void addDislike() {
         dislikes += 1;
-    }
-
-    public ArrayList<Comment> getReplies() {
-        if (replies == null) {
-            replies = new ArrayList<>();
-        }
-        return replies;
-    }
-
-    public void setReplies(ArrayList<Comment> replies) {
-        this.replies = replies;
-    }
-
-    public void addReply(Comment reply) {
-        if (replies == null) {
-            replies = new ArrayList<>();
-        }
-        replies.add(reply);
     }
 }
