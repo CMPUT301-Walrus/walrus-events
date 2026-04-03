@@ -74,15 +74,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ListView
-        android:id="@+id/org_entrant_list_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_toolbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/waiting_list_fragment" />
-
     <TextView
         android:id="@+id/textView9"
         android:layout_width="100dp"
@@ -101,9 +92,10 @@
         android:id="@+id/waiting_list_fragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/org_entrant_list_view"
-        app:layout_constraintTop_toBottomOf="@+id/org_entrant_count"
-        tools:layout_editor_absoluteX="110dp" />
+        app:layout_constraintBottom_toTopOf="@+id/bottom_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/org_entrant_count" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottom_toolbar"
