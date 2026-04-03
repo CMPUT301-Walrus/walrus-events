@@ -16,6 +16,7 @@ import com.example.walrusevents.model.Event;
 import com.example.walrusevents.R;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -30,14 +31,18 @@ public class MainSEventArrayAdapter extends ArrayAdapter<Event> implements Filte
     KeywordSearchFilter searchFilter;
 
     private ArrayList<Event> filteredList;
+    private LocalDateTime selectedStartTime=null;
+    private LocalDateTime selectedEndTime=null;
+    private String keyword="";
+    private boolean onlyOpenSeats=false;
     public MainSEventArrayAdapter(@NonNull Context context, ArrayList<Event> eventList){
         super(context, 0, eventList);
         this.eventList = eventList;
         this.context = context;
-        this.filteredList=eventList;
+        this.filteredList=new ArrayList<Event>();
     }
 
-    @NonNull
+    //@NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View view = convertView;
@@ -94,4 +99,77 @@ public class MainSEventArrayAdapter extends ArrayAdapter<Event> implements Filte
         if(searchFilter==null) searchFilter = new KeywordSearchFilter(filteredList, this);
         return searchFilter;
     }
+
+    public ArrayList<Event> getFilteredList(){
+        return filteredList;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+        applyFilters();
+    }
+
+    public void setOnlyOpenSeats(boolean onlyOpenSeats) {
+        this.onlyOpenSeats = onlyOpenSeats;
+        applyFilters();
+    }
+
+    public void updateData(ArrayList<Event> newEvents) {
+        eventList.clear();
+        eventList.addAll(newEvents);
+        applyFilters();
+    }
+
+    public void setSelectedRange(LocalDateTime start, LocalDateTime end){
+        this.selectedStartTime=start;
+        this.selectedEndTime=end;
+    }
+
+    /*
+    * Apply the set of filters onto the eventlist : keyword, capacity, availability
+     */
+    public void applyFilters(){
+        filteredList.clear();
+
+        boolean matchesKeyword = true;
+        boolean matchesSeats = true;
+        boolean matchesAvailability=true;
+
+        for(Event event : eventList){
+            // Keyword filter
+            if (keyword != null && !keyword.isEmpty()) {
+                matchesKeyword =
+                        event.getTitle().toLowerCase().contains(keyword.toLowerCase()) ||
+                                event.getDescription().toLowerCase().contains(keyword.toLowerCase());
+            }
+
+            // Capacity filter
+            if (onlyOpenSeats) {
+                matchesSeats = event.hasOpenSeats();
+            }
+
+            //Availability Filter
+            if(selectedStartTime!=null && selectedEndTime !=null){
+                if(event.getStartRegistrationTime()!=null && event.getEndRegistrationTime()!=null){
+                    LocalDateTime eventStartTime = LocalDateTime.parse(event.getStartRegistrationTime());
+                    LocalDateTime eventEndTime= LocalDateTime.parse(event.getEndRegistrationTime());
+
+                    matchesAvailability =
+                            (selectedStartTime.isBefore(eventStartTime) || selectedStartTime.isEqual(eventStartTime)) &&
+                                    (selectedEndTime.isAfter(eventEndTime) || selectedEndTime.isEqual(eventEndTime));
+
+                }else{
+                    matchesAvailability=false;
+                }
+            }
+
+            if (matchesKeyword && matchesSeats && matchesAvailability) {
+                filteredList.add(event);
+            }
+        }
+        clear();
+        addAll(filteredList);
+        notifyDataSetChanged();
+    }
+
 }
