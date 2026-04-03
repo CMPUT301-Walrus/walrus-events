@@ -206,7 +206,17 @@ public class EventRepository {
 
         return docRef.getId();
     }
-
+    /**
+     * Sets a comment in the database
+     * @param comment The comment to be set/overwritten
+     */
+    public void setComment(String eventId, Comment comment) {
+        DocumentReference docRef = eventsCollection
+                .document(eventId)
+                .collection("comments")
+                .document(comment.getCommentId());
+        docRef.set(comment, SetOptions.merge());
+    }
     /**
      * Delete an comment
      * @param eventId ID of the event

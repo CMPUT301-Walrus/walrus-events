@@ -24,6 +24,7 @@ public class AddCommentFragment extends DialogFragment {
     public interface AddCommentListener {
         void addComment(Comment parent);
         void postComment(Comment parent, String bodyText);
+        void updateComment(Comment comment);
     }
 
     private Comment parent;
