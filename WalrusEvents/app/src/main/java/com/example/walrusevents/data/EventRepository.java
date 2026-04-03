@@ -2,6 +2,7 @@ package com.example.walrusevents.data;
 
 import com.example.walrusevents.model.Comment;
 import com.example.walrusevents.model.Event;
+import com.google.firebase.firestore.AggregateSource;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.CollectionReference;
@@ -205,7 +206,17 @@ public class EventRepository {
 
         return docRef.getId();
     }
-
+    /**
+     * Sets a comment in the database
+     * @param comment The comment to be set/overwritten
+     */
+    public void setComment(String eventId, Comment comment) {
+        DocumentReference docRef = eventsCollection
+                .document(eventId)
+                .collection("comments")
+                .document(comment.getCommentId());
+        docRef.set(comment, SetOptions.merge());
+    }
     /**
      * Delete an comment
      * @param eventId ID of the event
@@ -280,6 +291,26 @@ public class EventRepository {
                     e.printStackTrace();
                 });
     }
+
+    public void getReplyCount(String eventId, String commentId, ReplyCountCallback callback) {
+        eventsCollection
+                .document(eventId)
+                .collection("comments")
+                .whereEqualTo("parentId", commentId)
+                .count()
+                .get(AggregateSource.SERVER)
+                .addOnSuccessListener(aggregateQuerySnapshot -> {
+                    if (aggregateQuerySnapshot == null)
+                    {
+                        return;
+                    }
+
+                    callback.onRepliesCounted(aggregateQuerySnapshot.getCount());
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                });
+    }
     /**
      * Callback interface for single event
      * method made to get the event that we want from the Event class
@@ -297,5 +328,9 @@ public class EventRepository {
 
     public interface CommentListCallback {
         void onCommentsLoaded(ArrayList<Comment> comments);
+    }
+
+    public interface ReplyCountCallback {
+        void onRepliesCounted(long count);
     }
 }

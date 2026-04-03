@@ -12,6 +12,8 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.R;
@@ -31,8 +33,9 @@ public class CommentsSectionFragment extends BottomSheetDialogFragment
     private FragmentManager fragmentManager;
     private EventRepository eventRepository;
     private String parentId;
+    private RecyclerView.LayoutManager layoutManager;
 
-    public static CommentsSectionFragment newInstance(Activity context, Event eventModel, String parentId, FragmentManager fragmentManager){
+    public static CommentsSectionFragment newInstance(Event eventModel, String parentId, FragmentManager fragmentManager){
         CommentsSectionFragment fragment = new CommentsSectionFragment();
         fragment.setEventModel(eventModel);
         fragment.setFragmentManager(fragmentManager);
@@ -58,7 +61,7 @@ public class CommentsSectionFragment extends BottomSheetDialogFragment
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        ListView commentsView = view.findViewById(R.id.comments_section_view);
+        RecyclerView commentsView = view.findViewById(R.id.comments_section_view);
         Button addCommentButton = view.findViewById(R.id.add_comment_button);
         ImageView closeButton = view.findViewById(R.id.comments_close_button);
         eventRepository = new EventRepository();
@@ -66,6 +69,7 @@ public class CommentsSectionFragment extends BottomSheetDialogFragment
         commentsList = new ArrayList<>();
         commentsAdapter = new CommentsAdapter(getActivity(), commentsList, eventModel.getEventId(), this);
         commentsView.setAdapter(commentsAdapter);
+        commentsView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         eventRepository.initiateGetCommentsFromEvent(eventModel.getEventId(), parentId, this);
 
@@ -95,16 +99,21 @@ public class CommentsSectionFragment extends BottomSheetDialogFragment
     @Override
     public void postComment(Comment parent, String bodyText) {
         if (parent != null) {
-            Comment comment = new Comment(parent.getCommentId(), DeviceIdManager.getOrCreate(getActivity()), bodyText, 0, 0);
+            Comment comment = new Comment(parent.getCommentId(), DeviceIdManager.getOrCreate(getActivity()), bodyText, new ArrayList<>());
             eventRepository.addComment(eventModel.getEventId(), comment);
             commentsList.add(comment);
         }
         else {
-            Comment comment = new Comment(null, DeviceIdManager.getOrCreate(getActivity()), bodyText, 0, 0);
+            Comment comment = new Comment(null, DeviceIdManager.getOrCreate(getActivity()), bodyText, new ArrayList<>());
             eventRepository.addComment(eventModel.getEventId(), comment);
         }
 
         commentsAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void updateComment(Comment comment) {
+        eventRepository.setComment(eventModel.getEventId(), comment);
     }
 
     @Override
