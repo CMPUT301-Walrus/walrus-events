@@ -53,7 +53,7 @@ public class MainSEventListController implements NameEventFragment.NameEventList
     public void loadEvents() {
         eventList.clear();
         eventRepository.initiateGetAllEvents(this);
-        eventRepository.getAllEvents(this);
+       // eventRepository.getAllEvents(this);
         eventListAdapter.applyFilters();
     }
 

@@ -187,7 +187,12 @@ public class Event implements Serializable {
     }
 
     public boolean hasOpenSeats(){
-        return numParticipants<entrantCapacity;
+        if(entrantCapacity!=0){
+            return numParticipants<entrantCapacity;
+        }else{
+            //waitlist has no limit
+            return true;
+        }
     }
 
     /**

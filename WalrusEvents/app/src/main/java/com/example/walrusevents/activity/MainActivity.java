@@ -77,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
 
         /*
          * Search Bar
-         *
          */
         SearchView searchBar = findViewById(R.id.search_bar);
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -111,21 +110,24 @@ public class MainActivity extends AppCompatActivity {
         CheckBox capacitySortCheckbox=findViewById(R.id.capacity_sort_button);
         CheckBox availabilitySortCheckbox=findViewById(R.id.availability_sort_button);
 
-        // Issue : once you filter by capacity & keyword, it does not revert back
-
-
-
         capacitySortCheckbox.setOnCheckedChangeListener((buttonView, isChecked) ->{
             if(isChecked){
-                Log.d("checkbox","filter by capacity");
                 eventListController.setOpenSeatsFilter(true);
 
             }
             else{
-                Log.d("checkbox","filter");
                 eventListController.setOpenSeatsFilter(false);
                 eventListController.loadEvents();
 
+            }
+        });
+
+        availabilitySortCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                //GO TO SCHEDULE FRAGMENT
+
+            }else{
+                //revert?
             }
         });
 
