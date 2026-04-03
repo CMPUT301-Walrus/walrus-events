@@ -27,6 +27,8 @@ public class Event implements Serializable {
     private Image thumbnail;
     private Bitmap qrCodeImage;
     private boolean useGeolocation;
+    private ArrayList<String> owners;
+    private boolean isPrivate;
 
     /**
      * Constructor for no args
@@ -187,9 +189,27 @@ public class Event implements Serializable {
         this.poster = poster;
     }
 
+    public ArrayList<String> getOwners() {
+        return owners;
+    }
+
+    public void setOwners(ArrayList<String> owners) {
+        this.owners = owners;
+    }
+
+    public boolean getIsPrivate() {
+        return isPrivate;
+    }
+
+    public void setIsPrivate(boolean isPrivate) {
+        this.isPrivate = isPrivate;
+    }
+
     /**
      * Calls QR Code generators to make a unique QR code for event
      */
+
+
     public void generateEventQRCode() {
         this.qrCodeImage = QRGenerator.generateQRCode("walrusevents://event/" + this.eventId);
     }
