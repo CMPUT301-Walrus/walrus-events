@@ -10,7 +10,7 @@ import com.example.walrusevents.ui.NameEventFragment;
 
 import java.util.ArrayList;
 
-public class MainSEventListController implements NameEventFragment.NameEventListener, EventRepository.EventListCallback {
+public class MainSEventListController implements EventRepository.EventListCallback {
     private ArrayList<Event> eventList;
     private MainSEventArrayAdapter eventListAdapter;
     private EventRepository eventRepository;
@@ -29,18 +29,6 @@ public class MainSEventListController implements NameEventFragment.NameEventList
         eventListView.setAdapter(eventListAdapter);
         this.eventRepository = eventRepository;
         this.context = context;
-    }
-
-    /**
-     * Creates an event with the specified title and adds it to eventList and the database
-     * @param title The title to be given to the new event
-     */
-    public void addEvent(String title) {
-        Event event = new Event(title, "");
-        eventRepository.addEvent(event);
-
-        eventList.add(event);
-        eventListAdapter.notifyDataSetChanged();
     }
 
     /**

@@ -96,12 +96,12 @@ public class EventRepository {
 
     /**
      * Gets the all the events made by the specified user
-     * @param id The ID of the user
+     * @param ownerId The ID of the user
      * @param callback Callback to pass the events to (Firestore is asynchronous)
      */
-    public void getEventsFromUser(String id, EventListCallback callback) {
+    public void getEventsFromUser(String ownerId, EventListCallback callback) {
         eventsCollection
-                .whereEqualTo("ownerId", id)
+                .whereArrayContains("owners", ownerId)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     ArrayList<Event> events = new ArrayList<>();
@@ -109,8 +109,6 @@ public class EventRepository {
 
                         Event event = doc.toObject(Event.class);
                         events.add(event);
-                        event.setOwnerId(doc.get("ownerId").toString());
-                        System.out.println(event.getOwnerId());
                     }
                     callback.onEventsLoaded(events);
                 })
