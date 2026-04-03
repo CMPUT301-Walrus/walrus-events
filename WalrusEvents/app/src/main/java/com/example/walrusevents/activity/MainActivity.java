@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 //GO TO SCHEDULE FRAGMENT
                 //TODO: setup fragment and get the ModalDateRangePicker
 
+
             }else{
                 //revert?
             }
