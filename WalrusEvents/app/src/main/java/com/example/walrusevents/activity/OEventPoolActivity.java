@@ -111,7 +111,6 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
      */
     public void refresh() {
         if (eventModel.isInConfirmation()) {
-            System.out.println("AAAAAA");
             postLotteryFragment = new PostLotteryPoolFragment(eventModel);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.waiting_list_fragment, postLotteryFragment)
@@ -127,6 +126,13 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
         }
     }
 
+    /**
+     * Sends an invite notification to the specified entrant. Can only invite if the event is private
+     * @param entrantId ID of the entrant to be invited
+     */
+    public void sendInvite(String entrantId) {
+        //TODO: add functionality
+    }
     @Override
     public void onEntriesLoaded(List<WaitlistEntry> entries) {
         Lottery lottery = new Lottery();

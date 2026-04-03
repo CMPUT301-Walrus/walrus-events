@@ -12,7 +12,7 @@ import com.example.walrusevents.ui.NameEventFragment;
 
 import java.util.ArrayList;
 
-public class MainSEventListController implements NameEventFragment.NameEventListener, EventRepository.EventListCallback {
+public class MainSEventListController implements EventRepository.EventListCallback {
     private ArrayList<Event> eventList;
     private MainSEventArrayAdapter eventListAdapter;
     private EventRepository eventRepository;

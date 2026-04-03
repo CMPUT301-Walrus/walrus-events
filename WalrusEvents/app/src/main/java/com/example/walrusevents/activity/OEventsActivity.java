@@ -12,6 +12,7 @@ import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.controllers.OEventListController;
 import com.example.walrusevents.R;
 import com.example.walrusevents.ui.OEventListView;
+import com.example.walrusevents.util.DeviceIdManager;
 
 /**
  * Shows the "My Events" view for the organizer. Initializes and connects event repository, the
@@ -28,10 +29,12 @@ public class OEventsActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.organizer_events);
 
+        String deviceId = DeviceIdManager.getOrCreate(this);
+
         eventListView = new OEventListView(this);
         eventRepository = new EventRepository();
-        eventListController = new OEventListController(this, eventRepository, eventListView.getEventList());
-        eventListController.loadEvents("ABCDEF");     //**Currently using a placeholder owner id
+        eventListController = new OEventListController(this, deviceId, eventListView.getEventList());
+        eventListController.loadEvents(deviceId);
 
         // Back to main button
         ImageView backButton = findViewById(R.id.backButton_organizer_to_main);
@@ -58,11 +61,11 @@ public class OEventsActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onRestart() {
+        super.onRestart();
 
         if (eventListController != null) {
-            eventListController.loadEvents("ABCDEF");
+            eventListController.loadEvents(DeviceIdManager.getOrCreate(this));
         }
     }
 }
