@@ -1,24 +1,50 @@
 package com.example.walrusevents.model;
 
+import android.content.Context;
+
+import com.example.walrusevents.util.DeviceIdManager;
+import com.google.firebase.firestore.Exclude;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Comment implements Serializable {
+    private String commentId;
+    private String parentId;
     private String entrantId;
     private String body;
-    private int likes;
-    private int dislikes;
-    private ArrayList<Comment> replies;
+    private ArrayList<String> likedEntrantIds;
+    @Exclude
+    private boolean liked;
+    private int totalLikes;
 
     public Comment() {
 
     }
-    public Comment(String entrantId, String body, int likes, int dislikes) {
+    public Comment(String parentId, String entrantId, String body, ArrayList<String> likedEntrantIds) {
+        this.parentId = parentId;
         this.entrantId = entrantId;
         this.body = body;
-        this.likes = likes;
-        this.dislikes = dislikes;
+        this.likedEntrantIds = likedEntrantIds;
+        totalLikes = likedEntrantIds.size();
     }
+
+    public String getCommentId() {
+        return commentId;
+    }
+
+    public void setCommentId(String commentId) {
+        this.commentId = commentId;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
     public String getEntrantId() {
         return entrantId;
     }
@@ -35,45 +61,48 @@ public class Comment implements Serializable {
         this.body = body;
     }
 
-    public int getLikes() {
-        return likes;
+    public ArrayList<String> getLikedEntrantIds() {
+        return likedEntrantIds;
     }
 
-    public void setLikes(int likes) {
-        this.likes = likes;
-    }
-
-    public void addLike() {
-        likes += 1;
-    }
-
-    public int getDislikes() {
-        return dislikes;
-    }
-
-    public void setDislikes(int dislikes) {
-        this.dislikes = dislikes;
-    }
-
-    public void addDislike() {
-        dislikes += 1;
-    }
-
-    public ArrayList<Comment> getReplies() {
-        if (replies == null) {
-            replies = new ArrayList<>();
+    public void setLikedEntrantIds(ArrayList<String> likedEntrantIds) {
+        if (likedEntrantIds == null) {
+            return;
         }
-        return replies;
+        this.likedEntrantIds = likedEntrantIds;
+        totalLikes = likedEntrantIds.size();
     }
 
-    public void setReplies(ArrayList<Comment> replies) {
-        this.replies = replies;
+    @Exclude
+    public int getTotalLikes() {
+        return totalLikes;
     }
 
-    public void addReply(Comment reply) {
-        if (replies == null) {
-            replies = new ArrayList<>();
+    public void initializeLiked(Context context) {
+        if (likedEntrantIds == null) {
+            this.likedEntrantIds = new ArrayList<>();
         }
-        replies.add(reply);
+
+        if (likedEntrantIds.contains(DeviceIdManager.getOrCreate(context))) {
+            liked = true;
+        }
+    }
+
+    public boolean toggleLike(String entrantId) {
+        liked = !liked;
+
+        if (likedEntrantIds == null) {
+            this.likedEntrantIds = new ArrayList<>();
+        }
+
+        if (liked) {
+            likedEntrantIds.add(entrantId);
+            totalLikes++;
+        }
+        else {
+            likedEntrantIds.removeLast();
+            totalLikes--;
+        }
+        return liked;
     }
 }

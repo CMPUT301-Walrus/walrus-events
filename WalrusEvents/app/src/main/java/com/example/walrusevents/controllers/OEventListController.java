@@ -14,6 +14,7 @@ import com.example.walrusevents.activity.OEventPoolActivity;
 import com.example.walrusevents.data.FirebaseAPIManager;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.ui.NameEventFragment;
+import com.example.walrusevents.util.DeviceIdManager;
 import com.example.walrusevents.util.PosterGenerator;
 import com.example.walrusevents.util.QRGenerator;
 
@@ -24,6 +25,7 @@ public class OEventListController implements NameEventFragment.NameEventListener
     private ArrayList<Event> eventList;
     private OEventArrayAdapter eventListAdapter;
     private EventRepository eventRepository;
+    private String ownerId;
 
     /**
      * Constructor for the organizer event list controller

@@ -1,6 +1,8 @@
 package com.example.walrusevents.data;
 
+import com.example.walrusevents.model.Comment;
 import com.example.walrusevents.model.Event;
+import com.google.firebase.firestore.AggregateSource;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -20,10 +22,26 @@ public class EventRepository {
 
     private CollectionReference eventsCollection;   // Reference to the events collection
 
+    private DocumentSnapshot lastFetchedEvent;
+    private DocumentSnapshot lastFetchedComment;
+
+    private int eventBatchSize;
+    private int commentBatchSize;
+
     // Constructor: connects to Firestore
     public EventRepository() {
         db = FirebaseFirestore.getInstance();
         eventsCollection = db.collection("events");
+        eventBatchSize = 2;
+        commentBatchSize = 2;
+    }
+
+    /**
+     * Set the batch size limiting the number of events that can be retrieved at time from the database
+     * @param eventBatchSize Batch size when getting events from the database
+     */
+    public void setEventBatchSize(int eventBatchSize) {
+        this.eventBatchSize = eventBatchSize;
     }
 
     /**
@@ -103,17 +121,49 @@ public class EventRepository {
     }
 
     /**
-     * Retrieve all events in the database
+     * Initiate retrieval of all events in the database
      * @param callback Callback to pass the events to (Firestore is asynchronous)
      */
-    public void getAllEvents(EventListCallback callback) {
-
+    public void initiateGetAllEvents(EventListCallback callback) {
         eventsCollection
+                .limit(eventBatchSize)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    ArrayList<Event> events = new ArrayList<>();
+
+                    lastFetchedEvent = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+
+                        Event event = doc.toObject(Event.class);
+
+                        events.add(event);
+                    }
+
+                    callback.onEventsLoaded(events);
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                });
+    }
+
+    /**
+     * Get the next batch of events from the database, starting from the last fetched document
+     * @param callback Callback to pass the events to
+     */
+    public void getNextEventBatch(EventListCallback callback) {
+        eventsCollection
+                .limit(eventBatchSize)
+                .startAfter(lastFetchedEvent)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
 
+                    if (querySnapshot == null || querySnapshot.isEmpty())
+                    {
+                        return;
+                    }
                     ArrayList<Event> events = new ArrayList<>();
 
+                    lastFetchedEvent = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
 
                         Event event = doc.toObject(Event.class);
@@ -140,6 +190,129 @@ public class EventRepository {
     }
 
     /**
+     * Store a new event in the database
+     * @param eventId ID of the event the comment is being added to
+     * @param comment The comment being added
+     * @return commend ID
+     */
+    public String addComment(String eventId, Comment comment) {
+        DocumentReference docRef = eventsCollection
+                .document(eventId)
+                .collection("comments")
+                .document();
+
+        String newId = docRef.getId();
+        comment.setCommentId(newId);
+        docRef.set(comment);
+
+        return docRef.getId();
+    }
+    /**
+     * Sets a comment in the database
+     * @param comment The comment to be set/overwritten
+     */
+    public void setComment(String eventId, Comment comment) {
+        DocumentReference docRef = eventsCollection
+                .document(eventId)
+                .collection("comments")
+                .document(comment.getCommentId());
+        docRef.set(comment, SetOptions.merge());
+    }
+    /**
+     * Delete an comment
+     * @param eventId ID of the event
+     * @param commentId ID of the comment to be deleted
+     */
+    public void deleteComment(String eventId, String commentId) {
+        //TODO: cascade delete replies
+        eventsCollection
+                .document(eventId)
+                .collection("comments")
+                .document(commentId)
+                .delete();
+    }
+    public void initiateGetCommentsFromEvent(String eventId, String parentId, CommentListCallback callback) {
+        eventsCollection
+                .document(eventId)
+                .collection("comments")
+                .limit(commentBatchSize)
+                .whereEqualTo("parentId", parentId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (querySnapshot == null || querySnapshot.isEmpty())
+                    {
+                        callback.onCommentsLoaded(null);
+                        return;
+                    }
+                    ArrayList<Comment> comments = new ArrayList<>();
+
+                    lastFetchedComment = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+
+                        Comment comment = doc.toObject(Comment.class);
+
+                        comments.add(comment);
+                    }
+
+                    callback.onCommentsLoaded(comments);
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                });
+    }
+
+    public void getNextCommentBatch(String eventId, String parentId, CommentListCallback callback) {
+        eventsCollection
+                .document(eventId)
+                .collection("comments")
+                .limit(commentBatchSize)
+                .startAfter(lastFetchedComment)
+                .whereEqualTo("parentId", parentId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+
+                    if (querySnapshot == null || querySnapshot.isEmpty())
+                    {
+                        callback.onCommentsLoaded(null);
+                        return;
+                    }
+                    ArrayList<Comment> comments = new ArrayList<>();
+
+                    lastFetchedComment = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+
+                        Comment comment = doc.toObject(Comment.class);
+
+                        comments.add(comment);
+                    }
+
+                    callback.onCommentsLoaded(comments);
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                });
+    }
+
+    public void getReplyCount(String eventId, String commentId, ReplyCountCallback callback) {
+        eventsCollection
+                .document(eventId)
+                .collection("comments")
+                .whereEqualTo("parentId", commentId)
+                .count()
+                .get(AggregateSource.SERVER)
+                .addOnSuccessListener(aggregateQuerySnapshot -> {
+                    if (aggregateQuerySnapshot == null)
+                    {
+                        return;
+                    }
+
+                    callback.onRepliesCounted(aggregateQuerySnapshot.getCount());
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                });
+    }
+    /**
      * Callback interface for single event
      * method made to get the event that we want from the Event class
      */
@@ -154,26 +327,12 @@ public class EventRepository {
         void onEventsLoaded(ArrayList<Event> events);
     }
 
-    /**
-     * This method was generated by Gemini 3, Google DeepMind
-     * Fed EventRepo and Notification classes with US descriptions
-     * 12/03/26
-     * Retrieves all events where the user is an entrant
-     * @param userId The ID of the current user
-     * @param callback Callback to return the list of events
-     */
-    public void getEventsForEntrant(String userId, EventListCallback callback) {
-        eventsCollection
-                .whereArrayContains("entrantIds", userId)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    ArrayList<Event> events = new ArrayList<>();
-                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
-                        events.add(doc.toObject(Event.class));
-                    }
-                    callback.onEventsLoaded(events);
-                })
-                .addOnFailureListener(Throwable::printStackTrace);
+    public interface CommentListCallback {
+        void onCommentsLoaded(ArrayList<Comment> comments);
+    }
+
+    public interface ReplyCountCallback {
+        void onRepliesCounted(long count);
     }
 
     /*

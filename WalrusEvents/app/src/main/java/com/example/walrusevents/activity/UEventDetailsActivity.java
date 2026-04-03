@@ -8,6 +8,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.example.walrusevents.data.EventRepository;
@@ -140,7 +141,7 @@ public class UEventDetailsActivity extends AppCompatActivity
         }
 
         CommentsSectionFragment commentsSectionFragment =
-                CommentsSectionFragment.newInstance(this, eventModel, getSupportFragmentManager());
+                CommentsSectionFragment.newInstance(eventModel, null, getSupportFragmentManager());
 
         view.getViewCommentsButton().setOnClickListener(v -> {
             commentsSectionFragment.show(getSupportFragmentManager(), "View Comments");
