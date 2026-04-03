@@ -110,7 +110,14 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
      * Updates the activity based on the stored event. Call when any event details may have changed.
      */
     public void refresh() {
-        if (eventModel.isInConfirmation()) {
+        if (eventModel.isInRegistration()) {
+            preLotteryFragment = new PreLotteryPoolFragment(eventModel);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.waiting_list_fragment, preLotteryFragment)
+                    .commit();
+            controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), preLotteryFragment);
+        }
+        else if (eventModel.isInConfirmation()) {
             postLotteryFragment = new PostLotteryPoolFragment(eventModel);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.waiting_list_fragment, postLotteryFragment)
@@ -118,11 +125,7 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
             controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), postLotteryFragment);
         }
         else {
-            preLotteryFragment = new PreLotteryPoolFragment(eventModel);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.waiting_list_fragment, preLotteryFragment)
-                    .commit();
-            controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), preLotteryFragment);
+
         }
     }
 
