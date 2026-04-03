@@ -110,8 +110,14 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
      * Updates the activity based on the stored event. Call when any event details may have changed.
      */
     public void refresh() {
-        if (eventModel.isInConfirmation()) {
-            System.out.println("AAAAAA");
+        if (eventModel.isInRegistration()) {
+            preLotteryFragment = new PreLotteryPoolFragment(eventModel);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.waiting_list_fragment, preLotteryFragment)
+                    .commit();
+            controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), preLotteryFragment);
+        }
+        else if (eventModel.isInConfirmation()) {
             postLotteryFragment = new PostLotteryPoolFragment(eventModel);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.waiting_list_fragment, postLotteryFragment)
@@ -119,14 +125,17 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
             controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), postLotteryFragment);
         }
         else {
-            preLotteryFragment = new PreLotteryPoolFragment(eventModel);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.waiting_list_fragment, preLotteryFragment)
-                    .commit();
-            controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), preLotteryFragment);
+
         }
     }
 
+    /**
+     * Sends an invite notification to the specified entrant. Can only invite if the event is private
+     * @param entrantId ID of the entrant to be invited
+     */
+    public void sendInvite(String entrantId) {
+        //TODO: add functionality
+    }
     @Override
     public void onEntriesLoaded(List<WaitlistEntry> entries) {
         Lottery lottery = new Lottery();

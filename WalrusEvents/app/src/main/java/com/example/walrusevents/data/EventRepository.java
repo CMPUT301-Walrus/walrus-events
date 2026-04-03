@@ -4,6 +4,7 @@ import com.example.walrusevents.model.Comment;
 import com.example.walrusevents.model.Event;
 import com.google.firebase.firestore.AggregateSource;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -96,12 +97,12 @@ public class EventRepository {
 
     /**
      * Gets the all the events made by the specified user
-     * @param id The ID of the user
+     * @param ownerId The ID of the user
      * @param callback Callback to pass the events to (Firestore is asynchronous)
      */
-    public void getEventsFromUser(String id, EventListCallback callback) {
+    public void getEventsFromUser(String ownerId, EventListCallback callback) {
         eventsCollection
-                .whereEqualTo("ownerId", id)
+                .whereArrayContains("owners", ownerId)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     ArrayList<Event> events = new ArrayList<>();
@@ -109,8 +110,6 @@ public class EventRepository {
 
                         Event event = doc.toObject(Event.class);
                         events.add(event);
-                        event.setOwnerId(doc.get("ownerId").toString());
-                        System.out.println(event.getOwnerId());
                     }
                     callback.onEventsLoaded(events);
                 })
@@ -120,17 +119,21 @@ public class EventRepository {
     }
 
     /**
-     * Initiate retrieval of all events in the database
+     * Initiate retrieval of all public events in the database
      * @param callback Callback to pass the events to (Firestore is asynchronous)
      */
     public void initiateGetAllEvents(EventListCallback callback) {
         eventsCollection
+                .whereEqualTo("isPrivate", false)
                 .limit(eventBatchSize)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     ArrayList<Event> events = new ArrayList<>();
 
-                    lastFetchedEvent = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
+                    if (!querySnapshot.isEmpty()) {
+                        lastFetchedEvent = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
+                    }
+
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
 
                         Event event = doc.toObject(Event.class);
@@ -146,11 +149,12 @@ public class EventRepository {
     }
 
     /**
-     * Get the next batch of events from the database, starting from the last fetched document
+     * Get the next batch of public events from the database, starting from the last fetched document
      * @param callback Callback to pass the events to
      */
     public void getNextEventBatch(EventListCallback callback) {
         eventsCollection
+                .whereEqualTo("isPrivate", false)
                 .limit(eventBatchSize)
                 .startAfter(lastFetchedEvent)
                 .get()
@@ -162,7 +166,9 @@ public class EventRepository {
                     }
                     ArrayList<Event> events = new ArrayList<>();
 
-                    lastFetchedEvent = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
+                    if (!querySnapshot.isEmpty()) {
+                        lastFetchedEvent = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
+                    }
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
 
                         Event event = doc.toObject(Event.class);
@@ -292,25 +298,6 @@ public class EventRepository {
                 });
     }
 
-    public void getReplyCount(String eventId, String commentId, ReplyCountCallback callback) {
-        eventsCollection
-                .document(eventId)
-                .collection("comments")
-                .whereEqualTo("parentId", commentId)
-                .count()
-                .get(AggregateSource.SERVER)
-                .addOnSuccessListener(aggregateQuerySnapshot -> {
-                    if (aggregateQuerySnapshot == null)
-                    {
-                        return;
-                    }
-
-                    callback.onRepliesCounted(aggregateQuerySnapshot.getCount());
-                })
-                .addOnFailureListener(e -> {
-                    e.printStackTrace();
-                });
-    }
     /**
      * Callback interface for single event
      * method made to get the event that we want from the Event class
@@ -328,9 +315,5 @@ public class EventRepository {
 
     public interface CommentListCallback {
         void onCommentsLoaded(ArrayList<Comment> comments);
-    }
-
-    public interface ReplyCountCallback {
-        void onRepliesCounted(long count);
     }
 }

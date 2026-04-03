@@ -25,20 +25,21 @@ public class OEventListController implements NameEventFragment.NameEventListener
     private ArrayList<Event> eventList;
     private OEventArrayAdapter eventListAdapter;
     private EventRepository eventRepository;
-    private String ownerId;
+    private String deviceId;
 
     /**
      * Constructor for the organizer event list controller
      * @param context
-     * @param eventRepository
+     * @param deviceId
      * @param eventListView
      */
-    public OEventListController(Context context, EventRepository eventRepository, ListView eventListView) {
+    public OEventListController(Context context, String deviceId, ListView eventListView) {
         //Initialize EventController
         eventList = new ArrayList<>();
+        this.deviceId = deviceId;
         eventListAdapter = new OEventArrayAdapter(context, eventList);
         eventListView.setAdapter(eventListAdapter);
-        this.eventRepository = eventRepository;
+        eventRepository = new EventRepository();
     }
 
     /**
@@ -91,7 +92,7 @@ public class OEventListController implements NameEventFragment.NameEventListener
      */
     public void addEvent(String title) {
         // Create new event
-        Event event = new Event(title, "Default description");
+        Event event = new Event(title, "", deviceId);
 
         // Get new eventId from creating the event in eventRepo
         String eventId = eventRepository.addEvent(event);
