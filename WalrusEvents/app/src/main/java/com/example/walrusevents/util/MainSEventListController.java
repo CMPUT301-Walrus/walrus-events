@@ -34,19 +34,6 @@ public class MainSEventListController implements EventRepository.EventListCallba
     }
 
     /**
-     * Creates an event with the specified title and adds it to eventList and the database
-     * @param title The title to be given to the new event
-     */
-    public void addEvent(String title) {
-        Event event = new Event(title, "");
-        eventRepository.addEvent(event);
-
-        eventList.add(event);
-        eventListAdapter.applyFilters();
-        //eventListAdapter.notifyDataSetChanged();
-    }
-
-    /**
      * Load All the Events
      *
      */
@@ -82,24 +69,4 @@ public class MainSEventListController implements EventRepository.EventListCallba
     public void setOpenSeatsFilter(boolean onlyOpenSeats) {
         eventListAdapter.setOnlyOpenSeats(onlyOpenSeats);
     }
-
-
-    public Filter getSearchFilter(){
-
-        return eventListAdapter.getFilter();
-    }
-
-    public Filter getCapacityFilter(){
-        return null;
-    }
-
-
-
-    /*
-    * Easier Query Way to do Filters
-     */
-    public void loadEventsbyKeyword(String keyword){
-        //eventRepository.getEventsByKeyword(this,keyword);
-    }
-
 }
