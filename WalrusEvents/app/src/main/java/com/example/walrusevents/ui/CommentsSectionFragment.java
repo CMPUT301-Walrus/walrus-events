@@ -99,16 +99,21 @@ public class CommentsSectionFragment extends BottomSheetDialogFragment
     @Override
     public void postComment(Comment parent, String bodyText) {
         if (parent != null) {
-            Comment comment = new Comment(parent.getCommentId(), DeviceIdManager.getOrCreate(getActivity()), bodyText, 0, 0);
+            Comment comment = new Comment(parent.getCommentId(), DeviceIdManager.getOrCreate(getActivity()), bodyText, new ArrayList<>());
             eventRepository.addComment(eventModel.getEventId(), comment);
             commentsList.add(comment);
         }
         else {
-            Comment comment = new Comment(null, DeviceIdManager.getOrCreate(getActivity()), bodyText, 0, 0);
+            Comment comment = new Comment(null, DeviceIdManager.getOrCreate(getActivity()), bodyText, new ArrayList<>());
             eventRepository.addComment(eventModel.getEventId(), comment);
         }
 
         commentsAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void updateComment(Comment comment) {
+        eventRepository.setComment(eventModel.getEventId(), comment);
     }
 
     @Override

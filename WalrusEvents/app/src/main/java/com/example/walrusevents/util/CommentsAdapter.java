@@ -27,6 +27,7 @@ import java.util.Locale;
 public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
         implements ProfileRepository.ProfileCallback {
     private Context context;
+    private String entrantId;
     private String eventId;
     private ArrayList<Comment> commentsList;
     private EventRepository eventRepository;
@@ -38,6 +39,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
         this.context = context;
         this.addCommentListener = addCommentListener;
         eventRepository = new EventRepository();
+        entrantId = DeviceIdManager.getOrCreate(context);
     }
 
     @Override
@@ -56,12 +58,12 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         Comment comment = commentsList.get(position);
 
+        comment.initializeLiked(context);
+
         ArrayList<Comment> replies = new ArrayList<>();
         CommentsAdapter repliesAdapter = new CommentsAdapter(context, replies, eventId, addCommentListener);
 
-
         holder.getRepliesView().setAdapter(repliesAdapter);
-
 
         EventRepository eventRepository = new EventRepository();
 
@@ -69,9 +71,12 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
             @Override
             public void onCommentsLoaded(ArrayList<Comment> comments) {
                 if (comments != null && !comments.isEmpty()) {
+                    holder.getViewRepliesButton().setVisibility(View.VISIBLE);
+                    holder.getDivider().setVisibility(View.VISIBLE);
+
                     int prevSize = replies.size();
                     replies.addAll(comments);
-                    repliesAdapter.notifyDataSetChanged();
+                    repliesAdapter.notifyItemRangeInserted(prevSize, replies.size());
                     eventRepository.getNextCommentBatch(eventId, comment.getCommentId(), this);
                 }
                 else {
@@ -83,9 +88,25 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
             addCommentListener.addComment(comment);
         });
 
+        holder.getLikeButton().setOnClickListener(v -> {
+            comment.toggleLike(DeviceIdManager.getOrCreate(context));
+            holder.getLikesCounter().setText(String.format(Locale.CANADA, "%d", comment.getTotalLikes()));
+            addCommentListener.updateComment(comment);
+        });
+
+        holder.getViewRepliesButton().setOnClickListener(v -> {
+            holder.getRepliesView().setVisibility(View.VISIBLE);
+            holder.getHideRepliesButton().setVisibility(View.VISIBLE);
+            holder.getViewRepliesButton().setVisibility(View.GONE);
+        });
+
+        holder.getHideRepliesButton().setOnClickListener(v -> {
+            holder.getRepliesView().setVisibility(View.GONE);
+            holder.getHideRepliesButton().setVisibility(View.GONE);
+            holder.getViewRepliesButton().setVisibility(View.VISIBLE);
+        });
         holder.getBodyText().setText(comment.getBody());
-        holder.getLikesCounter().setText(String.format(Locale.CANADA, "%d", comment.getLikes()));
-        holder.getDislikesCounter().setText(String.format(Locale.CANADA, "%d", comment.getDislikes()));
+        holder.getLikesCounter().setText(String.format(Locale.CANADA, "%d", comment.getTotalLikes()));
     }
 
     @Override

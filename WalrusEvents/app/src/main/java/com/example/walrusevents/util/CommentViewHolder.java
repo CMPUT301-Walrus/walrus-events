@@ -10,26 +10,32 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.walrusevents.R;
 
 public class CommentViewHolder extends RecyclerView.ViewHolder {
-    TextView likesCounter = itemView.findViewById(R.id.likes_counter);
-    TextView dislikesCounter = itemView.findViewById(R.id.dislikes_counter);
-    TextView bodyText = itemView.findViewById(R.id.comment_body);
-    Button replyButton = itemView.findViewById(R.id.reply_button);
-    RecyclerView repliesView = itemView.findViewById(R.id.replies_view);
+    TextView likesCounter;
+    Button likeButton;
+    TextView bodyText;
+    Button replyButton;
+    RecyclerView repliesView;
+    TextView viewRepliesButton;
+    TextView hideRepliesButton;
+    View divider;
     public CommentViewHolder(@NonNull View itemView) {
         super(itemView);
         likesCounter = itemView.findViewById(R.id.likes_counter);
-        dislikesCounter = itemView.findViewById(R.id.dislikes_counter);
+        likeButton = itemView.findViewById(R.id.comment_like_button);
         bodyText = itemView.findViewById(R.id.comment_body);
         replyButton = itemView.findViewById(R.id.reply_button);
         repliesView = itemView.findViewById(R.id.replies_view);
+        viewRepliesButton = itemView.findViewById(R.id.comment_view_replies_button);
+        hideRepliesButton = itemView.findViewById(R.id.comment_hide_replies_button);
+        divider = itemView.findViewById(R.id.comment_divider);
     }
 
     public TextView getLikesCounter() {
         return likesCounter;
     }
 
-    public TextView getDislikesCounter() {
-        return dislikesCounter;
+    public Button getLikeButton() {
+        return likeButton;
     }
 
     public TextView getBodyText() {
@@ -42,5 +48,17 @@ public class CommentViewHolder extends RecyclerView.ViewHolder {
 
     public RecyclerView getRepliesView() {
         return repliesView;
+    }
+
+    public TextView getViewRepliesButton() {
+        return viewRepliesButton;
+    }
+
+    public TextView getHideRepliesButton() {
+        return hideRepliesButton;
+    }
+
+    public View getDivider() {
+        return divider;
     }
 }
