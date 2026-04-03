@@ -24,7 +24,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/top_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,14 +32,13 @@
 
         <Button
             android:id="@+id/back_waiting_list_org"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:backgroundTint="#FFD24B"
             android:text="Back"
             android:textColor="#000000"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/textView"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -47,6 +46,8 @@
             android:id="@+id/textView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:text="Event Name"
             android:textAlignment="center"
             android:textColor="@color/darkBlue"
@@ -60,8 +61,8 @@
 
         <Button
             android:id="@+id/settings_org_button"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:backgroundTint="#FFD24B"
             android:text="Settings"
             android:textColor="#000000"
@@ -102,13 +103,12 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/org_entrant_list_view"
         app:layout_constraintTop_toBottomOf="@+id/org_entrant_count"
-        app:layout_constraintVertical_bias="0.55"
         tools:layout_editor_absoluteX="110dp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottom_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="100dp"
         android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -117,36 +117,9 @@
         app:layout_constraintTop_toBottomOf="@+id/org_entrant_list_view">
 
         <Button
-            android:id="@+id/remove_applicant"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/red"
-            android:text="Remove Applicant"
-            android:textColor="#000000"
-            app:layout_constraintBottom_toBottomOf="@+id/map_button"
-            app:layout_constraintEnd_toStartOf="@+id/map_button"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/map_button" />
-
-        <ImageView
-            android:id="@+id/map_button"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:minWidth="100dp"
-            android:minHeight="100dp"
-            app:layout_constraintBottom_toBottomOf="@+id/lottery_button"
-            app:layout_constraintEnd_toStartOf="@+id/lottery_button"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/remove_applicant"
-            app:layout_constraintTop_toTopOf="@+id/lottery_button"
-            app:srcCompat="@android:drawable/ic_menu_compass" />
-
-        <Button
             android:id="@+id/lottery_button"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="#FFD24B"
             android:text="Lottery"
@@ -154,9 +127,48 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/map_button"
+            app:layout_constraintStart_toEndOf="@+id/remove_applicant"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <Button
+            android:id="@+id/invite_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFD24B"
+            android:text="Invite"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/remove_applicant"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/remove_applicant"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/red"
+            android:text="Remove Applicant"
+            android:textColor="#000000"
+            app:layout_constraintEnd_toStartOf="@+id/lottery_button"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/invite_button"
+            tools:layout_editor_absoluteY="26dp" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:layout_width="118dp"
+        android:layout_height="138dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/map_button"
+            android:layout_width="79dp"
+            android:layout_height="64dp"
+            app:srcCompat="@android:drawable/ic_menu_compass" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

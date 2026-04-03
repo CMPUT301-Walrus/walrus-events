@@ -82,5 +82,6 @@ public class UViewWaitlistActivity extends AppCompatActivity implements Waitlist
     public void onEntriesLoaded(List<WaitlistEntry> entries) {
         Integer eCount = countValidEntrants(entries);
         countEntrants.setText(eCount.toString());
+        event.setNumParticipants(eCount);
     }
 }
