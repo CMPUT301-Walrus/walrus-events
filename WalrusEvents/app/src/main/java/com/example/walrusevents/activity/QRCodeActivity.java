@@ -9,11 +9,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.walrusevents.R;
 import com.example.walrusevents.util.QRGenerator;
+import com.example.walrusevents.util.PermissionGatekeeper;
 
 public class QRCodeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PermissionGatekeeper.requireNotBanned(this, false, permissions -> initializeUi());
+    }
+
+    private void initializeUi() {
         // Use the XML layout that matches your storyboard design
         setContentView(R.layout.qr_code);
 

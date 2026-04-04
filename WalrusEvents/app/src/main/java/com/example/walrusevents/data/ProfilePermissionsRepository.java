@@ -88,22 +88,6 @@ public class ProfilePermissionsRepository {
                 });
     }
 
-    public void deletePermissions(String deviceId, SaveCallback callback) {
-        if (deviceId == null || deviceId.trim().isEmpty()) {
-            callback.onFailure("Device ID is required.");
-            return;
-        }
-
-        permissionsCollection
-                .document(deviceId)
-                .delete()
-                .addOnSuccessListener(aVoid -> callback.onSuccess())
-                .addOnFailureListener(e -> {
-                    e.printStackTrace();
-                    callback.onFailure(e.getMessage());
-                });
-    }
-
     private ProfilePermissions normalize(String deviceId, ProfilePermissions permissions) {
         ProfilePermissions normalized = permissions == null ? new ProfilePermissions(deviceId) : permissions;
         normalized.setDeviceId(deviceId);
