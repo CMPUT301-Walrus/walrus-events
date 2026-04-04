@@ -42,8 +42,9 @@ public class MainSEventListController implements EventRepository.EventListCallba
      */
     public void loadEvents() {
         eventList.clear();
+        eventRepository.resetPagination();
         eventRepository.initiateGetAllEvents(this);
-        filterManager.applyFilters();
+        //filterManager.applyFilters();
     }
 
     /**
@@ -55,14 +56,28 @@ public class MainSEventListController implements EventRepository.EventListCallba
         if (events == null || events.isEmpty()) {
             return;
         }
-        eventList.addAll(events);
+        //eventList.addAll(events);
+        for (Event newEvent : events) {
+            boolean exists = false;
+
+            for (Event existing : eventList) {
+                if (existing.getEventId().equals(newEvent.getEventId())) {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (!exists) {
+                eventList.add(newEvent);
+            }
+        }
+        //filterManager.applyFilters();
         eventListAdapter.notifyDataSetChanged();
-        eventRepository.getNextEventBatch(this);
+        //eventRepository.getNextEventBatch(this);
+        if (events.size() == 2) {
+            eventRepository.getNextEventBatch(this);
+        }
         System.out.printf("%d event(s) loaded", events.size());
-        //eventListAdapter.applyFilters();
-        //eventListAdapter.notifyDataSetChanged();
-       // eventListAdapter.updateData(events);
-        //filterManager.updateData(events);
     }
 
     public void setKeyword(String keyword) {
@@ -74,5 +89,11 @@ public class MainSEventListController implements EventRepository.EventListCallba
 
         filterManager.setOnlyOpenSeats(onlyOpenSeats);
         //eventListAdapter.setOnlyOpenSeats(onlyOpenSeats);
+    }
+
+    public void resetFilters(){
+        filterManager.setKeyword("");
+        filterManager.setSelectedRange(null,null);
+        filterManager.setOnlyOpenSeats(false);
     }
 }
