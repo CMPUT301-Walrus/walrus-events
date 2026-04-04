@@ -13,6 +13,7 @@ import com.example.walrusevents.controllers.OEventListController;
 import com.example.walrusevents.R;
 import com.example.walrusevents.ui.OEventListView;
 import com.example.walrusevents.util.DeviceIdManager;
+import com.example.walrusevents.util.PermissionGatekeeper;
 
 /**
  * Shows the "My Events" view for the organizer. Initializes and connects event repository, the
@@ -26,6 +27,10 @@ public class OEventsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PermissionGatekeeper.requireNotBanned(this, false, permissions -> initializeUi());
+    }
+
+    private void initializeUi() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.organizer_events);
 
