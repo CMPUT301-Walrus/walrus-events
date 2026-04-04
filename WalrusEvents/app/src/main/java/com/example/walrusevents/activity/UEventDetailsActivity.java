@@ -30,6 +30,7 @@ import com.example.walrusevents.ui.UEventDetailsView;
 import com.example.walrusevents.util.DeviceIdManager;
 import com.example.walrusevents.util.UserRole;
 import com.example.walrusevents.util.UserRoleManager;
+import com.example.walrusevents.util.PermissionGatekeeper;
 
 /**
  * Class handles displaying event details for a particular event
@@ -47,6 +48,10 @@ public class UEventDetailsActivity extends AppCompatActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PermissionGatekeeper.requireNotBanned(this, false, permissions -> initializeUi());
+    }
+
+    private void initializeUi() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.event_details);
 
@@ -146,7 +151,7 @@ public class UEventDetailsActivity extends AppCompatActivity
         }
 
         CommentsSectionFragment commentsSectionFragment =
-                CommentsSectionFragment.newInstance(eventModel, null, getSupportFragmentManager());
+                CommentsSectionFragment.newInstance(eventModel, getSupportFragmentManager());
 
         view.getViewCommentsButton().setOnClickListener(v -> {
             commentsSectionFragment.show(getSupportFragmentManager(), "View Comments");

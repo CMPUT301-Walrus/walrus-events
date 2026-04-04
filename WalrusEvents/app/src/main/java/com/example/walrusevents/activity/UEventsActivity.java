@@ -21,6 +21,7 @@ import com.example.walrusevents.R;
 import com.example.walrusevents.model.WaitlistEntry;
 import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.util.UEventHistoryAdapter;
+import com.example.walrusevents.util.PermissionGatekeeper;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -45,6 +46,10 @@ public class UEventsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PermissionGatekeeper.requireNotBanned(this, false, permissions -> initializeUi());
+    }
+
+    private void initializeUi() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.user_history_events);
 

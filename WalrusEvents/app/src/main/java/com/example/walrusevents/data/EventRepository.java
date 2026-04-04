@@ -229,13 +229,30 @@ public class EventRepository {
      * @param commentId ID of the comment to be deleted
      */
     public void deleteComment(String eventId, String commentId) {
-        //TODO: cascade delete replies
+        eventsCollection
+                .document(eventId)
+                .collection("comments")
+                .whereEqualTo("parentId", commentId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (querySnapshot == null || querySnapshot.isEmpty())
+                    {
+                        return;
+                    }
+
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        Comment comment = doc.toObject(Comment.class);
+                        deleteComment(eventId, comment.getCommentId());
+                    }
+                });
+
         eventsCollection
                 .document(eventId)
                 .collection("comments")
                 .document(commentId)
                 .delete();
     }
+
     public void initiateGetCommentsFromEvent(String eventId, String parentId, CommentListCallback callback) {
         eventsCollection
                 .document(eventId)

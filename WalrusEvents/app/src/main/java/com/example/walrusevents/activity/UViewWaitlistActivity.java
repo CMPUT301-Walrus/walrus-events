@@ -16,6 +16,7 @@ import com.example.walrusevents.R;
 import com.example.walrusevents.model.WaitlistEntry;
 import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Event;
+import com.example.walrusevents.util.PermissionGatekeeper;
 
 import java.util.List;
 
@@ -29,6 +30,10 @@ public class UViewWaitlistActivity extends AppCompatActivity implements Waitlist
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initializeUi();
+    }
+
+    private void initializeUi() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.user_view_waitlist_activity);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
