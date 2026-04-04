@@ -119,6 +119,9 @@ public class UEventsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (waitlistRepository == null || eventRepository == null || deviceId == null) {
+            return;
+        }
         loadHistory(); // refresh when returning to this Activity
     }
 

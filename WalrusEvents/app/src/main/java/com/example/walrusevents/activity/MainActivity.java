@@ -274,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             adminBtn.setVisibility(View.GONE);
             scanQRCodeButton.setVisibility(View.VISIBLE);
-            settingsBtn.setVisibility(View.VISIBLE);
+            settingsBtn.setVisibility(View.GONE);
             eventsBtn.setVisibility(View.VISIBLE);
         }
     }
