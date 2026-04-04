@@ -75,9 +75,9 @@ public class UViewWaitlistActivity extends AppCompatActivity implements Waitlist
         for(WaitlistEntry entry: entries) {
             if(entry.getStatus() != WaitlistEntry.Status.DECLINED && entry.getStatus() != WaitlistEntry.Status.CANCELLED) count++;
         }
+
         return count;
     }
-
     @Override
     public void onEntriesLoaded(List<WaitlistEntry> entries) {
         Integer eCount = countValidEntrants(entries);
