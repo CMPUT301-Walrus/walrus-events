@@ -167,7 +167,7 @@ public class UEventDetailsActivity extends AppCompatActivity
 
         // Waitlist Join Logic
         String deviceId = DeviceIdManager.getOrCreate(this);
-        Entrant me = new Entrant(new Profile(deviceId, "User", "email@uab.ca"));
+        Entrant me = new Entrant(new Profile(deviceId));
 
         if (role == UserRole.USER && !eventModel.getIsPrivate()) {
             view.getJoinButton().setOnClickListener(v -> {
