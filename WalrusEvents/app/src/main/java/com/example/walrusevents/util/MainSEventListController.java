@@ -62,7 +62,7 @@ public class MainSEventListController implements EventRepository.EventListCallba
         //eventListAdapter.applyFilters();
         //eventListAdapter.notifyDataSetChanged();
        // eventListAdapter.updateData(events);
-        filterManager.updateData(events);
+        //filterManager.updateData(events);
     }
 
     public void setKeyword(String keyword) {
