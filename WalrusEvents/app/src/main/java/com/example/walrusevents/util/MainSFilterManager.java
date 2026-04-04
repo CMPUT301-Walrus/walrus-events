@@ -8,6 +8,8 @@ import java.util.ArrayList;
 /*
 * Manages the filters for the Listview in the MainActivity
 * keyword search filter, capacity filter, availability filter
+*
+* TODO: have the filters check the originalList and not the items in filteredList
  */
 public class MainSFilterManager {
     private ArrayList<Event> originalList;
@@ -28,6 +30,8 @@ public class MainSFilterManager {
     public ArrayList<Event> getFilteredList(){
         return filteredList;
     }
+
+    public ArrayList<Event> getOriginalList(){return originalList;}
 
     public void setKeyword(String keyword) {
         this.keyword = keyword;
@@ -94,6 +98,9 @@ public class MainSFilterManager {
             arrayAdapter.clear();
             arrayAdapter.addAll(filteredList);
             arrayAdapter.notifyDataSetChanged();
+        } else {
+            //filteredList.clear();
+            //filteredList=originalList;
         }
     }
 
