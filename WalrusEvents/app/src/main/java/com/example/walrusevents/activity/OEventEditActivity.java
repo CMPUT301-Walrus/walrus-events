@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -103,8 +104,11 @@ public class OEventEditActivity extends AppCompatActivity {
             String newTitle = eventEditView.getTitleView().getText().toString();
             String newDescription = eventEditView.getEditDescription().getText().toString();
 
+            boolean isPrivate = eventEditView.getPrivateToggle().isChecked();
+
             // Update local info and Firebase info
             eventEditController.setTitle(newTitle);
+            eventEditController.setIsPrivate(isPrivate);
             eventEditController.setDescription(newDescription);
             eventEditController.setEntrantCapacity(eventEditView.getEditEntrantCapacity().getText().toString());
             eventEditController.setApplicantCapacity(eventEditView.getEditApplicantCapacity().getText().toString());

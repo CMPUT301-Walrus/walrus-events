@@ -80,7 +80,7 @@ public class NotificationInboxFragment extends Fragment {
                     emptyStateText.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
 
-                    adapter = new NotificationsAdapter(notifications);
+                    adapter = new NotificationsAdapter(getActivity(), notifications);
                     recyclerView.setAdapter(adapter);
                 }
             }

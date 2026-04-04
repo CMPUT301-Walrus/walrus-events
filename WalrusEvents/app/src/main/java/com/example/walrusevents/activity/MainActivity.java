@@ -24,6 +24,7 @@ import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.model.Entrant;
+import com.example.walrusevents.model.Notification;
 import com.example.walrusevents.model.Profile;
 import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.R;
@@ -244,12 +245,12 @@ public class MainActivity extends AppCompatActivity {
         testSendButton.setOnClickListener(v -> {
             // Replace "TEST_EVENT_ID" with an actual event ID from your Firestore
             // if you want to see it appear in a real user's inbox.
-            String testEventId = "7QDBAJLs3wjyyKD2F8l5";
+            String testEventId = "f6IxP1BkYXMZmyT1r914";
             String title = "Test Broadcast";
             String message = "This is a test notification sent at " + new java.util.Date().toString();
 
             // We use "all" to ensure it hits everyone on the waitlist regardless of status
-            testController.sendNotifications(this, testEventId, title, message, "all");
+            testController.sendNotifications(this, testEventId, title, message, Notification.NotificationTarget.ALL);
 
             Toast.makeText(this, "Attempting to send test broadcast...", Toast.LENGTH_SHORT).show();
         });

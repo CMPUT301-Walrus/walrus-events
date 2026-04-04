@@ -63,7 +63,7 @@ public class UEventDetailsActivity extends AppCompatActivity
         } else {
             // Clicked event
             try {
-                eventModel = (Event) getIntent().getSerializableExtra("Event");
+                eventModel = getIntent().getSerializableExtra("Event", Event.class);
                 if (eventModel != null) {
                     setupUI();
                 } else {
@@ -164,7 +164,7 @@ public class UEventDetailsActivity extends AppCompatActivity
         String deviceId = DeviceIdManager.getOrCreate(this);
         Entrant me = new Entrant(new Profile(deviceId, "User", "email@uab.ca"));
 
-        if (role == UserRole.USER) {
+        if (role == UserRole.USER && !eventModel.getIsPrivate()) {
             view.getJoinButton().setOnClickListener(v -> {
                 WaitlistRepository waitRep = new WaitlistRepository();
                 ProfileRepository pfRep = new ProfileRepository();
@@ -183,7 +183,7 @@ public class UEventDetailsActivity extends AppCompatActivity
      * Checks if the user has an active invitation to respond to.
      */
     private void checkForInvitation() {
-        if (eventModel == null || !eventModel.isInConfirmation()) {
+        if (eventModel == null || (!eventModel.getIsPrivate() && !eventModel.isInConfirmation())) {
             return;
         }
 
