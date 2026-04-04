@@ -21,6 +21,7 @@ import com.example.walrusevents.model.Event;
 import com.example.walrusevents.ui.OEventPoolView;
 import com.example.walrusevents.ui.PostLotteryPoolFragment;
 import com.example.walrusevents.ui.PreLotteryPoolFragment;
+import com.example.walrusevents.util.PermissionGatekeeper;
 
 import java.util.List;
 
@@ -54,6 +55,10 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PermissionGatekeeper.requireNotBanned(this, false, permissions -> initializeUi());
+    }
+
+    private void initializeUi() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.waiting_list_org);
 

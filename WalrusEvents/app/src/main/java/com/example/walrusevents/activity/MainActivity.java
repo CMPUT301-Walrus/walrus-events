@@ -2,12 +2,10 @@ package com.example.walrusevents.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -20,8 +18,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.walrusevents.controllers.NotificationsController;
-import com.example.walrusevents.data.WaitlistRepository;
-import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.model.Profile;
@@ -29,13 +25,11 @@ import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.ui.NotificationInboxFragment;
-import com.example.walrusevents.model.WaitlistEntry;
 import com.example.walrusevents.util.DeviceIdManager;
 import com.example.walrusevents.util.MainSEventListController;
+import com.example.walrusevents.util.PermissionGatekeeper;
 import com.example.walrusevents.util.UserRole;
 import com.example.walrusevents.util.UserRoleManager;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,12 +45,14 @@ public class MainActivity extends AppCompatActivity {
     private Button scanQRCodeButton;
     private boolean initialProfileSetupLaunched;
 
-    private WaitlistRepository waitlistRepo;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PermissionGatekeeper.requireNotBanned(this, true, permissions -> initializeUi());
+    }
+
+    private void initializeUi() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.event_list);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -286,6 +282,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRestart() {
         super.onRestart();
+        if (eventListController == null || profileRepository == null) {
+            return;
+        }
         initialProfileSetupLaunched = false;
         eventListController.loadEvents();
         ensureProfileSetupState();

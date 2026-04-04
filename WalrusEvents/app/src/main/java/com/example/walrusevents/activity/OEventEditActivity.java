@@ -17,6 +17,7 @@ import com.example.walrusevents.model.Event;
 import com.example.walrusevents.controllers.OEventEditController;
 import com.example.walrusevents.R;
 import com.example.walrusevents.ui.OEventEditView;
+import com.example.walrusevents.util.PermissionGatekeeper;
 
 public class OEventEditActivity extends AppCompatActivity {
     private OEventEditView eventEditView;
@@ -25,6 +26,10 @@ public class OEventEditActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PermissionGatekeeper.requireNotBanned(this, false, permissions -> initializeUi());
+    }
+
+    private void initializeUi() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.edit_event);
         // Take event class info and move it here
