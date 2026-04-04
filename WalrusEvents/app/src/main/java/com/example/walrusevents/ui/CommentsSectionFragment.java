@@ -1,6 +1,7 @@
 package com.example.walrusevents.ui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,12 +17,17 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.walrusevents.activity.OEventEditActivity;
+import com.example.walrusevents.activity.QRCodeActivity;
+import com.example.walrusevents.activity.UEventDetailsActivity;
 import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.Comment;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.util.CommentsAdapter;
 import com.example.walrusevents.util.DeviceIdManager;
+import com.example.walrusevents.util.UserRole;
+import com.example.walrusevents.util.UserRoleManager;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.ArrayList;
@@ -32,20 +39,15 @@ public class CommentsSectionFragment extends BottomSheetDialogFragment
     private CommentsAdapter commentsAdapter;
     private FragmentManager fragmentManager;
     private EventRepository eventRepository;
-    private String parentId;
     private RecyclerView.LayoutManager layoutManager;
 
-    public static CommentsSectionFragment newInstance(Event eventModel, String parentId, FragmentManager fragmentManager){
+    public static CommentsSectionFragment newInstance(Event eventModel, FragmentManager fragmentManager){
         CommentsSectionFragment fragment = new CommentsSectionFragment();
         fragment.setEventModel(eventModel);
         fragment.setFragmentManager(fragmentManager);
-        fragment.setParentId(parentId);
         return fragment;
     }
 
-    private void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
     private void setEventModel(Event eventModel) {
         this.eventModel = eventModel;
     }
@@ -64,30 +66,36 @@ public class CommentsSectionFragment extends BottomSheetDialogFragment
         RecyclerView commentsView = view.findViewById(R.id.comments_section_view);
         Button addCommentButton = view.findViewById(R.id.add_comment_button);
         ImageView closeButton = view.findViewById(R.id.comments_close_button);
+        ImageView contextMenuButton = view.findViewById(R.id.context_menu_button);
         eventRepository = new EventRepository();
 
         commentsList = new ArrayList<>();
-        commentsAdapter = new CommentsAdapter(getActivity(), commentsList, eventModel.getEventId(), this);
+        commentsAdapter = new CommentsAdapter(getActivity(),
+                commentsList,
+                eventModel.getEventId(),
+                this,
+                eventModel.getOwners().contains(DeviceIdManager.getOrCreate(getActivity())) && UserRoleManager.getRole() == UserRole.ORGANIZER);
         commentsView.setAdapter(commentsAdapter);
         commentsView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        eventRepository.initiateGetCommentsFromEvent(eventModel.getEventId(), parentId, this);
+        eventRepository.initiateGetCommentsFromEvent(eventModel.getEventId(), null, this);
 
         addCommentButton.setOnClickListener(v -> {
-            addComment(null);
+            addComment(null, commentsAdapter);
         });
 
         closeButton.setOnClickListener(v -> {
             dismiss();
         });
+
     }
 
     /**
      * Opens up the popup for the user to write down their comment
      */
     @Override
-    public void addComment(Comment parent) {
-        AddCommentFragment addCommentFragment = AddCommentFragment.newInstance(this, parent);
+    public void addComment(String parentId, CommentsAdapter adapter) {
+        AddCommentFragment addCommentFragment = AddCommentFragment.newInstance(parentId, this, adapter);
         addCommentFragment.show(fragmentManager, "Add Comment");
     }
 
@@ -97,18 +105,20 @@ public class CommentsSectionFragment extends BottomSheetDialogFragment
      * The text that the user wrote as a comment
      */
     @Override
-    public void postComment(Comment parent, String bodyText) {
-        if (parent != null) {
-            Comment comment = new Comment(parent.getCommentId(), DeviceIdManager.getOrCreate(getActivity()), bodyText, new ArrayList<>());
+    public void postComment(String parentId, CommentsAdapter adapter, String bodyText) {
+        if (parentId != null) {
+            Comment comment = new Comment(parentId, DeviceIdManager.getOrCreate(getActivity()), bodyText, new ArrayList<>());
             eventRepository.addComment(eventModel.getEventId(), comment);
-            commentsList.add(comment);
+            adapter.notifyDataSetChanged();;
         }
         else {
             Comment comment = new Comment(null, DeviceIdManager.getOrCreate(getActivity()), bodyText, new ArrayList<>());
             eventRepository.addComment(eventModel.getEventId(), comment);
+            commentsList.add(comment);
+            commentsAdapter.notifyItemInserted(commentsList.size() - 1);
         }
 
-        commentsAdapter.notifyDataSetChanged();
+
     }
 
     @Override
@@ -122,7 +132,7 @@ public class CommentsSectionFragment extends BottomSheetDialogFragment
             return;
         }
         commentsList.addAll(comments);
-        eventRepository.getNextCommentBatch(eventModel.getEventId(), parentId, this);
+        eventRepository.getNextCommentBatch(eventModel.getEventId(), null, this);
         commentsAdapter.notifyDataSetChanged();
     }
 }
