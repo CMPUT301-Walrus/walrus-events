@@ -1,6 +1,7 @@
 package com.example.walrusevents.util;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,14 +34,16 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
     private String eventId;
     private ArrayList<Comment> commentsList;
     private AddCommentFragment.AddCommentListener addCommentListener;
+    private ArrayList<String> owners;
     private boolean inOwnerView;
 
-    public CommentsAdapter(@NonNull Context context, ArrayList<Comment> comments, String eventId, AddCommentFragment.AddCommentListener addCommentListener, boolean inOwnerView) {
+    public CommentsAdapter(@NonNull Context context, ArrayList<Comment> comments, String eventId, AddCommentFragment.AddCommentListener addCommentListener, ArrayList<String> owners) {
         this.eventId = eventId;
         this.commentsList = comments;
         this.context = context;
         this.addCommentListener = addCommentListener;
-        this.inOwnerView = inOwnerView;
+        this.owners = owners;
+        inOwnerView = owners.contains(DeviceIdManager.getOrCreate(context)) && UserRoleManager.getRole() == UserRole.ORGANIZER;
         entrantId = DeviceIdManager.getOrCreate(context);
     }
 
@@ -62,13 +66,20 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
         comment.initializeLiked(context);
 
         ArrayList<Comment> replies = new ArrayList<>();
-        CommentsAdapter repliesAdapter = new CommentsAdapter(context, replies, eventId, addCommentListener, inOwnerView);
+        CommentsAdapter repliesAdapter = new CommentsAdapter(context, replies, eventId, addCommentListener, owners);
 
         holder.getRepliesView().setAdapter(repliesAdapter);
 
         ProfileRepository profileRepository = new ProfileRepository();
         profileRepository.getProfile(comment.getEntrantId(), entrant -> {
-            holder.getNameText().setText(entrant.getProfile().getName());
+            String displayedName = entrant.getProfile().getName();
+            TextView nameView = holder.getNameText();
+            if (owners.contains(entrant.getDeviceId())) {
+                nameView.setTypeface(nameView.getTypeface(), Typeface.BOLD);
+                displayedName += " (Organizer)";
+            }
+
+            nameView.setText(displayedName);
         });
 
         EventRepository eventRepository = new EventRepository();
