@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -32,12 +33,14 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
     private ArrayList<Comment> commentsList;
     private EventRepository eventRepository;
     private AddCommentFragment.AddCommentListener addCommentListener;
+    private boolean inOwnerView;
 
-    public CommentsAdapter(@NonNull Context context, ArrayList<Comment> comments, String eventId, AddCommentFragment.AddCommentListener addCommentListener) {
+    public CommentsAdapter(@NonNull Context context, ArrayList<Comment> comments, String eventId, AddCommentFragment.AddCommentListener addCommentListener, boolean inOwnerView) {
         this.eventId = eventId;
         this.commentsList = comments;
         this.context = context;
         this.addCommentListener = addCommentListener;
+        this.inOwnerView = inOwnerView;
         eventRepository = new EventRepository();
         entrantId = DeviceIdManager.getOrCreate(context);
     }
@@ -61,7 +64,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
         comment.initializeLiked(context);
 
         ArrayList<Comment> replies = new ArrayList<>();
-        CommentsAdapter repliesAdapter = new CommentsAdapter(context, replies, eventId, addCommentListener);
+        CommentsAdapter repliesAdapter = new CommentsAdapter(context, replies, eventId, addCommentListener, inOwnerView);
 
         holder.getRepliesView().setAdapter(repliesAdapter);
 
@@ -71,8 +74,10 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
             @Override
             public void onCommentsLoaded(ArrayList<Comment> comments) {
                 if (comments != null && !comments.isEmpty()) {
-                    holder.getViewRepliesButton().setVisibility(View.VISIBLE);
-                    holder.getDivider().setVisibility(View.VISIBLE);
+                    if (holder.getHideRepliesButton().getVisibility() != View.VISIBLE) {
+                        holder.getViewRepliesButton().setVisibility(View.VISIBLE);
+                        holder.getDivider().setVisibility(View.VISIBLE);
+                    }
 
                     int prevSize = replies.size();
                     replies.addAll(comments);
@@ -80,12 +85,16 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
                     eventRepository.getNextCommentBatch(eventId, comment.getCommentId(), this);
                 }
                 else {
+                    if (replies.isEmpty()) {
+                        holder.getViewRepliesButton().setVisibility(View.GONE);
+                        holder.getDivider().setVisibility(View.GONE);
+                    }
                     holder.getRepliesView().setLayoutManager(new LinearLayoutManager(context));
                 }
             }
         });
         holder.getReplyButton().setOnClickListener(v -> {
-            addCommentListener.addComment(comment);
+            addCommentListener.addComment(comment.getCommentId(), this);
         });
 
         holder.getLikeButton().setOnClickListener(v -> {
@@ -105,6 +114,29 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
             holder.getHideRepliesButton().setVisibility(View.GONE);
             holder.getViewRepliesButton().setVisibility(View.VISIBLE);
         });
+
+        if (inOwnerView) {
+            holder.getContextMenuButton().setOnClickListener(v -> {
+                PopupMenu popupMenu = new PopupMenu(context, holder.getContextMenuButton());
+
+                popupMenu.getMenuInflater().inflate(R.menu.comment_context_popup, popupMenu.getMenu());
+
+                popupMenu.setOnMenuItemClickListener(menuItem -> {
+                    if (menuItem.getItemId() == R.id.comment_context_delete) {
+                        eventRepository.deleteComment(eventId, comment.getCommentId());
+                        commentsList.remove(holder.getBindingAdapterPosition());
+                        notifyDataSetChanged();
+                    }
+                    return true;
+                });
+
+                popupMenu.show();
+            });
+        }
+        else {
+            holder.getContextMenuButton().setVisibility(View.GONE);
+        }
+
         holder.getBodyText().setText(comment.getBody());
         holder.getLikesCounter().setText(String.format(Locale.CANADA, "%d", comment.getTotalLikes()));
     }

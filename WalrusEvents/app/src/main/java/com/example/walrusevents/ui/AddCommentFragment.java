@@ -17,32 +17,38 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.Comment;
+import com.example.walrusevents.util.CommentsAdapter;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class AddCommentFragment extends DialogFragment {
 
     public interface AddCommentListener {
-        void addComment(Comment parent);
-        void postComment(Comment parent, String bodyText);
+        void addComment(String parentId, CommentsAdapter adapter);
+        void postComment(String parentId, CommentsAdapter adapter, String bodyText);
         void updateComment(Comment comment);
     }
 
-    private Comment parent;
+    private CommentsAdapter adapter;
     private AddCommentListener listener;
+    private String parentId;
 
     public void setListener(AddCommentListener listener) {
         this.listener = listener;
     }
 
-    public static AddCommentFragment newInstance(AddCommentListener listener, Comment parent){
+    public static AddCommentFragment newInstance(String parentId, AddCommentListener listener, CommentsAdapter adapter){
         AddCommentFragment fragment = new AddCommentFragment();
-        fragment.setParent(parent);
+        fragment.setParentId(parentId);
+        fragment.setAdapter(adapter);
         fragment.setListener(listener);
         return fragment;
     }
 
-    private void setParent(Comment parent) {
-        this.parent = parent;
+    private void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+    private void setAdapter(CommentsAdapter adapter) {
+        this.adapter = adapter;
     }
 
     @Override
@@ -58,7 +64,7 @@ public class AddCommentFragment extends DialogFragment {
 
         postButton.setEnabled(false);
         postButton.setOnClickListener(v -> {
-            listener.postComment(parent, commentBody.getText().toString());
+            listener.postComment(parentId, adapter, commentBody.getText().toString());
             dismiss();
         });
 

@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String newText) {
+                //to reset to all public events to filter
                 eventListController.loadEvents();
                 return false;
             }
@@ -135,13 +136,10 @@ public class MainActivity extends AppCompatActivity {
         eventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(UserRoleManager.getRole() == UserRole.USER) {
-                    Event event_selected = (Event) adapterView.getItemAtPosition(i);
-                    Intent passToUserEventDetails = new Intent(MainActivity.this, UEventDetailsActivity.class);
-
-                    passToUserEventDetails.putExtra("Event", event_selected);
-                    startActivity(passToUserEventDetails);
-                }
+                Event event_selected = (Event) adapterView.getItemAtPosition(i);
+                Intent passToUserEventDetails = new Intent(MainActivity.this, UEventDetailsActivity.class);
+                passToUserEventDetails.putExtra("Event", event_selected);
+                startActivity(passToUserEventDetails);
             }
         });
 

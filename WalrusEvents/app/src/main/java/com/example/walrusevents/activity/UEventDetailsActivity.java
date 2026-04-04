@@ -3,6 +3,7 @@ package com.example.walrusevents.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -27,6 +28,8 @@ import com.example.walrusevents.ui.CommentsSectionFragment;
 import com.example.walrusevents.ui.EventPosterFragment;
 import com.example.walrusevents.ui.UEventDetailsView;
 import com.example.walrusevents.util.DeviceIdManager;
+import com.example.walrusevents.util.UserRole;
+import com.example.walrusevents.util.UserRoleManager;
 import com.example.walrusevents.util.PermissionGatekeeper;
 
 /**
@@ -104,6 +107,8 @@ public class UEventDetailsActivity extends AppCompatActivity
     private void setupUI() {
         if (eventModel == null) return;
 
+        UserRole role = UserRoleManager.getRole();
+
         // Initialize the View wrapper
         view = new UEventDetailsView(this, eventModel);
 
@@ -146,7 +151,7 @@ public class UEventDetailsActivity extends AppCompatActivity
         }
 
         CommentsSectionFragment commentsSectionFragment =
-                CommentsSectionFragment.newInstance(eventModel, null, getSupportFragmentManager());
+                CommentsSectionFragment.newInstance(eventModel, getSupportFragmentManager());
 
         view.getViewCommentsButton().setOnClickListener(v -> {
             commentsSectionFragment.show(getSupportFragmentManager(), "View Comments");
@@ -164,12 +169,17 @@ public class UEventDetailsActivity extends AppCompatActivity
         String deviceId = DeviceIdManager.getOrCreate(this);
         Entrant me = new Entrant(new Profile(deviceId, "User", "email@uab.ca"));
 
-        view.getJoinButton().setOnClickListener(v -> {
-            WaitlistRepository waitRep = new WaitlistRepository();
-            ProfileRepository pfRep = new ProfileRepository();
-            EntrantController entrantController = new EntrantController(me, waitRep, pfRep);
-            entrantController.joinWaitlist(eventModel.getEventId(), this);
-        });
+        if (role == UserRole.USER) {
+            view.getJoinButton().setOnClickListener(v -> {
+                WaitlistRepository waitRep = new WaitlistRepository();
+                ProfileRepository pfRep = new ProfileRepository();
+                EntrantController entrantController = new EntrantController(me, waitRep, pfRep);
+                entrantController.joinWaitlist(eventModel.getEventId(), this);
+            });
+        }
+        else {
+            view.getJoinButton().setVisibility(View.GONE);
+        }
 
         checkForInvitation();
     }

@@ -16,6 +16,8 @@ public class MainSEventListController implements EventRepository.EventListCallba
     private ArrayList<Event> eventList;
     private MainSEventArrayAdapter eventListAdapter;
     private EventRepository eventRepository;
+
+    private MainSFilterManager filterManager;
     private Context context;
 
     /**
@@ -31,6 +33,7 @@ public class MainSEventListController implements EventRepository.EventListCallba
         eventListView.setAdapter(eventListAdapter);
         this.eventRepository = eventRepository;
         this.context = context;
+        this.filterManager=new MainSFilterManager(eventList,eventListAdapter);
     }
 
     /**
@@ -40,8 +43,7 @@ public class MainSEventListController implements EventRepository.EventListCallba
     public void loadEvents() {
         eventList.clear();
         eventRepository.initiateGetAllEvents(this);
-       // eventRepository.getAllEvents(this);
-        eventListAdapter.applyFilters();
+        filterManager.applyFilters();
     }
 
     /**
@@ -59,14 +61,18 @@ public class MainSEventListController implements EventRepository.EventListCallba
         System.out.printf("%d event(s) loaded", events.size());
         //eventListAdapter.applyFilters();
         //eventListAdapter.notifyDataSetChanged();
-        eventListAdapter.updateData(events);
+       // eventListAdapter.updateData(events);
+        //filterManager.updateData(events);
     }
 
     public void setKeyword(String keyword) {
-        eventListAdapter.setKeyword(keyword);
+        //eventListAdapter.setKeyword(keyword);
+        filterManager.setKeyword(keyword);
     }
 
     public void setOpenSeatsFilter(boolean onlyOpenSeats) {
-        eventListAdapter.setOnlyOpenSeats(onlyOpenSeats);
+
+        filterManager.setOnlyOpenSeats(onlyOpenSeats);
+        //eventListAdapter.setOnlyOpenSeats(onlyOpenSeats);
     }
 }
