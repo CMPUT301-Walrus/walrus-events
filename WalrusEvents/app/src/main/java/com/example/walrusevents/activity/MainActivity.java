@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String newText) {
+                //to reset to all public events to filter
                 eventListController.loadEvents();
                 return false;
             }

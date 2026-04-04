@@ -125,9 +125,12 @@ public class MainSEventArrayAdapter extends ArrayAdapter<Event> implements Filte
         this.selectedEndTime=end;
     }
 
+
+
     /*
     * Apply the set of filters onto the eventlist : keyword, capacity, availability
      */
+
     public void applyFilters(){
         filteredList.clear();
 
@@ -171,5 +174,6 @@ public class MainSEventArrayAdapter extends ArrayAdapter<Event> implements Filte
         addAll(filteredList);
         notifyDataSetChanged();
     }
+
 
 }
