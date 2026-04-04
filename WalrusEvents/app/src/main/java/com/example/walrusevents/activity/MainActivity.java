@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         availabilitySortCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked){
                 //GO TO SCHEDULE FRAGMENT
-                //TODO: setup fragment and get the ModalDateRangePicker
+                //TODO: setup fragment and get the ModalDateRangePicker to pick the selected dates
 
 
             }else{

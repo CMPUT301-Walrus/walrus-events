@@ -87,8 +87,8 @@ public class MainSFilterManager {
                         LocalDateTime eventEndTime = LocalDateTime.parse(event.getEndRegistrationTime());
 
                         matchesAvailability =
-                                (selectedStartTime.isBefore(eventStartTime) || selectedStartTime.isEqual(eventStartTime)) &&
-                                        (selectedEndTime.isAfter(eventEndTime) || selectedEndTime.isEqual(eventEndTime));
+                                !eventEndTime.isBefore(selectedStartTime) &&
+                                        !eventStartTime.isAfter(selectedEndTime);
 
                     } else {
                         matchesAvailability = false;
