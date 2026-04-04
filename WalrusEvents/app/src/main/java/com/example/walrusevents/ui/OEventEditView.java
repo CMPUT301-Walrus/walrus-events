@@ -8,6 +8,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import androidx.appcompat.widget.SwitchCompat;
+
 import com.example.walrusevents.controllers.OEventEditController;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.Event;
@@ -18,7 +20,7 @@ import java.util.Locale;
 
 public class OEventEditView implements OEventEditController.EventEditListener {
     private TextView titleView;
-    private Switch privateToggle;
+    private SwitchCompat privateToggle;
     private ImageView editPosterImage;
     private ImageView editThumbnail;
     private TextInputEditText editDescription;
@@ -60,7 +62,7 @@ public class OEventEditView implements OEventEditController.EventEditListener {
         return titleView;
     }
 
-    public Switch getPrivateToggle() {
+    public SwitchCompat getPrivateToggle() {
         return privateToggle;
     }
 
