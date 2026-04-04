@@ -31,7 +31,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
     private String entrantId;
     private String eventId;
     private ArrayList<Comment> commentsList;
-    private EventRepository eventRepository;
     private AddCommentFragment.AddCommentListener addCommentListener;
     private boolean inOwnerView;
 
@@ -41,7 +40,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
         this.context = context;
         this.addCommentListener = addCommentListener;
         this.inOwnerView = inOwnerView;
-        eventRepository = new EventRepository();
         entrantId = DeviceIdManager.getOrCreate(context);
     }
 
@@ -67,6 +65,11 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
         CommentsAdapter repliesAdapter = new CommentsAdapter(context, replies, eventId, addCommentListener, inOwnerView);
 
         holder.getRepliesView().setAdapter(repliesAdapter);
+
+        ProfileRepository profileRepository = new ProfileRepository();
+        profileRepository.getProfile(comment.getEntrantId(), entrant -> {
+            holder.getNameText().setText(entrant.getProfile().getName());
+        });
 
         EventRepository eventRepository = new EventRepository();
 
