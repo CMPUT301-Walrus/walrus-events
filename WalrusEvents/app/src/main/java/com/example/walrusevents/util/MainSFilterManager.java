@@ -1,5 +1,7 @@
 package com.example.walrusevents.util;
 
+import android.util.Log;
+
 import com.example.walrusevents.model.Event;
 
 import java.time.LocalDateTime;
@@ -55,13 +57,15 @@ public class MainSFilterManager {
     }
 
     public void applyFilters() {
+        filteredList = new ArrayList<Event>();
         if (!isWithoutFilters()) {
 
-            filteredList.clear();
+            //filteredList.clear();
 
             boolean matchesKeyword = true;
             boolean matchesSeats = true;
             boolean matchesAvailability = true;
+            boolean isAlreadyInList =false;
 
             for (Event event : originalList) {
                 // Keyword filter
@@ -91,21 +95,33 @@ public class MainSFilterManager {
                     }
                 }
 
-                if (matchesKeyword && matchesSeats && matchesAvailability) {
+                //QUICK FIX AAH
+                isAlreadyInList = filteredList.contains(event);
+
+                if (matchesKeyword && matchesSeats && matchesAvailability&& (!isAlreadyInList)) {
                     filteredList.add(event);
                 }
             }
             arrayAdapter.clear();
             arrayAdapter.addAll(filteredList);
             arrayAdapter.notifyDataSetChanged();
+            Log.d("FilteredList",filteredList.toString());
         } else {
-            //filteredList.clear();
-            //filteredList=originalList;
+            arrayAdapter.clear();
+            arrayAdapter.addAll(originalList);
+            arrayAdapter.notifyDataSetChanged();
         }
     }
 
     public boolean isWithoutFilters(){
 
         return (keyword == null || keyword.isEmpty()) && selectedStartTime == null && selectedEndTime == null && !onlyOpenSeats;
+    }
+
+    public void resetFilters(){
+        this.keyword="";
+        this.selectedStartTime=null;
+        this.selectedEndTime=null;
+        this.onlyOpenSeats=false;
     }
 }

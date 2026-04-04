@@ -298,6 +298,11 @@ public class EventRepository {
                 });
     }
 
+    public void resetPagination(){
+        lastFetchedEvent=null;
+    }
+
+
     /**
      * Callback interface for single event
      * method made to get the event that we want from the Event class
