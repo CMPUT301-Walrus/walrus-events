@@ -70,6 +70,10 @@ public class OEventEditController {
         model.setTitle(title);
     }
 
+    public void setIsPrivate(boolean isPrivate) {
+        model.setIsPrivate(isPrivate);
+    }
+
     public void setDescription(String description) {
         model.setDescription(description);
     }
