@@ -29,6 +29,7 @@ import com.example.walrusevents.ui.NotificationInboxFragment;
 import com.example.walrusevents.util.DeviceIdManager;
 import com.example.walrusevents.util.MainSEventListController;
 import com.example.walrusevents.util.PermissionGatekeeper;
+import com.example.walrusevents.util.MainSFilterManager;
 import com.example.walrusevents.util.UserRole;
 import com.example.walrusevents.util.UserRoleManager;
 
@@ -80,8 +81,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 //to reset to all public events to filter
-                eventListController.loadEvents();
-                return false;
+                eventListController.setKeyword(newText);
+                //eventListController.resetFilters();
+                //eventListController.loadEvents();
+                return true;
             }
 
             @Override
@@ -89,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 //eventListController.getSearchFilter().filter(query);
                 eventListController.setKeyword(query);
                 //eventListController.loadEventsbyKeyword(query);
-                return false;
+                return true;
             }
         });
         searchBar.setOnCloseListener(new SearchView.OnCloseListener() {
@@ -115,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
             }
             else{
                 eventListController.setOpenSeatsFilter(false);
-                eventListController.loadEvents();
+                //eventListController.loadEvents();
 
             }
         });
@@ -123,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         availabilitySortCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked){
                 //GO TO SCHEDULE FRAGMENT
-                //TODO: setup fragment and get the ModalDateRangePicker
+                //TODO: setup fragment and get the ModalDateRangePicker to pick the selected dates
 
 
             }else{
