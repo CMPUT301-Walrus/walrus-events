@@ -3,6 +3,8 @@ package com.example.walrusevents.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.PopupMenu;
 
 import androidx.activity.EdgeToEdge;
@@ -12,25 +14,27 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.walrusevents.controllers.NotificationsController;
 import com.example.walrusevents.model.Lottery;
 import com.example.walrusevents.controllers.OEventPoolController;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.WaitlistEntry;
 import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Event;
+import com.example.walrusevents.ui.FinalizedPoolFragment;
 import com.example.walrusevents.ui.OEventPoolView;
 import com.example.walrusevents.ui.PostLotteryPoolFragment;
 import com.example.walrusevents.ui.PreLotteryPoolFragment;
+import com.example.walrusevents.util.DeviceIdManager;
 import com.example.walrusevents.util.PermissionGatekeeper;
 
 import java.util.List;
+import java.util.Locale;
 
 public class OEventPoolActivity extends AppCompatActivity implements WaitlistRepository.EntryListCallback {
     private Event eventModel;
     private OEventPoolView view;
     private OEventPoolController controller;
-    private PreLotteryPoolFragment preLotteryFragment;
-    private PostLotteryPoolFragment postLotteryFragment;
 
     ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -84,7 +88,6 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
                     Intent goEditDetails = new Intent(this, OEventEditActivity.class);
                     goEditDetails.putExtra("Event", eventModel);
                     activityResultLauncher.launch(goEditDetails);
-                    //startActivity(goEditDetails);
                 }
                 else if (menuItem.getItemId() == R.id.event_settings_qr) {
                     Intent goQrCode = new Intent(this, QRCodeActivity.class);
@@ -101,14 +104,6 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
         view.getBackButton().setOnClickListener(v -> {
             finish();
         });
-
-        /*
-        * Currently draws the lottery automatically upon clicking. More deliberate forms of execution can be done later.
-         */
-        view.getLotteryButton().setOnClickListener(v -> {
-            WaitlistRepository collectForLottery = new WaitlistRepository();
-            collectForLottery.getAllEntries(eventModel.getEventId(), this);
-        });
     }
 
     /**
@@ -116,21 +111,46 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
      */
     public void refresh() {
         if (eventModel.isInRegistration()) {
-            preLotteryFragment = new PreLotteryPoolFragment(eventModel);
+            PreLotteryPoolFragment preLotteryFragment = new PreLotteryPoolFragment(eventModel);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.waiting_list_fragment, preLotteryFragment)
                     .commit();
             controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), preLotteryFragment);
         }
         else if (eventModel.isInConfirmation()) {
-            postLotteryFragment = new PostLotteryPoolFragment(eventModel);
+            PostLotteryPoolFragment postLotteryFragment = new PostLotteryPoolFragment(eventModel);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.waiting_list_fragment, postLotteryFragment)
                     .commit();
             controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), postLotteryFragment);
         }
         else {
+            FinalizedPoolFragment finalizedPoolFragment = new FinalizedPoolFragment(eventModel);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.waiting_list_fragment, finalizedPoolFragment)
+                    .commit();
+            controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), finalizedPoolFragment);
+        }
 
+        //Turn lottery button to an invite button if the event is private
+        if (!eventModel.getIsPrivate()) {
+            /*
+             * Currently draws the lottery automatically upon clicking. More deliberate forms of execution can be done later.
+             */
+            view.getLotteryButton().setText("Lottery");
+            view.getLotteryButton().setOnClickListener(v -> {
+                WaitlistRepository collectForLottery = new WaitlistRepository();
+                collectForLottery.getAllEntries(eventModel.getEventId(), this);
+            });
+        }
+        else {
+            view.getLotteryButton().setText("Invite");
+
+            String testEntrantId = DeviceIdManager.getOrCreate(this);
+            view.getLotteryButton().setOnClickListener(v -> {
+                controller.sendInvite(this, testEntrantId, "Invitation",
+                        String.format(Locale.getDefault(),"You were invited to %s!", eventModel.getTitle()));
+            });
         }
     }
 

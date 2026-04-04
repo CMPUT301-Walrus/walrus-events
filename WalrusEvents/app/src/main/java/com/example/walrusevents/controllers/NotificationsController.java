@@ -35,17 +35,17 @@ public class NotificationsController {
      * Organizer can send a message, this function finds all eligible users
      * and puts the message into their inbox
      */
-    public void sendNotifications(Context context, String eventId, String title, String message, String targetGroup) {
+    public void sendNotifications(Context context, String eventId, String title, String message, Notification.NotificationTarget targetGroup) {
         Notification notification = new Notification(title, message, eventId, targetGroup);
 
         // Find all users in this event who match the target group
         waitlistRepo.getAllEntries(eventId, entries -> {
             final int[] processedCount = {0};
             for (WaitlistEntry entry : entries) {
-                String userGroup = mapStatusToGroup(entry.getStatus());
-
+                System.out.println("SENDING");
+                Notification.NotificationTarget userGroup = Notification.mapStatusToGroup(entry.getStatus());
                 // If the message is for 'all' or matches their specific status
-                if (targetGroup.equals("all") || targetGroup.equals(userGroup)) {
+                if (targetGroup == Notification.NotificationTarget.ALL || targetGroup.equals(userGroup)) {
                     profileRepo.getProfile(entry.getEntrantId(), profile -> {
                         if (profile != null && profile.hasNotificationsEnabled()) {
                             // Only send if the user has opted-in
@@ -71,15 +71,5 @@ public class NotificationsController {
 
     public interface NotificationCallback {
         void onNotificationsLoaded(List<Notification> notifications);
-    }
-
-    private String mapStatusToGroup(WaitlistEntry.Status status) {
-        if (status == null) return "all";
-        switch (status) {
-            case INVITED:
-            case ACCEPTED: return "selected";
-            case PENDING: return "waiting_list";
-            default: return "all";
-        }
     }
 }
