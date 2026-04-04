@@ -27,6 +27,7 @@ import com.example.walrusevents.ui.CommentsSectionFragment;
 import com.example.walrusevents.ui.EventPosterFragment;
 import com.example.walrusevents.ui.UEventDetailsView;
 import com.example.walrusevents.util.DeviceIdManager;
+import com.example.walrusevents.util.PermissionGatekeeper;
 
 /**
  * Class handles displaying event details for a particular event
@@ -44,6 +45,10 @@ public class UEventDetailsActivity extends AppCompatActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PermissionGatekeeper.requireNotBanned(this, false, permissions -> initializeUi());
+    }
+
+    private void initializeUi() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.event_details);
 
