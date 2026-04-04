@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -105,6 +106,27 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
             holder.getHideRepliesButton().setVisibility(View.GONE);
             holder.getViewRepliesButton().setVisibility(View.VISIBLE);
         });
+
+        UserRole role = UserRoleManager.getRole();
+        if (role != UserRole.USER) {
+            holder.getContextMenuButton().setOnClickListener(v -> {
+
+                PopupMenu popupMenu = new PopupMenu(context, holder.getContextMenuButton());
+
+                popupMenu.getMenuInflater().inflate(R.menu.comment_context_popup, popupMenu.getMenu());
+
+                popupMenu.setOnMenuItemClickListener(menuItem -> {
+                    if (menuItem.getItemId() == R.id.comment_context_delete) {
+                        eventRepository.deleteComment(eventId, comment.getCommentId());
+                    }
+                    return true;
+                });
+            });
+        }
+        else {
+            holder.getContextMenuButton().setVisibility(View.GONE);
+        }
+
         holder.getBodyText().setText(comment.getBody());
         holder.getLikesCounter().setText(String.format(Locale.CANADA, "%d", comment.getTotalLikes()));
     }

@@ -1,6 +1,7 @@
 package com.example.walrusevents.ui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,12 +17,17 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.walrusevents.activity.OEventEditActivity;
+import com.example.walrusevents.activity.QRCodeActivity;
+import com.example.walrusevents.activity.UEventDetailsActivity;
 import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.Comment;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.util.CommentsAdapter;
 import com.example.walrusevents.util.DeviceIdManager;
+import com.example.walrusevents.util.UserRole;
+import com.example.walrusevents.util.UserRoleManager;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.ArrayList;
@@ -64,6 +71,7 @@ public class CommentsSectionFragment extends BottomSheetDialogFragment
         RecyclerView commentsView = view.findViewById(R.id.comments_section_view);
         Button addCommentButton = view.findViewById(R.id.add_comment_button);
         ImageView closeButton = view.findViewById(R.id.comments_close_button);
+        ImageView contextMenuButton = view.findViewById(R.id.context_menu_button);
         eventRepository = new EventRepository();
 
         commentsList = new ArrayList<>();
@@ -80,6 +88,7 @@ public class CommentsSectionFragment extends BottomSheetDialogFragment
         closeButton.setOnClickListener(v -> {
             dismiss();
         });
+
     }
 
     /**
