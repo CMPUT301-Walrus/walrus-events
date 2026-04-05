@@ -124,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
             }
             else{
                 eventListController.setOpenSeatsFilter(false);
-                //eventListController.loadEvents();
 
             }
         });
@@ -139,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
             }else{
                 //revert?
                 eventListController.setDateRange(null,null);
+                eventListController.loadEvents();
             }
         });
 
@@ -366,7 +366,7 @@ public class MainActivity extends AppCompatActivity {
 
         MaterialDatePicker<Pair<Long, Long>> picker =
                 MaterialDatePicker.Builder.dateRangePicker()
-                        .setTitleText("Select date range")
+                        .setTitleText("Select availability")
                         .build();
 
         picker.addOnPositiveButtonClickListener(selection -> {

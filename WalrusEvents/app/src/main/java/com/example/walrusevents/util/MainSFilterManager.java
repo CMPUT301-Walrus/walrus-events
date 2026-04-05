@@ -11,7 +11,7 @@ import java.util.ArrayList;
 * Manages the filters for the Listview in the MainActivity
 * keyword search filter, capacity filter, availability filter
 *
-* TODO: have the filters check the originalList and not the items in filteredList
+* Currently : Availability is based on
  */
 public class MainSFilterManager {
     private ArrayList<Event> originalList;
@@ -54,6 +54,7 @@ public class MainSFilterManager {
     public void setSelectedRange(LocalDateTime start, LocalDateTime end){
         this.selectedStartTime=start;
         this.selectedEndTime=end;
+        applyFilters();
     }
 
     public void applyFilters() {
