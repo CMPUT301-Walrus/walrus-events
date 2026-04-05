@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
+import androidx.core.util.Pair;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
@@ -32,6 +33,11 @@ import com.example.walrusevents.util.PermissionGatekeeper;
 import com.example.walrusevents.util.MainSFilterManager;
 import com.example.walrusevents.util.UserRole;
 import com.example.walrusevents.util.UserRoleManager;
+import com.google.android.material.datepicker.MaterialDatePicker;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -118,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
             }
             else{
                 eventListController.setOpenSeatsFilter(false);
-                //eventListController.loadEvents();
 
             }
         });
@@ -127,10 +132,13 @@ public class MainActivity extends AppCompatActivity {
             if(isChecked){
                 //GO TO SCHEDULE FRAGMENT
                 //TODO: setup fragment and get the ModalDateRangePicker to pick the selected dates
+                showDateRangePicker();
 
 
             }else{
                 //revert?
+                eventListController.setDateRange(null,null);
+                eventListController.loadEvents();
             }
         });
 
@@ -352,6 +360,46 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, USettingsActivity.class);
         intent.putExtra(USettingsActivity.INITIAL_PROFILE_SETUP, initialProfileSetupLaunched);
         startActivity(intent);
+    }
+
+    private void showDateRangePicker() {
+
+        MaterialDatePicker<Pair<Long, Long>> picker =
+                MaterialDatePicker.Builder.dateRangePicker()
+                        .setTitleText("Select availability")
+                        .build();
+
+        picker.addOnPositiveButtonClickListener(selection -> {
+
+            if (selection == null) return;
+
+            Long startMillis = selection.first;
+            Long endMillis = selection.second;
+
+            if (startMillis != null && endMillis != null) {
+
+                LocalDateTime start = Instant.ofEpochMilli(startMillis)
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()
+                        .atStartOfDay();
+
+                LocalDateTime end = Instant.ofEpochMilli(endMillis)
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()
+                        .atTime(23, 59, 59);
+
+                //apply
+                eventListController.setDateRange(start,end);
+            }
+        });
+
+        picker.addOnNegativeButtonClickListener(dialog -> {
+            // Optional: reset checkbox if user cancels
+            CheckBox checkbox = findViewById(R.id.availability_sort_button);
+            checkbox.setChecked(false);
+        });
+
+        picker.show(getSupportFragmentManager(), "DATE_RANGE_PICKER");
     }
 
 }
