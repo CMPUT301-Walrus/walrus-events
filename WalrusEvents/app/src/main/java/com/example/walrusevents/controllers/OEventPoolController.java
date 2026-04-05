@@ -12,6 +12,7 @@ import com.example.walrusevents.data.NotificationRepository;
 import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Entrant;
+import com.example.walrusevents.model.Event;
 import com.example.walrusevents.model.Notification;
 import com.example.walrusevents.model.WaitlistEntry;
 
@@ -21,13 +22,11 @@ public class OEventPoolController {
     private WaitlistRepository waitlistRepository;
     private ProfileRepository profileRepository;
     private NotificationRepository notificationRepository;
-    private boolean inConfirmationPhase;
-    private String eventId;
+    private Event eventModel;
     private NotificationsController notificationsController;
 
-    public OEventPoolController(Activity context, String eventId, boolean inConfirmationPhase, FragmentContainerView fragmentContainerView, @NonNull Fragment fragment) {
-        this.inConfirmationPhase = inConfirmationPhase;
-        this.eventId = eventId;
+    public OEventPoolController(Activity context, Event eventModel, FragmentContainerView fragmentContainerView, @NonNull Fragment fragment) {
+        this.eventModel = eventModel;
 
         waitlistRepository = new WaitlistRepository();
         profileRepository = new ProfileRepository();
@@ -42,9 +41,9 @@ public class OEventPoolController {
      * @param notifMessage
      */
     public void sendInvite(Context context, String entrantId, String notifTitle, String notifMessage) {
-        Notification notification = new Notification(notifTitle, notifMessage, eventId, Notification.NotificationTarget.SELECTED);
+        Notification notification = new Notification(notifTitle, notifMessage, eventModel.getEventId(), Notification.NotificationTarget.SELECTED);
 
-        WaitlistEntry waitlistEntry = new WaitlistEntry(entrantId, eventId);
+        WaitlistEntry waitlistEntry = new WaitlistEntry(entrantId, eventModel.getEventId());
         waitlistEntry.setStatus(WaitlistEntry.Status.INVITED);
         waitlistRepository.addEntry(waitlistEntry, new WaitlistRepository.SaveCallback() {
             @Override
@@ -61,6 +60,7 @@ public class OEventPoolController {
     }
 
     public void sendNotifications(Context context, String title, String message, Notification.NotificationTarget targetGroup) {
+        String eventId = eventModel.getEventId();
         Notification notification = new Notification(title, message, eventId, targetGroup);
 
         // Find all users in this event who match the target group
@@ -99,5 +99,14 @@ public class OEventPoolController {
                 notificationRepository.sendNotificationToUser(entrant.getDeviceId(), notification);
             }
         });
+    }
+
+    public void addOwner(Context context, String entrantId) {
+        if (!eventModel.getOwners().contains(entrantId)) {
+            eventModel.addOwner(entrantId);
+        }
+        else {
+            Toast.makeText(context, "User is already an owner", Toast.LENGTH_SHORT).show();
+        }
     }
 }
