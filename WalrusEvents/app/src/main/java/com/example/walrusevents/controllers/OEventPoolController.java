@@ -16,6 +16,7 @@ import com.example.walrusevents.model.Event;
 import com.example.walrusevents.model.Notification;
 import com.example.walrusevents.model.WaitlistEntry;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OEventPoolController {
@@ -24,6 +25,7 @@ public class OEventPoolController {
     private NotificationRepository notificationRepository;
     private Event eventModel;
     private NotificationsController notificationsController;
+    private ArrayList<Integer> selectedForRemoval;
 
     public OEventPoolController(Activity context, Event eventModel, FragmentContainerView fragmentContainerView, @NonNull Fragment fragment) {
         this.eventModel = eventModel;
@@ -108,5 +110,9 @@ public class OEventPoolController {
         else {
             Toast.makeText(context, "User is already an owner", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void selectForRemoval(int position) {
+
     }
 }

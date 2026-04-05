@@ -1,14 +1,18 @@
 package com.example.walrusevents.ui;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.walrusevents.data.ProfileRepository;
@@ -35,9 +39,11 @@ public class PostLotteryPoolFragment extends Fragment {
     private ArrayList<Entrant> pendingList;
     private ArrayList<Entrant> notChosenList;
     private EntrantArrayAdapter notChosenListAdapter;
+    private ArrayList<String> selectedForRemoval;
 
-    public PostLotteryPoolFragment(Event eventModel) {
+    public PostLotteryPoolFragment(Event eventModel, ArrayList<String> selectedForRemoval) {
         this.eventModel = eventModel;
+        this.selectedForRemoval = selectedForRemoval;
         waitlistRepository = new WaitlistRepository();
         profileRepository = new ProfileRepository();
     }
@@ -71,6 +77,26 @@ public class PostLotteryPoolFragment extends Fragment {
 
         pendingList = new ArrayList<>();
         setupList(view, notChosenList, notChosenListAdapter, R.id.not_chosen_list, WaitlistEntry.Status.PENDING);
+
+        ListView chosenListView = view.findViewById(R.id.chosen_list);
+        chosenListView.setOnItemClickListener((parent, view1, position, id) -> {
+            String entrantId = chosenList.get(position).getDeviceId();
+
+            if (selectedForRemoval.contains(entrantId)){
+                selectedForRemoval.remove(entrantId);
+
+                TextView nameText = view1.findViewById(R.id.profileName);
+                nameText.setTextColor(Color.parseColor("#242424"));
+                view1.findViewById(R.id.waitlist_entry_background_selected).setVisibility(View.GONE);
+            }
+            else {
+                selectedForRemoval.add(entrantId);
+
+                TextView nameText = view1.findViewById(R.id.profileName);
+                nameText.setTextColor(Color.WHITE);
+                view1.findViewById(R.id.waitlist_entry_background_selected).setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void setupList(View view, ArrayList<Entrant> list, EntrantArrayAdapter adapter, int listViewId, WaitlistEntry.Status status) {

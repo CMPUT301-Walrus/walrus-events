@@ -13,12 +13,14 @@ public class OEventPoolView {
     private Button settingsButton;
     private Button backButton;
     private Button lotteryButton;
+    private Button removeButton;
     private FragmentContainerView fragmentContainer;
 
     public OEventPoolView(Activity context) {
         settingsButton = context.findViewById(R.id.settings_org_button);
         backButton = context.findViewById(R.id.back_waiting_list_org);
         lotteryButton = context.findViewById(R.id.lottery_button);
+        removeButton = context.findViewById(R.id.remove_applicant);
         fragmentContainer = context.findViewById(R.id.waiting_list_fragment);
     }
 
@@ -35,5 +37,9 @@ public class OEventPoolView {
 
     public Button getLotteryButton() {
         return lotteryButton;
+    }
+
+    public Button getRemoveButton() {
+        return removeButton;
     }
 }
