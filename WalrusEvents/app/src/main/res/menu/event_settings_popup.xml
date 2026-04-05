@@ -9,6 +9,9 @@
         android:id="@+id/event_settings_edit"
         android:title="Edit Details"/>
     <item
+        android:id="@+id/event_settings_co_owner"
+        android:title="Add Co-Owner"/>
+    <item
         android:id="@+id/event_settings_qr"
         android:title="Show QR Code"/>
 </menu>
