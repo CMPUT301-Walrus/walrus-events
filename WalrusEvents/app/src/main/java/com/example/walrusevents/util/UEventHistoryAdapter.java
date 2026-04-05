@@ -80,8 +80,9 @@ public class UEventHistoryAdapter extends ArrayAdapter<UEventHistoryAdapter.Hist
 
     private String statusLabel(WaitlistEntry.Status status) {
         switch (status) {
-            case INVITED:   return "Selected";
-            case ACCEPTED:  return "Registered";
+            case INVITED:   return "Invited";
+            case NOT_CHOSEN:return "Not Selected";
+            case ACCEPTED:  return "Confirmed";
             case DECLINED:  return "Declined";
             case CANCELLED: return "Cancelled";
             default:        return "Pending";
@@ -91,6 +92,7 @@ public class UEventHistoryAdapter extends ArrayAdapter<UEventHistoryAdapter.Hist
     private int statusColor(WaitlistEntry.Status status) {
         switch (status) {
             case INVITED:   return 0xFF4CAF50; // green
+            case NOT_CHOSEN:return 0xFFEB78FF; // purple
             case ACCEPTED:  return 0xFF00BCD4; // teal
             case DECLINED:  return 0xFFB91C1C; // red
             case CANCELLED: return 0xFF6B7280; // grey
