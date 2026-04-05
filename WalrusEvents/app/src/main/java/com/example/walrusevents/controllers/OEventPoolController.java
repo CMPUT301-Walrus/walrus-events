@@ -34,6 +34,13 @@ public class OEventPoolController {
         notificationRepository = new NotificationRepository();
     }
 
+    /**
+     * Sends an invite notification to the specified entrant. Can only invite if the event is private
+     * @param context
+     * @param entrantId ID of the entrant to be invited
+     * @param notifTitle
+     * @param notifMessage
+     */
     public void sendInvite(Context context, String entrantId, String notifTitle, String notifMessage) {
         Notification notification = new Notification(notifTitle, notifMessage, eventId, Notification.NotificationTarget.SELECTED);
 

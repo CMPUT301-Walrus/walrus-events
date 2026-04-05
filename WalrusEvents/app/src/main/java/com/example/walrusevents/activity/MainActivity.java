@@ -134,13 +134,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /*
-        * When set to User, OnItemClick an event goes to event_details from eventListView
-         */
+
+        //When set to User, OnItemClick an event goes to event_details from eventListView
         eventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Event event_selected = (Event) adapterView.getItemAtPosition(i);
+
+                //Swap to role to user if an organizer looks at an event they didn't organize
+                UserRole userRole = UserRoleManager.getRole();
+                if (userRole == UserRole.ORGANIZER && !event_selected.getOwners().contains(DeviceIdManager.getOrCreate(MainActivity.this))) {
+                    UserRoleManager.setRole(UserRole.USER);
+                    updateRoleText();
+                    Toast.makeText(MainActivity.this, "Role changed to user", Toast.LENGTH_SHORT).show();
+                }
                 Intent passToUserEventDetails = new Intent(MainActivity.this, UEventDetailsActivity.class);
                 passToUserEventDetails.putExtra("Event", event_selected);
                 startActivity(passToUserEventDetails);

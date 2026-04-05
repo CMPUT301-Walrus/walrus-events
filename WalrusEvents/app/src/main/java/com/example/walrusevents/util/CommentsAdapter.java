@@ -30,7 +30,6 @@ import java.util.Locale;
 public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
         implements ProfileRepository.ProfileCallback {
     private Context context;
-    private String entrantId;
     private String eventId;
     private ArrayList<Comment> commentsList;
     private AddCommentFragment.AddCommentListener addCommentListener;
@@ -44,7 +43,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
         this.addCommentListener = addCommentListener;
         this.owners = owners;
         inOwnerView = owners.contains(DeviceIdManager.getOrCreate(context)) && UserRoleManager.getRole() == UserRole.ORGANIZER;
-        entrantId = DeviceIdManager.getOrCreate(context);
     }
 
     @Override
