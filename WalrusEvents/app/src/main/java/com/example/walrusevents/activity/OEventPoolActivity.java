@@ -89,6 +89,11 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
                     goEditDetails.putExtra("Event", eventModel);
                     activityResultLauncher.launch(goEditDetails);
                 }
+                else if (menuItem.getItemId() == R.id.event_settings_co_owner) {
+                    //TODO: search users and select co-owner
+
+
+                }
                 else if (menuItem.getItemId() == R.id.event_settings_qr) {
                     Intent goQrCode = new Intent(this, QRCodeActivity.class);
                     goQrCode.putExtra("EVENT_ID", eventModel.getEventId());
@@ -115,21 +120,21 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.waiting_list_fragment, preLotteryFragment)
                     .commit();
-            controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), preLotteryFragment);
+            controller = new OEventPoolController(this, eventModel, view.getFragmentContainerView(), preLotteryFragment);
         }
         else if (eventModel.isInConfirmation()) {
             PostLotteryPoolFragment postLotteryFragment = new PostLotteryPoolFragment(eventModel);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.waiting_list_fragment, postLotteryFragment)
                     .commit();
-            controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), postLotteryFragment);
+            controller = new OEventPoolController(this, eventModel, view.getFragmentContainerView(), postLotteryFragment);
         }
         else {
             FinalizedPoolFragment finalizedPoolFragment = new FinalizedPoolFragment(eventModel);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.waiting_list_fragment, finalizedPoolFragment)
                     .commit();
-            controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), finalizedPoolFragment);
+            controller = new OEventPoolController(this, eventModel, view.getFragmentContainerView(), finalizedPoolFragment);
         }
 
         //Turn lottery button to an invite button if the event is private
@@ -154,13 +159,6 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
         }
     }
 
-    /**
-     * Sends an invite notification to the specified entrant. Can only invite if the event is private
-     * @param entrantId ID of the entrant to be invited
-     */
-    public void sendInvite(String entrantId) {
-        //TODO: add functionality
-    }
     @Override
     public void onEntriesLoaded(List<WaitlistEntry> entries) {
         Lottery lottery = new Lottery();
