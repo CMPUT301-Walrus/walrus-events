@@ -122,13 +122,13 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/invite_button"
+            android:id="@+id/send_notifications_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="#FFD24B"
-            android:text="Invite"
+            android:text="Send Notifications"
             android:textColor="@color/black"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/remove_applicant"
             app:layout_constraintHorizontal_bias="0.5"
@@ -146,7 +146,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/lottery_button"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/invite_button"
+            app:layout_constraintStart_toEndOf="@+id/send_notifications_button"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
