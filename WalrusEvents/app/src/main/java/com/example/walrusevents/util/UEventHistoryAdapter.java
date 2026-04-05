@@ -84,7 +84,7 @@ public class UEventHistoryAdapter extends ArrayAdapter<UEventHistoryAdapter.Hist
             case NOT_CHOSEN:return "Not Selected";
             case ACCEPTED:  return "Confirmed";
             case DECLINED:  return "Declined";
-            case CANCELLED: return "Cancelled";
+            case CANCELED: return "Cancelled";
             default:        return "Pending";
         }
     }
@@ -95,7 +95,7 @@ public class UEventHistoryAdapter extends ArrayAdapter<UEventHistoryAdapter.Hist
             case NOT_CHOSEN:return 0xFFEB78FF; // purple
             case ACCEPTED:  return 0xFF00BCD4; // teal
             case DECLINED:  return 0xFFB91C1C; // red
-            case CANCELLED: return 0xFF6B7280; // grey
+            case CANCELED: return 0xFF6B7280; // grey
             default:        return 0xFFFFD24B; // yellow (PENDING)
         }
     }
