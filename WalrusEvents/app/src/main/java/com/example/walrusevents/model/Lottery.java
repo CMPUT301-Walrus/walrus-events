@@ -38,7 +38,7 @@ public class Lottery implements WaitlistRepository.SaveCallback {
         //if (capacity < 1) return false; /* Draw failed: capacity needs to be at least one */
 
         int length = entrants.size();
-        if (length < 1) return false; /* Draw failed: no entrants exist */
+        if (length < 1) return false; // Draw failed: no entrants exist
 
         int limit = capacity;
         // Create a new list of entrants that are PENDING and track how many seats are already reserved.
@@ -51,7 +51,12 @@ public class Lottery implements WaitlistRepository.SaveCallback {
             }
         }
 
-        if (pending.isEmpty()) return false; /* Draw failed: no pending entrants can be selected */
+        if (pending.isEmpty()) return false; // Draw failed: no pending entrants can be selected
+
+        // Draw failed: all available seats have been taken
+        if (limit <= 0) {
+            return false;
+        }
 
         // If event can seat all PENDING entrants, invite them all
         if (limit >= pending.size()) {

@@ -62,6 +62,8 @@ public class AcceptInvitationFragment extends DialogFragment {
         headerView.setText(headerText);
 
         TextView invitedText = view.findViewById(R.id.invitationText);
+        TextView disclaimerText = view.findViewById(R.id.invite_disclaimer);
+
         switch (status) {
             case INVITED:
                 acceptButton.setOnClickListener(v -> {
@@ -75,12 +77,14 @@ public class AcceptInvitationFragment extends DialogFragment {
                 break;
             case NOT_CHOSEN:
                 invitedText.setText("Not Selected");
+                disclaimerText.setText("You may still be chosen if another entrant declines");
                 acceptButton.setVisibility(INVISIBLE);
                 declineButton.setVisibility(INVISIBLE);
                 laterButton.setText("OK");
                 break;
             case PENDING:
                 invitedText.setText("Awaiting Organizer Action");
+                disclaimerText.setText("Organizer still needs to initiate the lottery");
                 acceptButton.setVisibility(INVISIBLE);
                 declineButton.setVisibility(INVISIBLE);
                 laterButton.setText("OK");
