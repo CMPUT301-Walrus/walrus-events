@@ -9,7 +9,6 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.example.walrusevents.data.EventRepository;
@@ -39,6 +38,7 @@ import com.example.walrusevents.util.PermissionGatekeeper;
 public class UEventDetailsActivity extends AppCompatActivity
         implements EntrantController.ActionCallback, AcceptInvitationFragment.AcceptInvitationListener,
         WaitlistRepository.EntryCallback {
+    private static final String INVITATION_DIALOG_TAG = "invitationDialog";
 
     private Event eventModel;
     private UEventDetailsView view;
@@ -177,7 +177,7 @@ public class UEventDetailsActivity extends AppCompatActivity
     private void updateJoinButton(boolean joined, String deviceId) {
         Entrant entrant = new Entrant(new Profile(deviceId, "User", "email@uab.ca"));
         if (joined) {
-            view.getJoinButton().setText("Leave");
+            view.getJoinButton().setText("- Leave");
 
             if (entry != null && entry.getStatus() == WaitlistEntry.Status.ACCEPTED) {
                 view.getJoinButton().setEnabled(false);
@@ -225,43 +225,39 @@ public class UEventDetailsActivity extends AppCompatActivity
      * Checks if the user has an active invitation to respond to.
      */
     private void checkForInvitation() {
-        if (eventModel == null) {
+        if (eventModel == null || entry == null || entry.getStatus() == null) {
             return;
         }
 
-        if (!eventModel.isInConfirmation()) {
+        if (!shouldShowInvitationDialog(entry.getStatus())) {
             return;
         }
 
-        if (entry.getStatus() == WaitlistEntry.Status.CANCELED) {
+        if (getSupportFragmentManager().findFragmentByTag(INVITATION_DIALOG_TAG) != null) {
             return;
         }
 
-        AcceptInvitationFragment inviteFragment;
+        AcceptInvitationFragment inviteFragment =
+                AcceptInvitationFragment.newInstance(entry.getStatus(), getInvitationHeaderText());
+        inviteFragment.show(getSupportFragmentManager(), INVITATION_DIALOG_TAG);
+    }
 
-        String headerText;
+    private String getInvitationHeaderText() {
         if (eventModel.getIsPrivate()) {
-            headerText = eventModel.getTitle();
+            return eventModel.getTitle();
         }
-        else {
-            headerText = "Lottery Result";
-        }
+        return "Lottery Result";
+    }
 
-        switch (entry.getStatus()) {
+    private boolean shouldShowInvitationDialog(WaitlistEntry.Status status) {
+        switch (status) {
             case INVITED:
-                inviteFragment = AcceptInvitationFragment.newInstance(UEventDetailsActivity.this, WaitlistEntry.Status.INVITED, headerText);
-                inviteFragment.show(getSupportFragmentManager(), "Invited");
-                break;
+                return true;
             case NOT_CHOSEN:
-                inviteFragment = AcceptInvitationFragment.newInstance(UEventDetailsActivity.this, WaitlistEntry.Status.NOT_CHOSEN, headerText);
-                inviteFragment.show(getSupportFragmentManager(), "Not Invited");
-                break;
             case PENDING:
-                inviteFragment = AcceptInvitationFragment.newInstance(UEventDetailsActivity.this, WaitlistEntry.Status.PENDING, headerText);
-                inviteFragment.show(getSupportFragmentManager(), "Pending");
-                break;
+                return eventModel.isInConfirmation();
             default:
-                break;
+                return false;
         }
     }
 
@@ -278,12 +274,12 @@ public class UEventDetailsActivity extends AppCompatActivity
 
     @Override
     public void acceptInvite() {
-        if (entry == null) return;
-        entry.setStatus(WaitlistEntry.Status.ACCEPTED);
+        if (entry == null || entry.getStatus() != WaitlistEntry.Status.INVITED) return;
         waitlistRepository.updateStatus(entry.getEventId(), entry.getEntrantId(), WaitlistEntry.Status.ACCEPTED,
                 new WaitlistRepository.SaveCallback() {
                     @Override
                     public void onSuccess() {
+                        entry.setStatus(WaitlistEntry.Status.ACCEPTED);
                         Toast.makeText(UEventDetailsActivity.this, "Accepted!", Toast.LENGTH_SHORT).show();
                     }
 
@@ -296,12 +292,12 @@ public class UEventDetailsActivity extends AppCompatActivity
 
     @Override
     public void declineInvite() {
-        if (entry == null) return;
-        entry.setStatus(WaitlistEntry.Status.DECLINED);
+        if (entry == null || entry.getStatus() != WaitlistEntry.Status.INVITED) return;
         waitlistRepository.updateStatus(entry.getEventId(), entry.getEntrantId(), WaitlistEntry.Status.DECLINED,
                 new WaitlistRepository.SaveCallback() {
                     @Override
                     public void onSuccess() {
+                        entry.setStatus(WaitlistEntry.Status.DECLINED);
                         Toast.makeText(UEventDetailsActivity.this, "Declined", Toast.LENGTH_SHORT).show();
                     }
 
