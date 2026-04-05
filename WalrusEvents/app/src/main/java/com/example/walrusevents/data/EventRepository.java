@@ -115,6 +115,7 @@ public class EventRepository {
                 })
                 .addOnFailureListener(e -> {
                     e.printStackTrace();
+                    callback.onEventsLoaded(new ArrayList<>());
                 });
     }
 

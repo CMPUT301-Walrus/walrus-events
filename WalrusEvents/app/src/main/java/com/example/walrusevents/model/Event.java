@@ -216,11 +216,23 @@ public class Event implements Serializable {
     }
 
     public void addOwner(String ownerId) {
+        if (owners == null) {
+            owners = new ArrayList<>();
+        }
         if (owners.contains(ownerId)) {
             return;
         }
         owners.add(ownerId);
     }
+
+    public boolean isOwner(String ownerId) {
+        return ownerId != null && owners != null && owners.contains(ownerId);
+    }
+
+    public boolean isCoOrganizer(String ownerId) {
+        return isOwner(ownerId) && owners.size() > 1 && !ownerId.equals(owners.get(0));
+    }
+
     public boolean getIsPrivate() {
         return isPrivate;
     }

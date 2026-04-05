@@ -27,4 +27,23 @@ public class EventTest {
         assertTrue(event.setEntrantCapacity(10));
         assertEquals(10, event.getApplicantCapacity());
     }
+
+    @Test
+    public void secondaryOwner_isRecognizedAsCoOrganizer() {
+        Event event = new Event("Test Event", "event-1", "owner-1");
+
+        event.addOwner("owner-2");
+
+        assertTrue(event.isCoOrganizer("owner-2"));
+    }
+
+    @Test
+    public void primaryOwner_isNotRecognizedAsCoOrganizer() {
+        Event event = new Event("Test Event", "event-1", "owner-1");
+
+        event.addOwner("owner-2");
+
+        assertTrue(event.isOwner("owner-1"));
+        assertEquals(false, event.isCoOrganizer("owner-1"));
+    }
 }
