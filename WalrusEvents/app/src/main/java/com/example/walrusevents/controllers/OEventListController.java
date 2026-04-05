@@ -25,20 +25,21 @@ public class OEventListController implements NameEventFragment.NameEventListener
     private ArrayList<Event> eventList;
     private OEventArrayAdapter eventListAdapter;
     private EventRepository eventRepository;
-    private String ownerId;
+    private String deviceId;
 
     /**
      * Constructor for the organizer event list controller
      * @param context
-     * @param eventRepository
+     * @param deviceId
      * @param eventListView
      */
-    public OEventListController(Context context, EventRepository eventRepository, ListView eventListView) {
+    public OEventListController(Context context, String deviceId, ListView eventListView) {
         //Initialize EventController
         eventList = new ArrayList<>();
+        this.deviceId = deviceId;
         eventListAdapter = new OEventArrayAdapter(context, eventList);
         eventListView.setAdapter(eventListAdapter);
-        this.eventRepository = eventRepository;
+        eventRepository = new EventRepository();
     }
 
     /**
@@ -89,31 +90,34 @@ public class OEventListController implements NameEventFragment.NameEventListener
      * Creates an event with the specified title and adds it to eventList and the database
      * @param title The title to be given to the new event
      */
-    public void addEvent(String title) {
+    public void addEvent(String title, boolean isPrivate) {
         // Create new event
-        Event event = new Event(title, "Default description");
+        Event event = new Event(title, "", deviceId);
+        event.setIsPrivate(isPrivate);
 
         // Get new eventId from creating the event in eventRepo
         String eventId = eventRepository.addEvent(event);
 
-        // Generate QR code and poster
-        Bitmap qrCode = QRGenerator.generateQRCode(eventId);
-        Bitmap poster = PosterGenerator.createEventPoster(title, event.getDescription(), qrCode);
+        if (!isPrivate) {
+            // Generate QR code and poster
+            Bitmap qrCode = QRGenerator.generateQRCode(eventId);
+            Bitmap poster = PosterGenerator.createEventPoster(title, event.getDescription(), qrCode);
 
-        // Upload poster to Firebase
-        // EventPosterFragment will download it via eventId.jpg
-        FirebaseAPIManager apiManager = new FirebaseAPIManager();
-        apiManager.uploadBitmap(poster, eventId, new FirebaseAPIManager.OnUploadCompleteListener() {
-            @Override
-            public void onSuccess() {
-                Log.d("QR_LOG", "Poster and QR generated/uploaded for ID: " + eventId);
-            }
+            // Upload poster to Firebase
+            // EventPosterFragment will download it via eventId.jpg
+            FirebaseAPIManager apiManager = new FirebaseAPIManager();
+            apiManager.uploadBitmap(poster, eventId, new FirebaseAPIManager.OnUploadCompleteListener() {
+                @Override
+                public void onSuccess() {
+                    Log.d("QR_LOG", "Poster and QR generated/uploaded for ID: " + eventId);
+                }
 
-            @Override
-            public void onFailure(String error) {
-                Log.e("QR_LOG", "Failed to upload poster: " + error);
-            }
-        });
+                @Override
+                public void onFailure(String error) {
+                    Log.e("QR_LOG", "Failed to upload poster: " + error);
+                }
+            });
+        }
 
         // Update local UI
         eventList.add(event);

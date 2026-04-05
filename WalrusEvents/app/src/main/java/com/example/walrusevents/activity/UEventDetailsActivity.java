@@ -3,6 +3,7 @@ package com.example.walrusevents.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -27,6 +28,9 @@ import com.example.walrusevents.ui.CommentsSectionFragment;
 import com.example.walrusevents.ui.EventPosterFragment;
 import com.example.walrusevents.ui.UEventDetailsView;
 import com.example.walrusevents.util.DeviceIdManager;
+import com.example.walrusevents.util.UserRole;
+import com.example.walrusevents.util.UserRoleManager;
+import com.example.walrusevents.util.PermissionGatekeeper;
 
 import android.location.Location;
 import com.google.android.gms.location.LocationServices;
@@ -38,7 +42,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
  * Handles whether event was clicked on or scanned to go to event page
  */
 public class UEventDetailsActivity extends AppCompatActivity
-        implements EntrantController.ActionCallback, AcceptInvitationFragment.AcceptInvitationListener {
+        implements EntrantController.ActionCallback, AcceptInvitationFragment.AcceptInvitationListener,
+        WaitlistRepository.EntryCallback {
 
     private Event eventModel;
     private UEventDetailsView view;
@@ -50,6 +55,10 @@ public class UEventDetailsActivity extends AppCompatActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PermissionGatekeeper.requireNotBanned(this, false, permissions -> initializeUi());
+    }
+
+    private void initializeUi() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.event_details);
 
@@ -66,7 +75,7 @@ public class UEventDetailsActivity extends AppCompatActivity
         } else {
             // Clicked event
             try {
-                eventModel = (Event) getIntent().getSerializableExtra("Event");
+                eventModel = getIntent().getSerializableExtra("Event", Event.class);
                 if (eventModel != null) {
                     setupUI();
                 } else {
@@ -147,7 +156,7 @@ public class UEventDetailsActivity extends AppCompatActivity
         }
 
         CommentsSectionFragment commentsSectionFragment =
-                CommentsSectionFragment.newInstance(eventModel, null, getSupportFragmentManager());
+                CommentsSectionFragment.newInstance(eventModel, getSupportFragmentManager());
 
         view.getViewCommentsButton().setOnClickListener(v -> {
             commentsSectionFragment.show(getSupportFragmentManager(), "View Comments");
@@ -163,52 +172,112 @@ public class UEventDetailsActivity extends AppCompatActivity
 
         // Waitlist Join Logic
         String deviceId = DeviceIdManager.getOrCreate(this);
+        waitlistRepository.getEntry(eventModel.getEventId(), deviceId, this);
 
-        view.getJoinButton().setOnClickListener(v -> {
-            // Check if geolocation is enabled
-            // If enabled, fetch location and then join, join without getting location data otherwise
-            if (eventModel.getUseGeolocation()) {
-                fetchLocationAndJoin();
-            } else {
-                performJoin(null, null);
-            }
-        });
-
-        checkForInvitation();
+        UserRole role = UserRoleManager.getRole();
+        if (role != UserRole.USER || eventModel.getIsPrivate() || !eventModel.isInRegistration()) {
+            view.getJoinButton().setVisibility(View.GONE);
+        }
     }
 
+    private void updateJoinButton(boolean joined, String deviceId) {
+        // 1. Ensure 'me' is initialized for the controller
+        if (me == null) {
+            me = new Entrant(new Profile(deviceId, "User", "email@uab.ca"));
+        }
+
+        if (joined) {
+            view.getJoinButton().setText("Leave");
+
+            // If already accepted, they shouldn't be able to leave/re-join easily
+            if (entry != null && entry.getStatus() == WaitlistEntry.Status.ACCEPTED) {
+                view.getJoinButton().setEnabled(false);
+            } else {
+                view.getJoinButton().setEnabled(true);
+                view.getJoinButton().setOnClickListener(v -> {
+                    WaitlistRepository waitRep = new WaitlistRepository();
+                    ProfileRepository pfRep = new ProfileRepository();
+                    EntrantController entrantController = new EntrantController(me, waitRep, pfRep);
+
+                    // Use 'this' as the callback (the Activity implements ActionCallback)
+                    entrantController.leaveWaitlist(eventModel.getEventId(), this);
+
+                    // Optimistically update UI
+                    updateJoinButton(false, deviceId);
+                });
+            }
+        } else {
+            view.getJoinButton().setText("+ Join");
+            view.getJoinButton().setEnabled(true);
+            view.getJoinButton().setOnClickListener(v -> {
+                // 2. Logic Merge: Check geolocation setting ONLY when button is clicked
+                if (eventModel.getUseGeolocation()) {
+                    fetchLocationAndJoin();
+                } else {
+                    performJoin(null, null);
+                }
+            });
+        }
+    }
+    @Override
+    public void onEntryLoaded(WaitlistEntry retrievedEntry) {
+        UserRole role = UserRoleManager.getRole();
+
+        UEventDetailsActivity.this.entry = retrievedEntry;
+        if (retrievedEntry != null) {
+            checkForInvitation();
+            if (role == UserRole.USER && !eventModel.getIsPrivate()) {
+                updateJoinButton(true, DeviceIdManager.getOrCreate(this));
+            }
+        }
+        else {
+            if (role == UserRole.USER && !eventModel.getIsPrivate()) {
+                updateJoinButton(false, DeviceIdManager.getOrCreate(this));
+            }
+        }
+    }
     /**
      * Checks if the user has an active invitation to respond to.
      */
     private void checkForInvitation() {
-        if (eventModel == null || !eventModel.isInConfirmation()) {
+        if (eventModel == null) {
             return;
         }
 
-        String deviceId = DeviceIdManager.getOrCreate(this);
-        String eventId = eventModel.getEventId();
+        if (!eventModel.isInConfirmation()) {
+            return;
+        }
 
-        waitlistRepository.getEntry(eventId, deviceId, new WaitlistRepository.EntryCallback() {
-            @Override
-            public void onEntryLoaded(WaitlistEntry retrievedEntry) {
-                if (retrievedEntry != null) {
-                    UEventDetailsActivity.this.entry = retrievedEntry;
-                    AcceptInvitationFragment inviteFragment;
-                    switch (retrievedEntry.getStatus()) {
-                        case INVITED:
-                            inviteFragment = AcceptInvitationFragment.newInstance(UEventDetailsActivity.this, true);
-                            inviteFragment.show(getSupportFragmentManager(), "Invited");
-                            break;
-                        case PENDING:
-                            inviteFragment = AcceptInvitationFragment.newInstance(UEventDetailsActivity.this, false);
-                            inviteFragment.show(getSupportFragmentManager(), "Not Invited");
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-        });
+        if (entry.getStatus() == WaitlistEntry.Status.CANCELED) {
+            return;
+        }
+
+        AcceptInvitationFragment inviteFragment;
+
+        String headerText;
+        if (eventModel.getIsPrivate()) {
+            headerText = eventModel.getTitle();
+        }
+        else {
+            headerText = "Lottery Result";
+        }
+
+        switch (entry.getStatus()) {
+            case INVITED:
+                inviteFragment = AcceptInvitationFragment.newInstance(UEventDetailsActivity.this, WaitlistEntry.Status.INVITED, headerText);
+                inviteFragment.show(getSupportFragmentManager(), "Invited");
+                break;
+            case NOT_CHOSEN:
+                inviteFragment = AcceptInvitationFragment.newInstance(UEventDetailsActivity.this, WaitlistEntry.Status.NOT_CHOSEN, headerText);
+                inviteFragment.show(getSupportFragmentManager(), "Not Invited");
+                break;
+            case PENDING:
+                inviteFragment = AcceptInvitationFragment.newInstance(UEventDetailsActivity.this, WaitlistEntry.Status.PENDING, headerText);
+                inviteFragment.show(getSupportFragmentManager(), "Pending");
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -292,16 +361,22 @@ public class UEventDetailsActivity extends AppCompatActivity
     }
 
     private void performJoin(Double lat, Double lon) {
+        // Double check 'me' isn't null (safety)
+        if (me == null) {
+            String deviceId = DeviceIdManager.getOrCreate(this);
+            me = new Entrant(new Profile(deviceId, "User", "email@uab.ca"));
+        }
+
         WaitlistRepository waitRep = new WaitlistRepository();
         ProfileRepository pfRep = new ProfileRepository();
         EntrantController entrantController = new EntrantController(me, waitRep, pfRep);
 
         if (lat != null && lon != null) {
-            // Use your controller's specialized location method!
             entrantController.joinWaitlistWithLocation(eventModel.getEventId(), lat, lon, this);
         } else {
-            // Use the standard join method
             entrantController.joinWaitlist(eventModel.getEventId(), this);
         }
-    }
-}
+
+        // Update button state to "Leave" after joining
+        updateJoinButton(true, me.getDeviceId());
+    }}

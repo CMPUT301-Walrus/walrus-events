@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import android.graphics.Bitmap;
+
+import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.util.QRGenerator;
 
 /**
@@ -14,7 +16,6 @@ import com.example.walrusevents.util.QRGenerator;
  */
 public class Event implements Serializable {
     private String eventId;
-    private String ownerId;     //ID that references the organizer of this event
     private String title;
     private String description;
     private String startRegistrationTime;
@@ -27,6 +28,11 @@ public class Event implements Serializable {
     private Image thumbnail;
     private Bitmap qrCodeImage;
     private boolean useGeolocation;
+    private ArrayList<String> owners;
+    private boolean isPrivate;
+    private int numParticipants;
+
+    private WaitlistRepository waitlistRepository;
 
     /**
      * Constructor for no args
@@ -40,13 +46,15 @@ public class Event implements Serializable {
      * @param title title of event set by organizer
      * @param eventId unique id for event
      */
-    public Event(String title, String eventId) {
+    public Event(String title, String eventId, String ownerId) {
         this.eventId = eventId;
         this.title = title;
-        this.ownerId = "ABCDEF";  //TODO: refactor when profile functionality is added.
+        owners = new ArrayList<>();
+        owners.add(ownerId);
         description = "";
         entrantCapacity = 0;
         applicantCapacity = 0;
+        numParticipants=1; //TEMP num Participants
     }
 
     /**
@@ -60,18 +68,6 @@ public class Event implements Serializable {
      * @param eventId unique identifier for event
      */
     public void setEventId(String eventId) { this.eventId = eventId; }
-
-    /**
-     * Gets id of owner/organizer of the event
-     * @return ownerId
-     */
-    public String getOwnerId() { return ownerId; }
-
-    /**
-     * Sets owner id, could be used for switching organizers for an event
-     * @param ownerId unique identifier for event
-     */
-    public void setOwnerId(String ownerId) { this.ownerId = ownerId; }
 
     /**
      * Gets title for event set by organizer
@@ -171,6 +167,24 @@ public class Event implements Serializable {
         return true;
     }
 
+    public void setNumParticipants(int numOpenSeats){
+
+        this.numParticipants=numOpenSeats;
+    }
+
+    public int getNumParticipants(){
+        return numParticipants;
+    }
+
+    public boolean hasOpenSeats(){
+        if(entrantCapacity!=0){
+            return numParticipants<entrantCapacity;
+        }else{
+            //waitlist has no limit
+            return true;
+        }
+    }
+
     /**
      * Gets poster for event, used to retrieve poster
      * @return poster (Bitmap format)
@@ -187,9 +201,33 @@ public class Event implements Serializable {
         this.poster = poster;
     }
 
+    public ArrayList<String> getOwners() {
+        return owners;
+    }
+
+    public void setOwners(ArrayList<String> owners) {
+        this.owners = owners;
+    }
+
+    public void addOwner(String ownerId) {
+        if (owners.contains(ownerId)) {
+            return;
+        }
+        owners.add(ownerId);
+    }
+    public boolean getIsPrivate() {
+        return isPrivate;
+    }
+
+    public void setIsPrivate(boolean isPrivate) {
+        this.isPrivate = isPrivate;
+    }
+
     /**
      * Calls QR Code generators to make a unique QR code for event
      */
+
+
     public void generateEventQRCode() {
         this.qrCodeImage = QRGenerator.generateQRCode("walrusevents://event/" + this.eventId);
     }
@@ -239,6 +277,9 @@ public class Event implements Serializable {
     }
 
     public boolean isInRegistration() {
+        if (isPrivate) {
+            return false;
+        }
         if (endRegistrationTime == null || startRegistrationTime == null
                 || endRegistrationTime.isBlank() || startRegistrationTime.isBlank()) {
             //No valid registration period set, so assume always in registration
@@ -249,12 +290,15 @@ public class Event implements Serializable {
     }
 
     public boolean isInConfirmation() {
-        if (isInRegistration()) {
+        if (isInRegistration() && !isPrivate) {
             return false;
         }
-        if (endConfirmationTime == null || startConfirmationTime == null
-                || endConfirmationTime.isBlank() || startConfirmationTime.isBlank()) {
-            //No valid confirmation period set, so assume always in registration
+        if (startConfirmationTime == null || startConfirmationTime.isBlank()) {
+            //No valid confirmation period start time set, so assume always out of confirmation
+            return false;
+        }
+        if (endConfirmationTime == null || endConfirmationTime.isBlank()) {
+            //No valid confirmation period end time set, so assume always in confirmation
             return true;
         }
         return LocalDateTime.now().isBefore(LocalDateTime.parse(endConfirmationTime))

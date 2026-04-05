@@ -29,6 +29,10 @@ public class UViewWaitlistActivity extends AppCompatActivity implements Waitlist
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initializeUi();
+    }
+
+    private void initializeUi() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.user_view_waitlist_activity);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -63,24 +67,23 @@ public class UViewWaitlistActivity extends AppCompatActivity implements Waitlist
             finish();
         });
 
-        // TODO: Display Waitlist entries in ListView
         countEntrants = findViewById(R.id.count_entrants);
         WaitlistRepository getWaitlist = new WaitlistRepository();
         getWaitlist.getAllEntries(event.getEventId(), this);
-
     }
 
     public Integer countValidEntrants(List<WaitlistEntry> entries) {
         Integer count = 0;
         for(WaitlistEntry entry: entries) {
-            if(entry.getStatus() != WaitlistEntry.Status.DECLINED && entry.getStatus() != WaitlistEntry.Status.CANCELLED) count++;
+            if(entry.getStatus() != WaitlistEntry.Status.DECLINED && entry.getStatus() != WaitlistEntry.Status.CANCELED) count++;
         }
+
         return count;
     }
-
     @Override
     public void onEntriesLoaded(List<WaitlistEntry> entries) {
         Integer eCount = countValidEntrants(entries);
         countEntrants.setText(eCount.toString());
+        event.setNumParticipants(eCount);
     }
 }

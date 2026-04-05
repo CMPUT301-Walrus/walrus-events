@@ -2,18 +2,23 @@ package com.example.walrusevents.util;
 
 import android.content.Context;
 import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ListView;
 
+import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.ui.NameEventFragment;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class MainSEventListController implements NameEventFragment.NameEventListener, EventRepository.EventListCallback {
+public class MainSEventListController implements EventRepository.EventListCallback {
     private ArrayList<Event> eventList;
     private MainSEventArrayAdapter eventListAdapter;
     private EventRepository eventRepository;
+
+    private MainSFilterManager filterManager;
     private Context context;
 
     /**
@@ -29,18 +34,7 @@ public class MainSEventListController implements NameEventFragment.NameEventList
         eventListView.setAdapter(eventListAdapter);
         this.eventRepository = eventRepository;
         this.context = context;
-    }
-
-    /**
-     * Creates an event with the specified title and adds it to eventList and the database
-     * @param title The title to be given to the new event
-     */
-    public void addEvent(String title) {
-        Event event = new Event(title, "");
-        eventRepository.addEvent(event);
-
-        eventList.add(event);
-        eventListAdapter.notifyDataSetChanged();
+        this.filterManager=new MainSFilterManager(eventList,eventListAdapter);
     }
 
     /**
@@ -49,7 +43,9 @@ public class MainSEventListController implements NameEventFragment.NameEventList
      */
     public void loadEvents() {
         eventList.clear();
+        eventRepository.resetPagination();
         eventRepository.initiateGetAllEvents(this);
+        //filterManager.applyFilters();
     }
 
     /**
@@ -61,13 +57,48 @@ public class MainSEventListController implements NameEventFragment.NameEventList
         if (events == null || events.isEmpty()) {
             return;
         }
-        eventList.addAll(events);
+        //eventList.addAll(events);
+        for (Event newEvent : events) {
+            boolean exists = false;
+
+            for (Event existing : eventList) {
+                if (existing.getEventId().equals(newEvent.getEventId())) {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (!exists) {
+                eventList.add(newEvent);
+            }
+        }
+        //filterManager.applyFilters();
         eventListAdapter.notifyDataSetChanged();
-        eventRepository.getNextEventBatch(this);
+        //eventRepository.getNextEventBatch(this);
+        if (events.size() == 2) {
+            eventRepository.getNextEventBatch(this);
+        }
+        System.out.printf("%d event(s) loaded", events.size());
     }
 
-    public Filter getFilter(){
-        return eventListAdapter.getFilter();
+    public void setKeyword(String keyword) {
+        //eventListAdapter.setKeyword(keyword);
+        filterManager.setKeyword(keyword);
     }
 
+    public void setOpenSeatsFilter(boolean onlyOpenSeats) {
+
+        filterManager.setOnlyOpenSeats(onlyOpenSeats);
+        //eventListAdapter.setOnlyOpenSeats(onlyOpenSeats);
+    }
+
+    public void resetFilters(){
+        filterManager.setKeyword("");
+        filterManager.setSelectedRange(null,null);
+        filterManager.setOnlyOpenSeats(false);
+    }
+
+    public void setDateRange(LocalDateTime start, LocalDateTime end){
+        filterManager.setSelectedRange(start,end);
+    }
 }

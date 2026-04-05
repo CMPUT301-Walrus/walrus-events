@@ -6,37 +6,33 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.R;
-import com.example.walrusevents.model.WaitlistEntry;
+import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.model.Event;
+import com.example.walrusevents.model.WaitlistEntry;
 import com.example.walrusevents.util.EntrantArrayAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-public class PreLotteryPoolFragment extends Fragment {
+public class FinalizedPoolFragment extends Fragment {
     private Event eventModel;
     private ArrayList<Entrant> entrantList;
     private EntrantArrayAdapter eventListAdapter;
-    private WaitlistRepository waitlistRepository;
-    private ProfileRepository profileRepository;
-    private TextView entrantCountText;
+    WaitlistRepository waitlistRepository;
+    ProfileRepository profileRepository;
 
-    public PreLotteryPoolFragment(Event eventModel, TextView entrantCountText) {
+    public FinalizedPoolFragment(Event eventModel) {
         this.eventModel = eventModel;
         waitlistRepository = new WaitlistRepository();
         profileRepository = new ProfileRepository();
-        this.entrantCountText = entrantCountText;
     }
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -55,14 +51,13 @@ public class PreLotteryPoolFragment extends Fragment {
 
         entrantListView.setAdapter(eventListAdapter);
 
-        waitlistRepository.getAllEntries(eventModel.getEventId(), new WaitlistRepository.EntryListCallback() {
+        waitlistRepository.getEntriesByStatus(eventModel.getEventId(), WaitlistEntry.Status.ACCEPTED, new WaitlistRepository.EntryListCallback() {
             @Override
             public void onEntriesLoaded(List<WaitlistEntry> entries) {
                 ArrayList<String> deviceIds = new ArrayList<>();
                 for (WaitlistEntry entry: entries) {
                     deviceIds.add(entry.getEntrantId());
                 }
-
                 profileRepository.getProfilesInList(deviceIds, new ProfileRepository.ProfileCallback() {
                     @Override
                     public void onEntrantLoaded(Entrant entrant) {
@@ -76,11 +71,6 @@ public class PreLotteryPoolFragment extends Fragment {
                         }
                     }
                 });
-
-                entrantCountText.setText(String.format(Locale.getDefault(),
-                        "(%d/%d)",
-                        entries.size(),
-                        eventModel.getApplicantCapacity()));
             }
         });
     }

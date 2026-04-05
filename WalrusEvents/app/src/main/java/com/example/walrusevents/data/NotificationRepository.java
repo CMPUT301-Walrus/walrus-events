@@ -4,10 +4,12 @@ import com.example.walrusevents.model.Notification;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,6 +31,17 @@ public class NotificationRepository {
                 .document(userId)
                 .collection(collectionPath)
                 .add(notification);
+    }
+
+    /**
+     * Sends a notification to specified users
+     * @param userIds
+     * @param notification
+     */
+    public void sendNotificationToUsers(ArrayList<String> userIds, Notification notification) {
+        for (String userId : userIds) {
+            sendNotificationToUser(userId, notification);
+        }
     }
 
     /**

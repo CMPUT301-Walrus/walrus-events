@@ -16,6 +16,7 @@ import com.example.walrusevents.model.Event;
 import com.example.walrusevents.R;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -34,10 +35,10 @@ public class MainSEventArrayAdapter extends ArrayAdapter<Event> implements Filte
         super(context, 0, eventList);
         this.eventList = eventList;
         this.context = context;
-        this.filteredList=eventList;
+        this.filteredList=new ArrayList<Event>();
     }
 
-    @NonNull
+    //@NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View view = convertView;
@@ -94,4 +95,11 @@ public class MainSEventArrayAdapter extends ArrayAdapter<Event> implements Filte
         if(searchFilter==null) searchFilter = new KeywordSearchFilter(filteredList, this);
         return searchFilter;
     }
+
+    public ArrayList<Event> getFilteredList(){
+        return filteredList;
+    }
+
+
+
 }

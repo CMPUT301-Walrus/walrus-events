@@ -6,16 +6,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.walrusevents.R;
 
 public class NameEventFragment extends DialogFragment {
     public interface NameEventListener {
-        void addEvent(String title);
+        void addEvent(String title, boolean isPrivate);
     }
 
     private  NameEventListener listener;
@@ -38,8 +40,9 @@ public class NameEventFragment extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         EditText editName = view.findViewById(R.id.editName);
         Button confirmButton = view.findViewById(R.id.editNameConfirm);
+        SwitchCompat privateSwitch = view.findViewById(R.id.create_event_private_switch);
         confirmButton.setOnClickListener(v -> {
-            listener.addEvent(editName.getText().toString());
+            listener.addEvent(editName.getText().toString(), privateSwitch.isChecked());
             dismiss();
         });
 

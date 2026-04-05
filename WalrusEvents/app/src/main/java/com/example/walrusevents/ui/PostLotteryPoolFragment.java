@@ -1,11 +1,13 @@
 package com.example.walrusevents.ui;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,9 +36,11 @@ public class PostLotteryPoolFragment extends Fragment {
     private EntrantArrayAdapter canceledListAdapter;
     private ArrayList<Entrant> notChosenList;
     private EntrantArrayAdapter notChosenListAdapter;
+    private ArrayList<String> selectedForRemoval;
 
-    public PostLotteryPoolFragment(Event eventModel) {
+    public PostLotteryPoolFragment(Event eventModel, ArrayList<String> selectedForRemoval) {
         this.eventModel = eventModel;
+        this.selectedForRemoval = selectedForRemoval;
         waitlistRepository = new WaitlistRepository();
         profileRepository = new ProfileRepository();
     }
@@ -58,15 +62,48 @@ public class PostLotteryPoolFragment extends Fragment {
 
         chosenList = new ArrayList<>();
         chosenListAdapter = new EntrantArrayAdapter(context, chosenList);
-        setupList(view, chosenList, chosenListAdapter, R.id.not_chosen_list, WaitlistEntry.Status.INVITED);
+        setupList(view, chosenList, chosenListAdapter, R.id.chosen_list, WaitlistEntry.Status.INVITED);
 
         canceledList = new ArrayList<>();
         canceledListAdapter = new EntrantArrayAdapter(context, canceledList);
-        setupList(view, canceledList, canceledListAdapter, R.id.canceled_list, WaitlistEntry.Status.CANCELLED);
+        setupList(view, canceledList, canceledListAdapter, R.id.canceled_list, WaitlistEntry.Status.CANCELED);
 
         notChosenList = new ArrayList<>();
         notChosenListAdapter = new EntrantArrayAdapter(context, notChosenList);
-        setupList(view, notChosenList, notChosenListAdapter, R.id.not_chosen_list, WaitlistEntry.Status.PENDING);
+        setupList(view, notChosenList, notChosenListAdapter, R.id.not_chosen_list, WaitlistEntry.Status.NOT_CHOSEN);
+
+        ListView chosenListView = view.findViewById(R.id.chosen_list);
+        chosenListView.setOnItemClickListener((parent, view1, position, id) -> {
+            String entrantId = chosenList.get(position).getDeviceId();
+
+            if (selectedForRemoval.contains(entrantId)){
+                selectedForRemoval.remove(entrantId);
+
+                TextView nameText = view1.findViewById(R.id.profileName);
+                nameText.setTextColor(Color.parseColor("#242424"));
+                view1.findViewById(R.id.waitlist_entry_background_selected).setVisibility(View.GONE);
+            }
+            else {
+                selectedForRemoval.add(entrantId);
+
+                TextView nameText = view1.findViewById(R.id.profileName);
+                nameText.setTextColor(Color.WHITE);
+                view1.findViewById(R.id.waitlist_entry_background_selected).setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    public int getAcceptedCount() {
+        return acceptedList.size();
+    }
+    public int getChosenList() {
+        return chosenList.size();
+    }
+    public int getNotChosenList() {
+        return notChosenList.size();
+    }
+    public int getCanceledCount() {
+        return canceledList.size();
     }
 
     private void setupList(View view, ArrayList<Entrant> list, EntrantArrayAdapter adapter, int listViewId, WaitlistEntry.Status status) {

@@ -101,6 +101,8 @@ dependencies {
 
     // Recommended for ActivityScenarioRule
     androidTestImplementation("androidx.test:rules:1.6.1")
+
+    implementation("com.google.android.material:material:1.11.0")
 }
 
 

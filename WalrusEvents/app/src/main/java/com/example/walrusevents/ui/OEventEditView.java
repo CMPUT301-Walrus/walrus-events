@@ -4,7 +4,11 @@ import android.app.Activity;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.ToggleButton;
+
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.example.walrusevents.controllers.OEventEditController;
 import com.example.walrusevents.R;
@@ -16,6 +20,7 @@ import java.util.Locale;
 
 public class OEventEditView implements OEventEditController.EventEditListener {
     private TextView titleView;
+    private SwitchCompat privateToggle;
     private ImageView editPosterImage;
     private ImageView editThumbnail;
     private TextInputEditText editDescription;
@@ -30,6 +35,9 @@ public class OEventEditView implements OEventEditController.EventEditListener {
     public OEventEditView(Activity activity, Event model) {
         titleView = activity.findViewById(R.id.eventName);
         titleView.setText(model.getTitle());
+
+        privateToggle = activity.findViewById(R.id.private_event_toggle);
+        privateToggle.setChecked(model.getIsPrivate());
 
         editPosterImage = activity.findViewById(R.id.editPoster);
         editThumbnail = activity.findViewById(R.id.editThumbnail);
@@ -52,6 +60,10 @@ public class OEventEditView implements OEventEditController.EventEditListener {
 
     public TextView getTitleView() {
         return titleView;
+    }
+
+    public SwitchCompat getPrivateToggle() {
+        return privateToggle;
     }
 
     public ImageView getEditPosterImage() {

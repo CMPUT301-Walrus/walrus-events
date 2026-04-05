@@ -35,23 +35,28 @@ public class Lottery implements WaitlistRepository.SaveCallback {
      *  Returns false if the draw fails
      */
     public boolean drawToCapacity(List<WaitlistEntry> entrants, int capacity) {
-        if (capacity < 1) return false; /* Draw failed: capacity needs to be at least one */
+        //if (capacity < 1) return false; /* Draw failed: capacity needs to be at least one */
 
         int length = entrants.size();
-        if (length < 1) return false; /* Draw failed: no entrants exist */
+        if (length < 1) return false; // Draw failed: no entrants exist
 
         int limit = capacity;
         // Create a new list of entrants that are PENDING and track how many seats are already reserved.
         ArrayList<WaitlistEntry> pending = new ArrayList<>();
         for (WaitlistEntry entrant : entrants) {
-            if (entrant.getStatus() == WaitlistEntry.Status.PENDING) {
+            if (entrant.getStatus() == WaitlistEntry.Status.PENDING || entrant.getStatus() == WaitlistEntry.Status.NOT_CHOSEN) {
                 pending.add(entrant);
             } else if (entrant.getStatus() == WaitlistEntry.Status.INVITED || entrant.getStatus() == WaitlistEntry.Status.ACCEPTED) {
                 limit--;
             }
         }
 
-        if (pending.isEmpty()) return false; /* Draw failed: no pending entrants can be selected */
+        if (pending.isEmpty()) return false; // Draw failed: no pending entrants can be selected
+
+        // Draw failed: all available seats have been taken
+        if (limit <= 0) {
+            return false;
+        }
 
         // If event can seat all PENDING entrants, invite them all
         if (limit >= pending.size()) {
@@ -73,6 +78,10 @@ public class Lottery implements WaitlistRepository.SaveCallback {
             pending.remove(index);
         }
 
+        //
+        for (WaitlistEntry entrant : pending) {
+            entrant.setStatus(WaitlistEntry.Status.NOT_CHOSEN);
+        }
         return true;
     }
 
@@ -95,7 +104,7 @@ public class Lottery implements WaitlistRepository.SaveCallback {
      *  Returns -1 if the entrant is not PENDING and therefore cannot be invited
      */
     private int invite(WaitlistEntry entrant) {
-        if(entrant.getStatus() != WaitlistEntry.Status.PENDING) return -1;
+        if(entrant.getStatus() != WaitlistEntry.Status.PENDING && entrant.getStatus() != WaitlistEntry.Status.NOT_CHOSEN) return -1;
         entrant.setStatus(WaitlistEntry.Status.INVITED);
         return 0;
     }

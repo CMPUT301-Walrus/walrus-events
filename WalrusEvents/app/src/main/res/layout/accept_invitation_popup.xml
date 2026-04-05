@@ -20,7 +20,7 @@
         app:layout_constraintVertical_bias="0.39" />
 
     <TextView
-        android:id="@+id/invitationText2"
+        android:id="@+id/invitation_header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
@@ -42,6 +42,7 @@
         android:layout_marginStart="100dp"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="30dp"
+        android:layout_marginBottom="30dp"
         android:backgroundTint="#FFD24B"
         android:text="Accept"
         android:textColor="#000000"
@@ -78,4 +79,16 @@
         app:layout_constraintEnd_toStartOf="@+id/acceptInviteButton"
         app:layout_constraintStart_toEndOf="@+id/declineInviteButton"
         app:layout_constraintTop_toTopOf="@+id/acceptInviteButton" />
+
+    <TextView
+        android:id="@+id/invite_disclaimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="An organizer may choose to remove you unless you accept"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/invitationText"
+        app:layout_constraintVertical_bias="0.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>

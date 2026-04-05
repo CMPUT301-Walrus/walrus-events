@@ -1,5 +1,7 @@
 package com.example.walrusevents.util;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +9,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.walrusevents.R;
+import com.example.walrusevents.activity.MainActivity;
+import com.example.walrusevents.activity.UEventDetailsActivity;
+import com.example.walrusevents.data.EventRepository;
+import com.example.walrusevents.model.Event;
 import com.example.walrusevents.model.Notification;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -18,12 +24,13 @@ import java.util.Locale;
  * 01/04/26
  */
 public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.NotificationViewHolder> {
-
+    private final Context context;
     private final List<Notification> notificationList;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, h:mm a", Locale.getDefault());
 
-    public NotificationsAdapter(List<Notification> notificationList) {
+    public NotificationsAdapter(Context context, List<Notification> notificationList) {
         this.notificationList = notificationList;
+        this.context = context;
     }
 
     @NonNull
@@ -46,6 +53,16 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         } else {
             holder.timestamp.setText("");
         }
+
+        //Go to the connected event when the notification is clicked
+        holder.itemView.setOnClickListener(v -> {
+            EventRepository eventRepository = new EventRepository();
+            eventRepository.getEvent(notification.getEventId(), event -> {
+                Intent passToUserEventDetails = new Intent(context, UEventDetailsActivity.class);
+                passToUserEventDetails.putExtra("Event", event);
+                context.startActivity(passToUserEventDetails);
+            });
+        });
     }
 
     @Override
@@ -54,10 +71,12 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     }
 
     public static class NotificationViewHolder extends RecyclerView.ViewHolder {
+        View itemView;
         TextView title, message, timestamp;
 
         public NotificationViewHolder(@NonNull View itemView) {
             super(itemView);
+            this.itemView = itemView;
             title = itemView.findViewById(R.id.notif_title);
             message = itemView.findViewById(R.id.notif_message);
             timestamp = itemView.findViewById(R.id.notif_timestamp);

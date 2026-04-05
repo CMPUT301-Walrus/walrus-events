@@ -21,6 +21,7 @@ public class ProfileRepository {
 
     private static final String COLLECTION = "profiles";
     private static final String WAITLIST_COLLECTION = "waitlist";
+    private static final String NOTIFICATIONS_COLLECTION = "notifications";
 
     private final FirebaseFirestore db;
     private final CollectionReference profileCollection;
@@ -125,7 +126,7 @@ public class ProfileRepository {
 
     /**
      * Completely deletes an entrant's profile document from Firestore.
-     * Also removes any waitlist entries tied to the same device ID.
+     * Also removes any waitlist entries and notification documents tied to the same device ID.
      * This satisfies the entrant's "right to be forgotten" and admin removal.
      *
      * @param deviceId The ID of the entrant to delete
@@ -135,17 +136,31 @@ public class ProfileRepository {
         waitlistCollection
                 .whereEqualTo("entrantId", deviceId)
                 .get()
-                .addOnSuccessListener(query -> {
-                    WriteBatch batch = db.batch();
+                .addOnSuccessListener(waitlistQuery -> {
+                    profileCollection
+                            .document(deviceId)
+                            .collection(NOTIFICATIONS_COLLECTION)
+                            .get()
+                            .addOnSuccessListener(notificationQuery -> {
+                                WriteBatch batch = db.batch();
 
-                    for (QueryDocumentSnapshot doc : query) {
-                        batch.delete(doc.getReference());
-                    }
+                                for (QueryDocumentSnapshot doc : waitlistQuery) {
+                                    batch.delete(doc.getReference());
+                                }
 
-                    batch.delete(profileCollection.document(deviceId));
+                                for (QueryDocumentSnapshot doc : notificationQuery) {
+                                    batch.delete(doc.getReference());
+                                }
 
-                    batch.commit()
-                            .addOnSuccessListener(aVoid -> callback.onSuccess())
+                                batch.delete(profileCollection.document(deviceId));
+
+                                batch.commit()
+                                        .addOnSuccessListener(aVoid -> callback.onSuccess())
+                                        .addOnFailureListener(e -> {
+                                            e.printStackTrace();
+                                            callback.onFailure(e.getMessage());
+                                        });
+                            })
                             .addOnFailureListener(e -> {
                                 e.printStackTrace();
                                 callback.onFailure(e.getMessage());

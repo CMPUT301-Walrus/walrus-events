@@ -18,12 +18,16 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.walrusevents.data.ProfileRepository;
+import com.example.walrusevents.data.ProfilePermissionsRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.controllers.EntrantController;
+import com.example.walrusevents.model.AccountRole;
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.model.Profile;
+import com.example.walrusevents.model.ProfilePermissions;
 import com.example.walrusevents.util.DeviceIdManager;
+import com.example.walrusevents.util.PermissionGatekeeper;
 
 /**
  * Activity that allows a user to view and edit their profile settings.
@@ -44,7 +48,7 @@ import com.example.walrusevents.util.DeviceIdManager;
  */
 public class USettingsActivity extends AppCompatActivity {
     public static final String INITIAL_PROFILE_SETUP =
-            "com.example.walrusevents.activity.USettingsActivity.EXTRA_INITIAL_PROFILE_SETUP";
+            "com.example.walrusevents.activity.USettingsActivity.INITIAL_PROFILE_SETUP";
 
     /** Input field for the user's display name. */
     private EditText nameInput;
@@ -61,12 +65,15 @@ public class USettingsActivity extends AppCompatActivity {
 
     /** Repository for reading and writing profile data to Firestore. */
     private ProfileRepository profileRepository;
+    /** Repository for reading and writing account permissions data to Firestore. */
+    private ProfilePermissionsRepository permissionsRepository;
     /** Controller providing business-logic operations on the entrant's profile. */
     private EntrantController entrantController;
     /** The currently loaded entrant whose profile is being edited. */
     private Entrant currentEntrant;
-    /** Whether the screen was opened to complete initial profile setup. */
-    private TextView title;
+    /** The current account permissions loaded from Firestore. */
+    private ProfilePermissions currentPermissions;
+    /** Whether the activity is being shown for initial profile setup. */
     private boolean initialProfileSetup;
 
     /**
@@ -78,10 +85,23 @@ public class USettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PermissionGatekeeper.requireNotBanned(this, false, permissions -> {
+            currentPermissions = permissions;
+            initializeUi();
+        });
+    }
+
+    private void initializeUi() {
         setContentView(R.layout.general_settings);
 
         profileRepository = new ProfileRepository();
+        permissionsRepository = new ProfilePermissionsRepository();
+
         initialProfileSetup = getIntent().getBooleanExtra(INITIAL_PROFILE_SETUP, false);
+        TextView title = findViewById(R.id.settings_title);
+        if(initialProfileSetup){
+            title.setText("Profile Setup");
+        }
 
         ImageButton backButton = findViewById(R.id.settings_back_button);
         nameInput = findViewById(R.id.name_input);
@@ -90,11 +110,7 @@ public class USettingsActivity extends AppCompatActivity {
         notificationsCheckbox = findViewById(R.id.notifications_checkbox);
         saveProfileButton = findViewById(R.id.save_profile_button);
         deleteProfileButton = findViewById(R.id.delete_profile_button);
-        deleteProfileButton.setVisibility(initialProfileSetup ? View.GONE : View.VISIBLE);
-        title = findViewById(R.id.settings_title);
-        if(initialProfileSetup){
-            title.setText("Profile Setup");
-        }
+        updateDeleteButtonVisibility();
 
         backButton.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
         notificationsCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -325,6 +341,11 @@ public class USettingsActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    private void updateDeleteButtonVisibility() {
+        boolean visible = !initialProfileSetup && currentPermissions != null;
+        deleteProfileButton.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     /**

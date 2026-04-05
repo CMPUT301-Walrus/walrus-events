@@ -27,5 +27,7 @@
     <string name="settings_delete_cancel_action">Cancel</string>
     <string name="settings_delete_success">Profile deleted.</string>
     <string name="settings_delete_error">Unable to delete profile.</string>
+    <string name="permissions_load_error">Unable to verify account permissions.</string>
+    <string name="permissions_banned_message">This account has been banned.</string>
     <string name="title_activity_maps">MapsActivity</string>
 </resources>

@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -14,12 +14,14 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
+import androidx.core.util.Pair;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.walrusevents.controllers.NotificationsController;
 import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.model.Entrant;
+import com.example.walrusevents.model.Notification;
 import com.example.walrusevents.model.Profile;
 import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.R;
@@ -27,8 +29,15 @@ import com.example.walrusevents.model.Event;
 import com.example.walrusevents.ui.NotificationInboxFragment;
 import com.example.walrusevents.util.DeviceIdManager;
 import com.example.walrusevents.util.MainSEventListController;
+import com.example.walrusevents.util.PermissionGatekeeper;
+import com.example.walrusevents.util.MainSFilterManager;
 import com.example.walrusevents.util.UserRole;
 import com.example.walrusevents.util.UserRoleManager;
+import com.google.android.material.datepicker.MaterialDatePicker;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,6 +57,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PermissionGatekeeper.requireNotBanned(this, true, permissions -> initializeUi());
+    }
+
+    private void initializeUi() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.event_list);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -68,45 +81,84 @@ public class MainActivity extends AppCompatActivity {
 
         /*
          * Search Bar
-         * TODO: fix refresh issue with filter
-         *  (once you submit keyword, it will only refresh to all events when you close)
-         *
          */
         SearchView searchBar = findViewById(R.id.search_bar);
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String newText) {
-                eventListController.loadEvents();
-                return false;
+                //to reset to all public events to filter
+                eventListController.setKeyword(newText);
+                //eventListController.resetFilters();
+                //eventListController.loadEvents();
+                return true;
             }
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                eventListController.getFilter().filter(query);
-                return false;
+                //eventListController.getSearchFilter().filter(query);
+                eventListController.setKeyword(query);
+                //eventListController.loadEventsbyKeyword(query);
+                return true;
             }
         });
         searchBar.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+
+                eventListController.setKeyword("");
                 eventListController.loadEvents();
                 return false;
             }
         });
 
         /*
-        * When set to User, OnItemClick an event goes to event_details from eventListView
+        * Capacity and Availability Filters
          */
+        CheckBox capacitySortCheckbox=findViewById(R.id.capacity_sort_button);
+        CheckBox availabilitySortCheckbox=findViewById(R.id.availability_sort_button);
+
+        capacitySortCheckbox.setOnCheckedChangeListener((buttonView, isChecked) ->{
+            if(isChecked){
+                eventListController.setOpenSeatsFilter(true);
+
+            }
+            else{
+                eventListController.setOpenSeatsFilter(false);
+
+            }
+        });
+
+        availabilitySortCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                //GO TO SCHEDULE FRAGMENT
+                //TODO: setup fragment and get the ModalDateRangePicker to pick the selected dates
+                showDateRangePicker();
+
+
+            }else{
+                //revert?
+                eventListController.setDateRange(null,null);
+                eventListController.loadEvents();
+            }
+        });
+
+
+        //When set to User, OnItemClick an event goes to event_details from eventListView
         eventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(UserRoleManager.getRole() == UserRole.USER) {
-                    Event event_selected = (Event) adapterView.getItemAtPosition(i);
-                    Intent passToUserEventDetails = new Intent(MainActivity.this, UEventDetailsActivity.class);
+                Event event_selected = (Event) adapterView.getItemAtPosition(i);
 
-                    passToUserEventDetails.putExtra("Event", event_selected);
-                    startActivity(passToUserEventDetails);
+                //Swap to role to user if an organizer looks at an event they didn't organize
+                UserRole userRole = UserRoleManager.getRole();
+                if (userRole == UserRole.ORGANIZER && !event_selected.getOwners().contains(DeviceIdManager.getOrCreate(MainActivity.this))) {
+                    UserRoleManager.setRole(UserRole.USER);
+                    updateRoleText();
+                    Toast.makeText(MainActivity.this, "Role changed to user", Toast.LENGTH_SHORT).show();
                 }
+                Intent passToUserEventDetails = new Intent(MainActivity.this, UEventDetailsActivity.class);
+                passToUserEventDetails.putExtra("Event", event_selected);
+                startActivity(passToUserEventDetails);
             }
         });
 
@@ -207,12 +259,12 @@ public class MainActivity extends AppCompatActivity {
         testSendButton.setOnClickListener(v -> {
             // Replace "TEST_EVENT_ID" with an actual event ID from your Firestore
             // if you want to see it appear in a real user's inbox.
-            String testEventId = "7QDBAJLs3wjyyKD2F8l5";
+            String testEventId = "f6IxP1BkYXMZmyT1r914";
             String title = "Test Broadcast";
             String message = "This is a test notification sent at " + new java.util.Date().toString();
 
             // We use "all" to ensure it hits everyone on the waitlist regardless of status
-            testController.sendNotifications(this, testEventId, title, message, "all");
+            testController.sendNotifications(this, testEventId, title, message, Notification.NotificationTarget.ALL);
 
             Toast.makeText(this, "Attempting to send test broadcast...", Toast.LENGTH_SHORT).show();
         });
@@ -249,6 +301,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRestart() {
         super.onRestart();
+        if (eventListController == null || profileRepository == null) {
+            return;
+        }
         initialProfileSetupLaunched = false;
         eventListController.loadEvents();
         ensureProfileSetupState();
@@ -306,4 +361,45 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(USettingsActivity.INITIAL_PROFILE_SETUP, initialProfileSetupLaunched);
         startActivity(intent);
     }
+
+    private void showDateRangePicker() {
+
+        MaterialDatePicker<Pair<Long, Long>> picker =
+                MaterialDatePicker.Builder.dateRangePicker()
+                        .setTitleText("Select availability")
+                        .build();
+
+        picker.addOnPositiveButtonClickListener(selection -> {
+
+            if (selection == null) return;
+
+            Long startMillis = selection.first;
+            Long endMillis = selection.second;
+
+            if (startMillis != null && endMillis != null) {
+
+                LocalDateTime start = Instant.ofEpochMilli(startMillis)
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()
+                        .atStartOfDay();
+
+                LocalDateTime end = Instant.ofEpochMilli(endMillis)
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()
+                        .atTime(23, 59, 59);
+
+                //apply
+                eventListController.setDateRange(start,end);
+            }
+        });
+
+        picker.addOnNegativeButtonClickListener(dialog -> {
+            // Optional: reset checkbox if user cancels
+            CheckBox checkbox = findViewById(R.id.availability_sort_button);
+            checkbox.setChecked(false);
+        });
+
+        picker.show(getSupportFragmentManager(), "DATE_RANGE_PICKER");
+    }
+
 }
