@@ -15,6 +15,8 @@ public class Notification {
     public enum NotificationTarget {
         WAITING_LIST,
         SELECTED,
+        NOT_SELECTED,
+        CANCELED,
         ALL
     }
 
@@ -124,7 +126,9 @@ public class Notification {
         switch (status) {
             case INVITED:
             case ACCEPTED: return NotificationTarget.SELECTED;
+            case NOT_CHOSEN: return NotificationTarget.NOT_SELECTED;
             case PENDING: return NotificationTarget.WAITING_LIST;
+            case CANCELED: return NotificationTarget.CANCELED;
             default: return NotificationTarget.ALL;
         }
     }

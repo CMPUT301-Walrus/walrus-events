@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,18 +22,21 @@ import com.example.walrusevents.util.EntrantArrayAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class PreLotteryPoolFragment extends Fragment {
     private Event eventModel;
     private ArrayList<Entrant> entrantList;
     private EntrantArrayAdapter eventListAdapter;
-    WaitlistRepository waitlistRepository;
-    ProfileRepository profileRepository;
+    private WaitlistRepository waitlistRepository;
+    private ProfileRepository profileRepository;
+    private TextView entrantCountText;
 
-    public PreLotteryPoolFragment(Event eventModel) {
+    public PreLotteryPoolFragment(Event eventModel, TextView entrantCountText) {
         this.eventModel = eventModel;
         waitlistRepository = new WaitlistRepository();
         profileRepository = new ProfileRepository();
+        this.entrantCountText = entrantCountText;
     }
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -58,6 +62,7 @@ public class PreLotteryPoolFragment extends Fragment {
                 for (WaitlistEntry entry: entries) {
                     deviceIds.add(entry.getEntrantId());
                 }
+
                 profileRepository.getProfilesInList(deviceIds, new ProfileRepository.ProfileCallback() {
                     @Override
                     public void onEntrantLoaded(Entrant entrant) {
@@ -71,6 +76,11 @@ public class PreLotteryPoolFragment extends Fragment {
                         }
                     }
                 });
+
+                entrantCountText.setText(String.format(Locale.getDefault(),
+                        "(%d/%d)",
+                        entries.size(),
+                        eventModel.getApplicantCapacity()));
             }
         });
     }

@@ -15,10 +15,11 @@ public class WaitlistEntry {
      */
     public enum Status {
         PENDING,    // Entrant is on the waitlist, waiting for the lottery
+        NOT_CHOSEN,
         INVITED,    // Entrant was selected by the lottery and invited to confirm
         ACCEPTED,   // Entrant accepted the invitation and is registered
         DECLINED,   // Entrant declined the invitation
-        CANCELLED   // Entrant left voluntarily, or was removed by the organizer
+        CANCELED   // Entrant left voluntarily, or was removed by the organizer
     }
 
     private String entrantId;

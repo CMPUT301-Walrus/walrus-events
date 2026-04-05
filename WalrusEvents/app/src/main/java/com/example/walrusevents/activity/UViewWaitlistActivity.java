@@ -16,7 +16,6 @@ import com.example.walrusevents.R;
 import com.example.walrusevents.model.WaitlistEntry;
 import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Event;
-import com.example.walrusevents.util.PermissionGatekeeper;
 
 import java.util.List;
 
@@ -68,17 +67,15 @@ public class UViewWaitlistActivity extends AppCompatActivity implements Waitlist
             finish();
         });
 
-        // TODO: Display Waitlist entries in ListView
         countEntrants = findViewById(R.id.count_entrants);
         WaitlistRepository getWaitlist = new WaitlistRepository();
         getWaitlist.getAllEntries(event.getEventId(), this);
-
     }
 
     public Integer countValidEntrants(List<WaitlistEntry> entries) {
         Integer count = 0;
         for(WaitlistEntry entry: entries) {
-            if(entry.getStatus() != WaitlistEntry.Status.DECLINED && entry.getStatus() != WaitlistEntry.Status.CANCELLED) count++;
+            if(entry.getStatus() != WaitlistEntry.Status.DECLINED && entry.getStatus() != WaitlistEntry.Status.CANCELED) count++;
         }
 
         return count;

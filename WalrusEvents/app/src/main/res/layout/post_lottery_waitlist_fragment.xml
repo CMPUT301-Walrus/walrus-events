@@ -8,8 +8,12 @@
         android:id="@+id/accepted_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
         android:text="Accepted"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,9 +29,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Chosen"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="10dp"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/accepted_list" />
+
     <ListView
         android:id="@+id/chosen_list"
         android:layout_width="match_parent"
@@ -40,7 +49,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Canceled"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="10dp"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chosen_list" />
     <ListView
@@ -55,7 +68,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Not Chosen"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="10dp"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/canceled_list" />
 

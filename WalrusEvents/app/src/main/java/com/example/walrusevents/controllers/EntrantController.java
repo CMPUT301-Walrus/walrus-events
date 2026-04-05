@@ -33,7 +33,7 @@ public class EntrantController {
      */
     public void joinWaitlist(String eventId, ActionCallback callback) {
         waitlistRepository.getEntry(eventId, entrant.getDeviceId(), existing -> {
-            if (existing != null && existing.getStatus() != WaitlistEntry.Status.CANCELLED) {
+            if (existing != null && existing.getStatus() != WaitlistEntry.Status.CANCELED) {
                 callback.onFailure("Already on the waitlist for this event.");
                 return;
             }
@@ -51,7 +51,7 @@ public class EntrantController {
     public void joinWaitlistWithLocation(String eventId, double latitude, double longitude,
                                          ActionCallback callback) {
         waitlistRepository.getEntry(eventId, entrant.getDeviceId(), existing -> {
-            if (existing != null && existing.getStatus() != WaitlistEntry.Status.CANCELLED) {
+            if (existing != null && existing.getStatus() != WaitlistEntry.Status.CANCELED) {
                 callback.onFailure("Already on the waitlist for this event.");
                 return;
             }
@@ -65,7 +65,7 @@ public class EntrantController {
     }
 
     /**
-     * Leaves the waitlist by setting status to CANCELLED.
+     * Leaves the waitlist by setting status to CANCELED.
      * Entrants who have already ACCEPTED cannot self-cancel.
      */
     public void leaveWaitlist(String eventId, ActionCallback callback) {
@@ -79,7 +79,7 @@ public class EntrantController {
                 return;
             }
             waitlistRepository.updateStatus(eventId, entrant.getDeviceId(),
-                    WaitlistEntry.Status.CANCELLED, new WaitlistRepository.SaveCallback() {
+                    WaitlistEntry.Status.CANCELED, new WaitlistRepository.SaveCallback() {
                         @Override public void onSuccess() { callback.onSuccess(); }
                         @Override public void onFailure(String error) { callback.onFailure(error); }
                     });

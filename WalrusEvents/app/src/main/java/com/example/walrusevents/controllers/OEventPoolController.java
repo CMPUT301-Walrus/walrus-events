@@ -16,6 +16,7 @@ import com.example.walrusevents.model.Event;
 import com.example.walrusevents.model.Notification;
 import com.example.walrusevents.model.WaitlistEntry;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OEventPoolController {
@@ -24,6 +25,7 @@ public class OEventPoolController {
     private NotificationRepository notificationRepository;
     private Event eventModel;
     private NotificationsController notificationsController;
+    private ArrayList<Integer> selectedForRemoval;
 
     public OEventPoolController(Activity context, Event eventModel, FragmentContainerView fragmentContainerView, @NonNull Fragment fragment) {
         this.eventModel = eventModel;
@@ -68,20 +70,26 @@ public class OEventPoolController {
             case ALL:
                 waitlistRepository.getAllEntries(eventId, entries -> {
                     sendNotifToEntries(entries, notification);
+                    Toast.makeText(context, "Notification sent to all users", Toast.LENGTH_SHORT).show();
                 });
-                Toast.makeText(context, "Sent to all users", Toast.LENGTH_SHORT).show();
                 break;
             case SELECTED:
                 waitlistRepository.getEntriesByStatus(eventId, WaitlistEntry.Status.INVITED, entries -> {
                     sendNotifToEntries(entries, notification);
+                    Toast.makeText(context, "Notification sent to selected users", Toast.LENGTH_SHORT).show();
                 });
-                Toast.makeText(context, "Sent to selected users", Toast.LENGTH_SHORT).show();
+                break;
+            case NOT_SELECTED:
+                waitlistRepository.getEntriesByStatus(eventId, WaitlistEntry.Status.NOT_CHOSEN, entries -> {
+                    sendNotifToEntries(entries, notification);
+                    Toast.makeText(context, "Notification sent to non-selected users", Toast.LENGTH_SHORT).show();
+                });
                 break;
             case WAITING_LIST:
                 waitlistRepository.getEntriesByStatus(eventId, WaitlistEntry.Status.PENDING, entries -> {
                     sendNotifToEntries(entries, notification);
+                    Toast.makeText(context, "Notification sent to pending users", Toast.LENGTH_SHORT).show();
                 });
-                Toast.makeText(context, "Sent to pending users", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -108,5 +116,9 @@ public class OEventPoolController {
         else {
             Toast.makeText(context, "User is already an owner", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void selectForRemoval(int position) {
+
     }
 }

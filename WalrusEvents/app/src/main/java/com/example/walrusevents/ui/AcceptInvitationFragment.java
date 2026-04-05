@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.walrusevents.R;
+import com.example.walrusevents.model.WaitlistEntry;
 
 public class AcceptInvitationFragment extends DialogFragment {
     public interface AcceptInvitationListener {
@@ -22,19 +23,23 @@ public class AcceptInvitationFragment extends DialogFragment {
     }
 
     private AcceptInvitationListener listener;
-    private boolean invited;
+    private WaitlistEntry.Status status;
+    private String headerText;
 
     private void setListener(AcceptInvitationListener listener) {
         this.listener = listener;
     }
-
-    private void setInvited(boolean invited) {
-        this.invited = invited;
+    private void setInviteStatus(WaitlistEntry.Status status) {
+        this.status = status;
     }
-    public static AcceptInvitationFragment newInstance(AcceptInvitationListener listener, boolean invited){
+    private void setHeaderText(String headerText) {
+        this.headerText = headerText;
+    }
+    public static AcceptInvitationFragment newInstance(AcceptInvitationListener listener, WaitlistEntry.Status status, String titleText){
         AcceptInvitationFragment fragment = new AcceptInvitationFragment();
-        fragment.setInvited(invited);
+        fragment.setInviteStatus(status);
         fragment.setListener(listener);
+        fragment.setHeaderText(titleText);
         return fragment;
     }
 
@@ -52,23 +57,38 @@ public class AcceptInvitationFragment extends DialogFragment {
         });
         Button acceptButton = view.findViewById(R.id.acceptInviteButton);
         Button declineButton = view.findViewById(R.id.declineInviteButton);
+        TextView headerView = view.findViewById(R.id.invitation_header);
 
-        if (invited) {
-            acceptButton.setOnClickListener(v -> {
-                listener.acceptInvite();
-                dismiss();
-            });
-            declineButton.setOnClickListener(v -> {
-                listener.declineInvite();
-                dismiss();
-            });
-        }
-        else {
-            TextView invitedText = view.findViewById(R.id.invitationText);
-            invitedText.setText("Not Selected");
-            acceptButton.setVisibility(INVISIBLE);
-            declineButton.setVisibility(INVISIBLE);
-            laterButton.setText("OK");
+        headerView.setText(headerText);
+
+        TextView invitedText = view.findViewById(R.id.invitationText);
+        TextView disclaimerText = view.findViewById(R.id.invite_disclaimer);
+
+        switch (status) {
+            case INVITED:
+                acceptButton.setOnClickListener(v -> {
+                    listener.acceptInvite();
+                    dismiss();
+                });
+                declineButton.setOnClickListener(v -> {
+                    listener.declineInvite();
+                    dismiss();
+                });
+                break;
+            case NOT_CHOSEN:
+                invitedText.setText("Not Selected");
+                disclaimerText.setText("You may still be chosen if another entrant declines");
+                acceptButton.setVisibility(INVISIBLE);
+                declineButton.setVisibility(INVISIBLE);
+                laterButton.setText("OK");
+                break;
+            case PENDING:
+                invitedText.setText("Awaiting Organizer Action");
+                disclaimerText.setText("Organizer still needs to initiate the lottery");
+                acceptButton.setVisibility(INVISIBLE);
+                declineButton.setVisibility(INVISIBLE);
+                laterButton.setText("OK");
+                break;
         }
     }
 }
