@@ -143,6 +143,9 @@ public class Event implements Serializable {
             return false;
         }
         this.entrantCapacity = entrantCapacity;
+        if (entrantCapacity != 0 && applicantCapacity > entrantCapacity) {
+            applicantCapacity = entrantCapacity;
+        }
         return true;
     }
 
@@ -160,7 +163,10 @@ public class Event implements Serializable {
      * @return success ? true : false
      */
     public boolean setApplicantCapacity(int applicantCapacity) {
-        if (applicantCapacity < 0 || applicantCapacity > entrantCapacity) {
+        if (applicantCapacity < 0) {
+            return false;
+        }
+        if (entrantCapacity != 0 && applicantCapacity > entrantCapacity) {
             return false;
         }
         this.applicantCapacity = applicantCapacity;
