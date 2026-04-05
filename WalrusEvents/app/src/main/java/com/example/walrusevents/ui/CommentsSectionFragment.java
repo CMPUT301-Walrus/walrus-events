@@ -74,7 +74,7 @@ public class CommentsSectionFragment extends BottomSheetDialogFragment
                 commentsList,
                 eventModel.getEventId(),
                 this,
-                eventModel.getOwners().contains(DeviceIdManager.getOrCreate(getActivity())) && UserRoleManager.getRole() == UserRole.ORGANIZER);
+                eventModel.getOwners());
         commentsView.setAdapter(commentsAdapter);
         commentsView.setLayoutManager(new LinearLayoutManager(getContext()));
 
