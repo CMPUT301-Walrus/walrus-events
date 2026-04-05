@@ -15,6 +15,7 @@ public class WaitlistEntry {
      */
     public enum Status {
         PENDING,    // Entrant is on the waitlist, waiting for the lottery
+        NOT_CHOSEN,
         INVITED,    // Entrant was selected by the lottery and invited to confirm
         ACCEPTED,   // Entrant accepted the invitation and is registered
         DECLINED,   // Entrant declined the invitation
