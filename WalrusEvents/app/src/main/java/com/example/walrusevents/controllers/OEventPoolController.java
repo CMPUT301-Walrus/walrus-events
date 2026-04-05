@@ -70,20 +70,26 @@ public class OEventPoolController {
             case ALL:
                 waitlistRepository.getAllEntries(eventId, entries -> {
                     sendNotifToEntries(entries, notification);
+                    Toast.makeText(context, "Notification sent to all users", Toast.LENGTH_SHORT).show();
                 });
-                Toast.makeText(context, "Sent to all users", Toast.LENGTH_SHORT).show();
                 break;
             case SELECTED:
                 waitlistRepository.getEntriesByStatus(eventId, WaitlistEntry.Status.INVITED, entries -> {
                     sendNotifToEntries(entries, notification);
+                    Toast.makeText(context, "Notification sent to selected users", Toast.LENGTH_SHORT).show();
                 });
-                Toast.makeText(context, "Sent to selected users", Toast.LENGTH_SHORT).show();
+                break;
+            case NOT_SELECTED:
+                waitlistRepository.getEntriesByStatus(eventId, WaitlistEntry.Status.NOT_CHOSEN, entries -> {
+                    sendNotifToEntries(entries, notification);
+                    Toast.makeText(context, "Notification sent to non-selected users", Toast.LENGTH_SHORT).show();
+                });
                 break;
             case WAITING_LIST:
                 waitlistRepository.getEntriesByStatus(eventId, WaitlistEntry.Status.PENDING, entries -> {
                     sendNotifToEntries(entries, notification);
+                    Toast.makeText(context, "Notification sent to pending users", Toast.LENGTH_SHORT).show();
                 });
-                Toast.makeText(context, "Sent to pending users", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

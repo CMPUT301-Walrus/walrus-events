@@ -6,13 +6,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.walrusevents.data.ProfileRepository;
@@ -36,7 +34,6 @@ public class PostLotteryPoolFragment extends Fragment {
     private EntrantArrayAdapter chosenListAdapter;
     private ArrayList<Entrant> canceledList;
     private EntrantArrayAdapter canceledListAdapter;
-    private ArrayList<Entrant> pendingList;
     private ArrayList<Entrant> notChosenList;
     private EntrantArrayAdapter notChosenListAdapter;
     private ArrayList<String> selectedForRemoval;
@@ -69,14 +66,11 @@ public class PostLotteryPoolFragment extends Fragment {
 
         canceledList = new ArrayList<>();
         canceledListAdapter = new EntrantArrayAdapter(context, canceledList);
-        setupList(view, canceledList, canceledListAdapter, R.id.canceled_list, WaitlistEntry.Status.CANCELLED);
+        setupList(view, canceledList, canceledListAdapter, R.id.canceled_list, WaitlistEntry.Status.CANCELED);
 
         notChosenList = new ArrayList<>();
         notChosenListAdapter = new EntrantArrayAdapter(context, notChosenList);
         setupList(view, notChosenList, notChosenListAdapter, R.id.not_chosen_list, WaitlistEntry.Status.NOT_CHOSEN);
-
-        pendingList = new ArrayList<>();
-        setupList(view, notChosenList, notChosenListAdapter, R.id.not_chosen_list, WaitlistEntry.Status.PENDING);
 
         ListView chosenListView = view.findViewById(R.id.chosen_list);
         chosenListView.setOnItemClickListener((parent, view1, position, id) -> {
@@ -97,6 +91,19 @@ public class PostLotteryPoolFragment extends Fragment {
                 view1.findViewById(R.id.waitlist_entry_background_selected).setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    public int getAcceptedCount() {
+        return acceptedList.size();
+    }
+    public int getChosenList() {
+        return chosenList.size();
+    }
+    public int getNotChosenList() {
+        return notChosenList.size();
+    }
+    public int getCanceledCount() {
+        return canceledList.size();
     }
 
     private void setupList(View view, ArrayList<Entrant> list, EntrantArrayAdapter adapter, int listViewId, WaitlistEntry.Status status) {
