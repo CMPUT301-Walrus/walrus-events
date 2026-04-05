@@ -188,7 +188,11 @@ public class UEventDetailsActivity extends AppCompatActivity
      * Checks if the user has an active invitation to respond to.
      */
     private void checkForInvitation() {
-        if (eventModel == null || (!eventModel.getIsPrivate() && !eventModel.isInConfirmation())) {
+        if (eventModel == null) {
+            return;
+        }
+
+        if (!eventModel.isInConfirmation()) {
             return;
         }
 
@@ -201,14 +205,27 @@ public class UEventDetailsActivity extends AppCompatActivity
                 if (retrievedEntry != null) {
                     UEventDetailsActivity.this.entry = retrievedEntry;
                     AcceptInvitationFragment inviteFragment;
+
+                    String headerText;
+                    if (eventModel.getIsPrivate()) {
+                        headerText = eventModel.getTitle();
+                    }
+                    else {
+                        headerText = "Lottery Result";
+                    }
+
                     switch (retrievedEntry.getStatus()) {
                         case INVITED:
-                            inviteFragment = AcceptInvitationFragment.newInstance(UEventDetailsActivity.this, true);
+                            inviteFragment = AcceptInvitationFragment.newInstance(UEventDetailsActivity.this, WaitlistEntry.Status.INVITED, headerText);
                             inviteFragment.show(getSupportFragmentManager(), "Invited");
                             break;
-                        case PENDING:
-                            inviteFragment = AcceptInvitationFragment.newInstance(UEventDetailsActivity.this, false);
+                        case NOT_CHOSEN:
+                            inviteFragment = AcceptInvitationFragment.newInstance(UEventDetailsActivity.this, WaitlistEntry.Status.NOT_CHOSEN, headerText);
                             inviteFragment.show(getSupportFragmentManager(), "Not Invited");
+                            break;
+                        case PENDING:
+                            inviteFragment = AcceptInvitationFragment.newInstance(UEventDetailsActivity.this, WaitlistEntry.Status.PENDING, headerText);
+                            inviteFragment.show(getSupportFragmentManager(), "Pending");
                             break;
                         default:
                             break;

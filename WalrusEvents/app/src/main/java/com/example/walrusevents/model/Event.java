@@ -277,6 +277,9 @@ public class Event implements Serializable {
     }
 
     public boolean isInRegistration() {
+        if (isPrivate) {
+            return false;
+        }
         if (endRegistrationTime == null || startRegistrationTime == null
                 || endRegistrationTime.isBlank() || startRegistrationTime.isBlank()) {
             //No valid registration period set, so assume always in registration
@@ -287,12 +290,15 @@ public class Event implements Serializable {
     }
 
     public boolean isInConfirmation() {
-        if (isInRegistration()) {
+        if (isInRegistration() && !isPrivate) {
             return false;
         }
-        if (endConfirmationTime == null || startConfirmationTime == null
-                || endConfirmationTime.isBlank() || startConfirmationTime.isBlank()) {
-            //No valid confirmation period set, so assume always in registration
+        if (startConfirmationTime == null || startConfirmationTime.isBlank()) {
+            //No valid confirmation period start time set, so assume always out of confirmation
+            return false;
+        }
+        if (endConfirmationTime == null || endConfirmationTime.isBlank()) {
+            //No valid confirmation period end time set, so assume always in confirmation
             return true;
         }
         return LocalDateTime.now().isBefore(LocalDateTime.parse(endConfirmationTime))

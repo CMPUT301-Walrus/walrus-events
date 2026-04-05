@@ -32,6 +32,7 @@ public class PostLotteryPoolFragment extends Fragment {
     private EntrantArrayAdapter chosenListAdapter;
     private ArrayList<Entrant> canceledList;
     private EntrantArrayAdapter canceledListAdapter;
+    private ArrayList<Entrant> pendingList;
     private ArrayList<Entrant> notChosenList;
     private EntrantArrayAdapter notChosenListAdapter;
 
@@ -58,7 +59,7 @@ public class PostLotteryPoolFragment extends Fragment {
 
         chosenList = new ArrayList<>();
         chosenListAdapter = new EntrantArrayAdapter(context, chosenList);
-        setupList(view, chosenList, chosenListAdapter, R.id.not_chosen_list, WaitlistEntry.Status.INVITED);
+        setupList(view, chosenList, chosenListAdapter, R.id.chosen_list, WaitlistEntry.Status.INVITED);
 
         canceledList = new ArrayList<>();
         canceledListAdapter = new EntrantArrayAdapter(context, canceledList);
@@ -66,6 +67,9 @@ public class PostLotteryPoolFragment extends Fragment {
 
         notChosenList = new ArrayList<>();
         notChosenListAdapter = new EntrantArrayAdapter(context, notChosenList);
+        setupList(view, notChosenList, notChosenListAdapter, R.id.not_chosen_list, WaitlistEntry.Status.NOT_CHOSEN);
+
+        pendingList = new ArrayList<>();
         setupList(view, notChosenList, notChosenListAdapter, R.id.not_chosen_list, WaitlistEntry.Status.PENDING);
     }
 

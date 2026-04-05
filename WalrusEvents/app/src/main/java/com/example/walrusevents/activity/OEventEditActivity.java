@@ -3,12 +3,9 @@ package com.example.walrusevents.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -23,7 +20,7 @@ import com.example.walrusevents.util.PermissionGatekeeper;
 public class OEventEditActivity extends AppCompatActivity {
     private OEventEditView eventEditView;
     private OEventEditController eventEditController;
-    private Event model;
+    private Event eventModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,64 +30,65 @@ public class OEventEditActivity extends AppCompatActivity {
     private void initializeUi() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.edit_event);
-        // Take event class info and move it here
-        model = getIntent().getSerializableExtra("Event", Event.class);
 
-        eventEditView = new OEventEditView(this, model);
-        eventEditController = new OEventEditController(model, eventEditView);
+        // Take event class info and move it here
+        try {
+            eventModel = getIntent().getSerializableExtra("Event", Event.class);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        eventEditView = new OEventEditView(this, eventModel);
+        eventEditController = new OEventEditController(eventModel, eventEditView);
 
         // Back to event list for organizer button
-        ImageView backButton = findViewById(R.id.backButton_organizer_to_main);
-        backButton.setOnClickListener(v -> {
+        eventEditView.getBackButton().setOnClickListener(v -> {
             // Passes the updated model back to the previous activity (which should be OEventPoolActivity)
             Intent saveIntent = new Intent();
-            saveIntent.putExtra("Event", model);
+            saveIntent.putExtra("Event", eventModel);
             setResult(OEventEditActivity.RESULT_CANCELED, saveIntent);
             finish();
         });
 
         // Get event title text view and put actual event title in it
-        TextView eventNameTitle = findViewById(R.id.eventName);
-        if (model != null) {
-            eventNameTitle.setText(model.getTitle()); // Or getEventName() depending on your model
-        }
+        eventEditView.getTitleView().setText(eventModel.getTitle()); // Or getEventName() depending on your model
 
         // Event poster
-        if (model != null) {
-            String eventId = model.getEventId();
-            ImageView posterImageView = findViewById(R.id.editPoster);
+        String eventId = eventModel.getEventId();
 
-            // Get APIMgr and IMGRepo
-            FirebaseAPIManager apiMgr = new FirebaseAPIManager();
-            ImageRepository imageRepo = new ImageRepository(apiMgr);
+        // Get APIMgr and IMGRepo
+        FirebaseAPIManager apiMgr = new FirebaseAPIManager();
+        ImageRepository imageRepo = new ImageRepository(apiMgr);
 
-            // Get poster image from Firebase
-            imageRepo.retrieveImage(eventId, new FirebaseAPIManager.OnDownloadCompleteListener() {
-                @Override
-                public void onSuccess(String imageUrl) {
-                    // Glide handles the background download and UI thread update
-                    Glide.with(OEventEditActivity.this)
-                            .load(imageUrl)
-                            .placeholder(R.drawable.rounded_light_blue_square) // Show while loading
-                            .error(R.drawable.image_not_found_placeholder)   // Show if missing
-                            .into(posterImageView);
-                }
+        // Get poster image from Firebase
+        imageRepo.retrieveImage(eventId, new FirebaseAPIManager.OnDownloadCompleteListener() {
+            @Override
+            public void onSuccess(String imageUrl) {
+                // Glide handles the background download and UI thread update
+                Glide.with(OEventEditActivity.this)
+                        .load(imageUrl)
+                        .placeholder(R.drawable.rounded_light_blue_square) // Show while loading
+                        .error(R.drawable.image_not_found_placeholder)   // Show if missing
+                        .into(eventEditView.getEditPosterImage());
+            }
 
-                @Override
-                public void onFailure(String error) {
-                    Log.e("POSTER_LOAD", "Could not find poster: " + error);
-                }
-            });
-        }
+            @Override
+            public void onFailure(String error) {
+                Log.e("POSTER_LOAD", "Could not find poster: " + error);
+            }
+        });
 
         eventEditView.getEditPosterImage().setOnClickListener(v -> {
             //TODO: Allow for selection of poster
         });
 
+        //Thumbnail
         eventEditView.getEditThumbnail().setOnClickListener(v -> {
             //TODO: Allow for selection of thumbnail
         });
 
+        //Registration and confirmation dates
         eventEditView.getEditRegistrationStart().setOnClickListener(v -> {
             eventEditController.openStartRegistrationDialog(this);
         });
@@ -104,6 +102,7 @@ public class OEventEditActivity extends AppCompatActivity {
             eventEditController.openEndConfirmationDialog(this);
         });
 
+        //Done button
         eventEditView.getDoneButton().setOnClickListener(v -> {
             // Get updated info from app
             String newTitle = eventEditView.getTitleView().getText().toString();
@@ -121,9 +120,26 @@ public class OEventEditActivity extends AppCompatActivity {
 
             // Passes the updated model back to the previous activity (which should be OEventPoolActivity)
             Intent saveIntent = new Intent();
-            saveIntent.putExtra("Event", model);
+            saveIntent.putExtra("Event", eventModel);
             setResult(OEventEditActivity.RESULT_OK, saveIntent);
             finish();
         });
+
+        //Private event toggle
+        updatePublicSettingsVisibility(eventModel.getIsPrivate());
+        eventEditView.getPrivateToggle().setOnCheckedChangeListener((buttonView, isChecked) -> {
+            updatePublicSettingsVisibility(isChecked);
+        });
+    }
+
+    private void updatePublicSettingsVisibility(boolean isPrivate) {
+        if (isPrivate) {
+            eventEditView.getEditRegistrationEnd().setVisibility(TextView.GONE);
+            eventEditView.getEditRegistrationStart().setVisibility(TextView.GONE);
+        }
+        else {
+            eventEditView.getEditRegistrationEnd().setVisibility(TextView.VISIBLE);
+            eventEditView.getEditRegistrationStart().setVisibility(TextView.VISIBLE);
+        }
     }
 }

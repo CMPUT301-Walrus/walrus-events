@@ -132,25 +132,32 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
             controller = new OEventPoolController(this, eventModel.getEventId(), eventModel.isInConfirmation(), view.getFragmentContainerView(), finalizedPoolFragment);
         }
 
-        //Turn lottery button to an invite button if the event is private
-        if (!eventModel.getIsPrivate()) {
-            /*
-             * Currently draws the lottery automatically upon clicking. More deliberate forms of execution can be done later.
-             */
-            view.getLotteryButton().setText("Lottery");
-            view.getLotteryButton().setOnClickListener(v -> {
-                WaitlistRepository collectForLottery = new WaitlistRepository();
-                collectForLottery.getAllEntries(eventModel.getEventId(), this);
-            });
+        //Only show the lottery/invite button if the event hasn't ended yet
+        if (eventModel.isInRegistration() || eventModel.isInConfirmation()) {
+            view.getLotteryButton().setVisibility(View.VISIBLE);
+            //Turn lottery button to an invite button if the event is private
+            if (!eventModel.getIsPrivate()) {
+                /*
+                 * Currently draws the lottery automatically upon clicking. More deliberate forms of execution can be done later.
+                 */
+                view.getLotteryButton().setText("Lottery");
+                view.getLotteryButton().setOnClickListener(v -> {
+                    WaitlistRepository collectForLottery = new WaitlistRepository();
+                    collectForLottery.getAllEntries(eventModel.getEventId(), this);
+                });
+            }
+            else {
+                view.getLotteryButton().setText("Invite");
+
+                String testEntrantId = DeviceIdManager.getOrCreate(this);
+                view.getLotteryButton().setOnClickListener(v -> {
+                    controller.sendInvite(this, testEntrantId, "Invitation",
+                            String.format(Locale.getDefault(),"You were invited to %s!", eventModel.getTitle()));
+                });
+            }
         }
         else {
-            view.getLotteryButton().setText("Invite");
-
-            String testEntrantId = DeviceIdManager.getOrCreate(this);
-            view.getLotteryButton().setOnClickListener(v -> {
-                controller.sendInvite(this, testEntrantId, "Invitation",
-                        String.format(Locale.getDefault(),"You were invited to %s!", eventModel.getTitle()));
-            });
+            view.getLotteryButton().setVisibility(View.GONE);
         }
     }
 
