@@ -119,7 +119,10 @@ public class UEventsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        PermissionGatekeeper.requireNotBanned(this, false, permissions -> loadHistory());
+        if (waitlistRepository == null || eventRepository == null || deviceId == null) {
+            return;
+        }
+        loadHistory(); // refresh when returning to this Activity
     }
 
 
