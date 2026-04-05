@@ -10,6 +10,7 @@ import com.example.walrusevents.model.Event;
 import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.ui.NameEventFragment;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class MainSEventListController implements EventRepository.EventListCallback {
@@ -95,5 +96,9 @@ public class MainSEventListController implements EventRepository.EventListCallba
         filterManager.setKeyword("");
         filterManager.setSelectedRange(null,null);
         filterManager.setOnlyOpenSeats(false);
+    }
+
+    public void setDateRange(LocalDateTime start, LocalDateTime end){
+        filterManager.setSelectedRange(start,end);
     }
 }
