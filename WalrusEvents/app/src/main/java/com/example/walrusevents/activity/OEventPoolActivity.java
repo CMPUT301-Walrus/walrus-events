@@ -106,15 +106,18 @@ public class OEventPoolActivity extends AppCompatActivity implements WaitlistRep
             collectForLottery.getAllEntries(eventModel.getEventId(), this);
         });
 
-        /**
-         * Uncomment and implement once XML is initialized
-         */
-        // Inside your Event Details setup
-        // if (currentEvent.getGeolocationEnabled()) {
-        //     viewMapButton.setVisibility(View.VISIBLE);
-        // } else {
-        //     viewMapButton.setVisibility(View.GONE);
-        // }
+        view.getMapButton().setOnClickListener(v -> {
+            Intent intent = new Intent(this, MapsActivity.class);
+            intent.putExtra("eventId", eventModel.getEventId());
+            startActivity(intent);
+        });
+
+        // Toggle map button visibility based on geolocation requirement
+        if (eventModel.getUseGeolocation()) {
+            view.getMapButton().setVisibility(View.VISIBLE);
+        } else {
+            view.getMapButton().setVisibility(View.GONE);
+        }
     }
 
     /**

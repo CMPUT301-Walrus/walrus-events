@@ -2,6 +2,7 @@ package com.example.walrusevents.ui;
 
 import android.app.Activity;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import androidx.fragment.app.FragmentContainerView;
@@ -13,12 +14,14 @@ public class OEventPoolView {
     private Button settingsButton;
     private Button backButton;
     private Button lotteryButton;
+    private ImageView mapButton;
     private FragmentContainerView fragmentContainer;
 
     public OEventPoolView(Activity context) {
         settingsButton = context.findViewById(R.id.settings_org_button);
         backButton = context.findViewById(R.id.back_waiting_list_org);
         lotteryButton = context.findViewById(R.id.lottery_button);
+        mapButton = context.findViewById(R.id.map_button);
         fragmentContainer = context.findViewById(R.id.waiting_list_fragment);
     }
 
@@ -35,5 +38,9 @@ public class OEventPoolView {
 
     public Button getLotteryButton() {
         return lotteryButton;
+    }
+
+    public ImageView getMapButton() {
+        return mapButton;
     }
 }

@@ -167,7 +167,7 @@ public class UEventDetailsActivity extends AppCompatActivity
         view.getJoinButton().setOnClickListener(v -> {
             // Check if geolocation is enabled
             // If enabled, fetch location and then join, join without getting location data otherwise
-            if (eventModel.getGeolocationEnabled()) {
+            if (eventModel.getUseGeolocation()) {
                 fetchLocationAndJoin();
             } else {
                 performJoin(null, null);
