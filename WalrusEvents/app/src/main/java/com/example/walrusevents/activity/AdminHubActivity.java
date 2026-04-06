@@ -50,7 +50,8 @@ public class AdminHubActivity extends AppCompatActivity {
         });
 
         view.getNotificationsButton().setOnClickListener(v -> {
-            //TODO: go to admin notifications view
+            Intent intent = new Intent(this, AdminAllNotificationsActivity.class);
+            startActivity(intent);
         });
 
         view.getCommentsButton().setOnClickListener(v -> {
