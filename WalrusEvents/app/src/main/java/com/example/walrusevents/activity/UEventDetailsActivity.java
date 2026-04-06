@@ -238,23 +238,17 @@ public class UEventDetailsActivity extends AppCompatActivity
             view.getJoinButton().setVisibility(View.VISIBLE);
             view.getJoinButton().setEnabled(true);
             view.getJoinButton().setText("+ Join");
-            view.getJoinButton().setEnabled(true);
             view.getJoinButton().setOnClickListener(v -> {
-                // 2. Logic Merge: Check geolocation setting ONLY when button is clicked
-                if (eventModel.getUseGeolocation()) {
-                    fetchLocationAndJoin();
-                } else {
-                    performJoin(null, null);
-                }
                 if (!eventModel.isInRegistration()) {
                     Toast.makeText(this, "Registration deadline has passed.", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                WaitlistRepository waitRep = new WaitlistRepository();
-                ProfileRepository pfRep = new ProfileRepository();
-                EntrantController entrantController = new EntrantController(entrant, waitRep, pfRep);
-                entrantController.joinWaitlist(eventModel.getEventId(), this);
+                if (eventModel.getUseGeolocation()) {
+                    fetchLocationAndJoin();
+                } else {
+                    performJoin(null, null);
+                }
             });
         }
     }
@@ -363,6 +357,11 @@ public class UEventDetailsActivity extends AppCompatActivity
      * 02/04/26
      */
     private void fetchLocationAndJoin() {
+        if (!eventModel.isInRegistration()) {
+            Toast.makeText(this, "Registration deadline has passed.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         com.google.android.gms.location.FusedLocationProviderClient fusedLocationClient =
                 com.google.android.gms.location.LocationServices.getFusedLocationProviderClient(this);
 
@@ -391,6 +390,11 @@ public class UEventDetailsActivity extends AppCompatActivity
     }
 
     private void performJoin(Double lat, Double lon) {
+        if (!eventModel.isInRegistration()) {
+            Toast.makeText(this, "Registration deadline has passed.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // Double check 'me' isn't null (safety)
         if (me == null) {
             String deviceId = DeviceIdManager.getOrCreate(this);
@@ -406,7 +410,5 @@ public class UEventDetailsActivity extends AppCompatActivity
         } else {
             entrantController.joinWaitlist(eventModel.getEventId(), this);
         }
-
-        // Update button state to "Leave" after joining
-        updateJoinButton(me.getDeviceId());
-    }}
+    }
+}
