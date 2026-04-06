@@ -129,12 +129,13 @@
 
         <Button
             android:id="@+id/settings_button"
-            android:layout_width="101dp"
+            android:layout_width="wrap_content"
             android:layout_height="58dp"
             android:layout_marginEnd="10dp"
             android:backgroundTint="@color/yellow"
             android:text="Settings"
             android:textColor="@android:color/black"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/main_button"
             app:layout_constraintHorizontal_bias="0.5"
@@ -158,7 +159,7 @@
 
         <Button
             android:id="@+id/my_events_button"
-            android:layout_width="96dp"
+            android:layout_width="wrap_content"
             android:layout_height="61dp"
             android:layout_marginEnd="24dp"
             android:backgroundTint="@color/yellow"
@@ -174,7 +175,7 @@
 
         <Button
             android:id="@+id/main_button"
-            android:layout_width="82dp"
+            android:layout_width="wrap_content"
             android:layout_height="59dp"
             android:layout_marginEnd="10dp"
             android:backgroundTint="@color/yellow"
