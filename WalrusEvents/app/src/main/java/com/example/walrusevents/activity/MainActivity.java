@@ -60,8 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Button scanQRCodeButton;
     private Button adminViewButton;
-    private Button settingsButton;
-    private Button eventsButton;
+    private ImageView settingsButton;
+    private ImageView eventsButton;
     private boolean initialProfileSetupLaunched;
 
 
@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
      * @param settingsBtn button to access settings
      * @param eventsBtn button to access my events
      */
-    private void updateVisibility(Button adminBtn, Button settingsBtn, Button eventsBtn) {
+    private void updateVisibility(Button adminBtn, ImageView settingsBtn, ImageView eventsBtn) {
         UserRole currentRole = UserRoleManager.getRole();
 
         if(currentRole == UserRole.ADMIN) {

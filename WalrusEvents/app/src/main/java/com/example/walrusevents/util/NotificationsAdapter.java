@@ -81,7 +81,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                     CoOrgInvitationFragment invitationFragment = CoOrgInvitationFragment.newInstance(new CoOrgInvitationFragment.AcceptInvitationListener() {
                         @Override
                         public void acceptInvite() {
-                            event.addOwner(notification.getEventId());
+                            event.addOwner(DeviceIdManager.getOrCreate(context));
                             eventRepository.setEvent(event);
                             Toast.makeText(context, "Accepted! Check your organizer events page", Toast.LENGTH_LONG).show();
                             notification.setTargetGroup(Notification.NotificationTarget.SELECTED);
