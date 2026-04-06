@@ -21,10 +21,10 @@
             android:backgroundTint="#FFD24B"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/event_name"
-            app:layout_constraintHorizontal_bias="0.166"
+            app:layout_constraintHorizontal_bias="0.192"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.75"
+            app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@android:drawable/ic_menu_revert" />
 
         <TextView
@@ -85,7 +85,9 @@
                 android:id="@+id/view_comments_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="View Comments" />
+                android:backgroundTint="@color/yellow"
+                android:text="View Comments"
+                android:textColor="@color/black" />
         </LinearLayout>
     </ScrollView>
 
