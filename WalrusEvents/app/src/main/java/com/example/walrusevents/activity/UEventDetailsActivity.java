@@ -408,5 +408,5 @@ public class UEventDetailsActivity extends AppCompatActivity
         }
 
         // Update button state to "Leave" after joining
-        updateJoinButton(true, me.getDeviceId());
+        updateJoinButton(me.getDeviceId());
     }}

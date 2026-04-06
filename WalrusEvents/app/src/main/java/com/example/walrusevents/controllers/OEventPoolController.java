@@ -1,10 +1,17 @@
 package com.example.walrusevents.controllers;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.DocumentsContract;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 
@@ -15,9 +22,17 @@ import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.model.Notification;
 import com.example.walrusevents.model.WaitlistEntry;
+import com.example.walrusevents.util.EntrantArrayAdapter;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class OEventPoolController {
     private WaitlistRepository waitlistRepository;
@@ -27,7 +42,11 @@ public class OEventPoolController {
     private NotificationsController notificationsController;
     private ArrayList<Integer> selectedForRemoval;
 
-    public OEventPoolController(Activity context, Event eventModel, FragmentContainerView fragmentContainerView, @NonNull Fragment fragment) {
+    public interface FillListCallback {
+        void onListFilled(ArrayList<Entrant> entrantList);
+    }
+
+    public OEventPoolController(Event eventModel) {
         this.eventModel = eventModel;
 
         waitlistRepository = new WaitlistRepository();
@@ -118,7 +137,47 @@ public class OEventPoolController {
         }
     }
 
-    public void selectForRemoval(int position) {
+    public void fillEntrantListByStatus(ArrayList<Entrant> entrantList, EntrantArrayAdapter adapter, WaitlistEntry.Status status) {
+        waitlistRepository.getEntriesByStatus(eventModel.getEventId(), status, entries -> {
+            ArrayList<String> deviceIds = new ArrayList<>();
+            for (WaitlistEntry entry: entries) {
+                deviceIds.add(entry.getEntrantId());
+            }
+            profileRepository.getProfilesInList(deviceIds, entrant -> {
+                if (entrant == null)
+                {
+                    System.out.println("null entrant");
+                }
+                else {
+                    entrantList.add(entrant);
+                    if (adapter != null) {
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            });
+        });
+    }
+
+    public void writeCSV(Context context, Uri uri, ContentResolver contentResolver, ArrayList<Entrant> finalList){
+        StringBuilder csvBuilder = new StringBuilder();
+        csvBuilder.append("Entrant list");
+
+        for (Entrant entrant : finalList) {
+            csvBuilder.append("\n").append(entrant.getProfile().getName());
+        }
+
+        DocumentFile directory = DocumentFile.fromTreeUri(context, uri);
+
+        String fileName = String.format(Locale.getDefault(), "%s Final List.csv", eventModel.getTitle());
+        DocumentFile newFile = directory.createFile("text/csv", fileName);
+        try {
+            OutputStream outputStream = contentResolver.openOutputStream(newFile.getUri());
+            outputStream.write(csvBuilder.toString().getBytes());
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 }

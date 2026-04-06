@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.walrusevents.R;
+import com.example.walrusevents.controllers.OEventPoolController;
 import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Entrant;
@@ -26,11 +27,14 @@ public class FinalizedPoolFragment extends Fragment {
     private Event eventModel;
     private ArrayList<Entrant> entrantList;
     private EntrantArrayAdapter eventListAdapter;
-    WaitlistRepository waitlistRepository;
-    ProfileRepository profileRepository;
+    private WaitlistRepository waitlistRepository;
+    private ProfileRepository profileRepository;
+    private OEventPoolController controller;
 
-    public FinalizedPoolFragment(Event eventModel) {
+    public FinalizedPoolFragment(Event eventModel, OEventPoolController controller, @NonNull ArrayList<Entrant> entrantList) {
         this.eventModel = eventModel;
+        this.controller = controller;
+        this.entrantList = entrantList;
         waitlistRepository = new WaitlistRepository();
         profileRepository = new ProfileRepository();
     }
@@ -45,33 +49,12 @@ public class FinalizedPoolFragment extends Fragment {
     private void registrationPhasePool(View view) {
         Activity context = getActivity();
 
-        entrantList = new ArrayList<>();
+        entrantList.clear();
         eventListAdapter = new EntrantArrayAdapter(context, entrantList);
         ListView entrantListView = view.findViewById(R.id.org_entrant_list_view);
 
         entrantListView.setAdapter(eventListAdapter);
 
-        waitlistRepository.getEntriesByStatus(eventModel.getEventId(), WaitlistEntry.Status.ACCEPTED, new WaitlistRepository.EntryListCallback() {
-            @Override
-            public void onEntriesLoaded(List<WaitlistEntry> entries) {
-                ArrayList<String> deviceIds = new ArrayList<>();
-                for (WaitlistEntry entry: entries) {
-                    deviceIds.add(entry.getEntrantId());
-                }
-                profileRepository.getProfilesInList(deviceIds, new ProfileRepository.ProfileCallback() {
-                    @Override
-                    public void onEntrantLoaded(Entrant entrant) {
-                        if (entrant == null)
-                        {
-                            System.out.println("null entrant");
-                        }
-                        else {
-                            entrantList.add(entrant);
-                            eventListAdapter.notifyDataSetChanged();
-                        }
-                    }
-                });
-            }
-        });
+        controller.fillEntrantListByStatus(entrantList, eventListAdapter, WaitlistEntry.Status.ACCEPTED);
     }
 }
