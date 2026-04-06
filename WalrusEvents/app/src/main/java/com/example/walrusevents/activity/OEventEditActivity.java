@@ -8,7 +8,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.walrusevents.data.FirebaseAPIManager;
@@ -104,12 +103,6 @@ public class OEventEditActivity extends AppCompatActivity {
             eventEditController.openEndConfirmationDialog(this);
         });
 
-        // Geolocation toggle
-        SwitchCompat geoToggle = findViewById(R.id.geolocation_toggle);
-        if (geoToggle != null) {
-            geoToggle.setChecked(eventModel.getUseGeolocation());
-        }
-
         //Done button
         eventEditView.getDoneButton().setOnClickListener(v -> {
             // Get updated info from app
@@ -123,7 +116,6 @@ public class OEventEditActivity extends AppCompatActivity {
             // Update local info and Firebase info
             eventEditController.setTitle(newTitle);
             eventEditController.setIsPrivate(isPrivate);
-            eventModel.setUseGeolocation(geoToggle.isChecked());
             eventEditController.setDescription(newDescription);
 
             try {

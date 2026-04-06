@@ -205,16 +205,6 @@
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/geolocation_toggle"
-                android:layout_width="290dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="Require Geolocation to Join"
-                android:textSize="18sp"
-                android:thumbTint="#FFD24B"
-                app:trackTint="#0F9BE7" />
-
             <Button
                 android:id="@+id/doneButton"
                 android:layout_width="match_parent"
