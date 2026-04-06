@@ -82,13 +82,13 @@
         app:layout_constraintTop_toTopOf="@+id/back_send_notif_p2"
         app:layout_constraintVertical_bias="0.197" />
 
-    <Button
+    <ImageView
         android:id="@+id/back_send_notif_p2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/darker_gray"
-        android:text="Back"
-        android:textColor="@color/black"
+        android:layout_width="61dp"
+        android:layout_height="58dp"
+        android:backgroundTint="#FFD24B"
+        android:contentDescription="Back"
+        app:srcCompat="@android:drawable/ic_menu_revert"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/confirm_send_notif_button"
         app:layout_constraintHorizontal_bias="0.5"
