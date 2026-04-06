@@ -38,16 +38,8 @@ public class AdminAllEventsActivity extends AppCompatActivity {
         eventList =new ArrayList<>();
         adapter=new MainSEventArrayAdapter(this,eventList);
         eventRepository=new EventRepository();
-        //controller=new MainSEventListController(this,eventRepository,view.getListView());
-        //controller.loadEvents();
-
-        eventRepository.initiateGetAllEvents(events -> {
-            if (events != null) {
-                eventList.clear();
-                eventList.addAll(events);
-                adapter.notifyDataSetChanged();
-            }
-        });
+        controller=new MainSEventListController(this,eventRepository,view.getListView());
+        controller.loadEvents();
 
         view.getBackButton().setOnClickListener(v -> {finish();});
 
