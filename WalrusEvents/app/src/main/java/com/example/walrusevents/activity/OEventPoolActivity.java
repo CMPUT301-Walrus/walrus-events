@@ -391,7 +391,7 @@ public class OEventPoolActivity extends AppCompatActivity {
                 view.getLotteryButton().setVisibility(View.VISIBLE);
                 view.getLotteryButton().setText("Replace Canceled");
                 view.getLotteryButton().setOnClickListener(v -> {
-                    runLotteryWithoutNotifications();
+                    waitlistRepository.getAllEntries(eventModel.getEventId(), entries -> doLottery(entries, true));
                 });
                 break;
             case 1:
