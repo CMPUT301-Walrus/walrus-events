@@ -76,7 +76,7 @@ public class PreLotteryPoolFragment extends Fragment {
             entrantCountText.setText(String.format(Locale.getDefault(),
                     "(%d/%d)",
                     entries.size(),
-                    eventModel.getApplicantCapacity()));
+                    eventModel.getEntrantCapacity()));
         });
     }
 }

@@ -29,6 +29,7 @@ import com.example.walrusevents.model.Notification;
 import com.example.walrusevents.model.WaitlistEntry;
 import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Event;
+import com.example.walrusevents.ui.ConfigureLotteryFragment;
 import com.example.walrusevents.ui.FinalizedPoolFragment;
 import com.example.walrusevents.ui.OEventPoolView;
 import com.example.walrusevents.ui.PostLotteryPoolFragment;
@@ -41,11 +42,15 @@ import java.util.List;
 import java.util.Locale;
 
 public class OEventPoolActivity extends AppCompatActivity {
+    public static final String CONFIG_LOTTERY_TAG = "configLottery";
+    public static final String CONFIG_NOTIFICATIONS_TAG = "configNotifications";
     private Event eventModel;
     private OEventPoolView view;
     private OEventPoolController controller;
     private ArrayList<String> selectedForRemoval;
     private ArrayList<Entrant> finalList;
+    private String selectedMessage;
+    private String nonSelectedMessage;
 
     ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -185,6 +190,9 @@ public class OEventPoolActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.waiting_list_fragment, preLotteryFragment)
                     .commit();
+
+            setLotteryButton(3);
+            view.getRemoveButton().setVisibility(View.GONE);
         }
         else if (eventModel.isInConfirmation()) {
             selectedForRemoval = new ArrayList<>();
@@ -193,6 +201,14 @@ public class OEventPoolActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.waiting_list_fragment, postLotteryFragment)
                     .commit();
+
+            if (!eventModel.getIsPrivate()) {
+                setLotteryButton(0);
+            }
+            else {
+                setLotteryButton(1);
+            }
+            view.getRemoveButton().setVisibility(View.VISIBLE);
         }
         else {
             finalList = new ArrayList<>();
@@ -200,37 +216,30 @@ public class OEventPoolActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.waiting_list_fragment, finalizedPoolFragment)
                     .commit();
-        }
 
-        //Turn lottery button to an export csv button if registration and confirmation has passed
-        if (eventModel.isInRegistration() || eventModel.isInConfirmation()) {
-            //Turn lottery button to an invite button if the event is private
-            if (!eventModel.getIsPrivate()) {
-                setLotteryButton(0);
-            }
-            else {
-                setLotteryButton(1);
-            }
-        }
-        else {
             setLotteryButton(2);
+            view.getRemoveButton().setVisibility(View.GONE);
         }
     }
 
     /**
      * Sets the lottery button to lottery/join/export list
-     * @param mode 0 -> lottery, 1 -> invite, 2 -> export list
+     * @param mode 0 -> lottery, 1 -> invite, 2 -> export list, 3 -> gone
      */
     private void setLotteryButton(int mode) {
         switch (mode) {
             case 0:
+                view.getLotteryButton().setVisibility(View.VISIBLE);
                 view.getLotteryButton().setText("Lottery");
                 view.getLotteryButton().setOnClickListener(v -> {
-                    WaitlistRepository collectForLottery = new WaitlistRepository();
-                    collectForLottery.getAllEntries(eventModel.getEventId(), this::doLottery);
+                    if (getSupportFragmentManager().findFragmentByTag(CONFIG_LOTTERY_TAG) == null) {
+                        ConfigureLotteryFragment configureLotteryFragment = new ConfigureLotteryFragment(eventModel, this);
+                        configureLotteryFragment.show(getSupportFragmentManager(), CONFIG_LOTTERY_TAG);
+                    }
                 });
                 break;
             case 1:
+                view.getLotteryButton().setVisibility(View.VISIBLE);
                 view.getLotteryButton().setText("Invite");
 
                 //TODO: replace testEntrantId when entrant search is implemented
@@ -241,6 +250,7 @@ public class OEventPoolActivity extends AppCompatActivity {
                 });
                 break;
             case 2:
+                view.getLotteryButton().setVisibility(View.VISIBLE);
                 view.getLotteryButton().setText("Export List");
                 view.getLotteryButton().setOnClickListener(v -> {
                     if (finalList != null && !finalList.isEmpty()) {
@@ -251,10 +261,18 @@ public class OEventPoolActivity extends AppCompatActivity {
                     }
                 });
                 break;
+            case 3:
+                view.getLotteryButton().setVisibility(View.GONE);
+                break;
         }
     }
 
-    private void doLottery(List<WaitlistEntry> entries) {
+    public void setNotificationMessages(String selectedMessage, String nonSelectedMessage) {
+        this.selectedMessage = selectedMessage;
+        this.nonSelectedMessage = nonSelectedMessage;
+    }
+
+    public void doLottery(List<WaitlistEntry> entries) {
         Lottery lottery = new Lottery();
         //Draw the lottery
         boolean lotterySuccess = lottery.drawToCapacity(entries, eventModel.getApplicantCapacity());
@@ -271,11 +289,11 @@ public class OEventPoolActivity extends AppCompatActivity {
         }
         controller.sendNotifications(OEventPoolActivity.this,
                 String.format(Locale.getDefault(), "%s Lottery Result", eventModel.getTitle()),
-                "You've been selected!",
+                selectedMessage,
                 Notification.NotificationTarget.SELECTED);
         controller.sendNotifications(OEventPoolActivity.this,
                 String.format(Locale.getDefault(), "%s Lottery Result", eventModel.getTitle()),
-                "You were not selected",
+                nonSelectedMessage,
                 Notification.NotificationTarget.NOT_SELECTED);
         refresh();
     }
