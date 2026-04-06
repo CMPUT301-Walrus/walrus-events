@@ -201,6 +201,18 @@ public class EventRepository {
                 .delete();
     }
 
+    public void deleteEventAdmin(String eventId, OnEventDeletedListener listener){
+        eventsCollection
+                .document(eventId)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    listener.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    listener.onFailure(e.getMessage());
+                });
+    }
+
     /**
      * Store a new event in the database
      * @param eventId ID of the event the comment is being added to
@@ -414,5 +426,10 @@ public class EventRepository {
 
     public interface CommentListCallback {
         void onCommentsLoaded(ArrayList<Comment> comments);
+    }
+
+    public interface OnEventDeletedListener{
+        void onSuccess();
+        void onFailure(String error);
     }
 }

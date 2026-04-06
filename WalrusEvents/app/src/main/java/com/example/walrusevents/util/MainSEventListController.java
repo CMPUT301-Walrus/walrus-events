@@ -144,4 +144,6 @@ public class MainSEventListController implements EventRepository.EventListCallba
     public void setIsJustEvent(boolean bool){
         this.isJustEvents=bool;
     }
+
+
 }

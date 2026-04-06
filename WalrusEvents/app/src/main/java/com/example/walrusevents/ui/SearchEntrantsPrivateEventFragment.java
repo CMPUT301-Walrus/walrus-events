@@ -94,6 +94,7 @@ public class SearchEntrantsPrivateEventFragment extends DialogFragment {
         searchBar.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                controller.loadAllEntrants();
                 return false;
             }
         });
