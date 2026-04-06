@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.walrusevents.controllers.OEventPoolController;
 import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.WaitlistEntry;
@@ -55,33 +56,27 @@ public class PreLotteryPoolFragment extends Fragment {
 
         entrantListView.setAdapter(eventListAdapter);
 
-        waitlistRepository.getAllEntries(eventModel.getEventId(), new WaitlistRepository.EntryListCallback() {
-            @Override
-            public void onEntriesLoaded(List<WaitlistEntry> entries) {
-                ArrayList<String> deviceIds = new ArrayList<>();
-                for (WaitlistEntry entry: entries) {
-                    deviceIds.add(entry.getEntrantId());
-                }
-
-                profileRepository.getProfilesInList(deviceIds, new ProfileRepository.ProfileCallback() {
-                    @Override
-                    public void onEntrantLoaded(Entrant entrant) {
-                        if (entrant == null)
-                        {
-                            System.out.println("null entrant");
-                        }
-                        else {
-                            entrantList.add(entrant);
-                            eventListAdapter.notifyDataSetChanged();
-                        }
-                    }
-                });
-
-                entrantCountText.setText(String.format(Locale.getDefault(),
-                        "(%d/%d)",
-                        entries.size(),
-                        eventModel.getApplicantCapacity()));
+        waitlistRepository.getAllEntries(eventModel.getEventId(), entries -> {
+            ArrayList<String> deviceIds = new ArrayList<>();
+            for (WaitlistEntry entry: entries) {
+                deviceIds.add(entry.getEntrantId());
             }
+
+            profileRepository.getProfilesInList(deviceIds, entrant -> {
+                if (entrant == null)
+                {
+                    System.out.println("null entrant");
+                }
+                else {
+                    entrantList.add(entrant);
+                    eventListAdapter.notifyDataSetChanged();
+                }
+            });
+
+            entrantCountText.setText(String.format(Locale.getDefault(),
+                    "(%d/%d)",
+                    entries.size(),
+                    eventModel.getApplicantCapacity()));
         });
     }
 }
