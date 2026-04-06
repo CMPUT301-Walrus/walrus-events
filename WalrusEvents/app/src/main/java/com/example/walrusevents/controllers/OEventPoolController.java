@@ -80,6 +80,12 @@ public class OEventPoolController {
         });
     }
 
+    public void sendCoOwnerInvite(Context context, String entrantId, String notifTitle, String notifMessage) {
+        Notification notification = new Notification(notifTitle, notifMessage, eventModel.getEventId(), Notification.NotificationTarget.SELECTED);
+        notification.setCoOwnerInvite(true);
+        sendNotifToEntrant(entrantId, notification);
+    }
+
     public void sendNotifications(Context context, String title, String message, Notification.NotificationTarget targetGroup) {
         String eventId = eventModel.getEventId();
         Notification notification = new Notification(title, message, eventId, targetGroup);
@@ -178,6 +184,5 @@ public class OEventPoolController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 }

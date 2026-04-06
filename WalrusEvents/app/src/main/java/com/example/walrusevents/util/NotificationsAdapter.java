@@ -1,12 +1,19 @@
 package com.example.walrusevents.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ActionMenuView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.testing.FragmentScenario;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.walrusevents.R;
 import com.example.walrusevents.activity.MainActivity;
@@ -14,6 +21,8 @@ import com.example.walrusevents.activity.UEventDetailsActivity;
 import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.model.Notification;
+import com.example.walrusevents.ui.CoOrgInvitationFragment;
+
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
@@ -24,11 +33,11 @@ import java.util.Locale;
  * 01/04/26
  */
 public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.NotificationViewHolder> {
-    private final Context context;
+    private FragmentActivity context;
     private final List<Notification> notificationList;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, h:mm a", Locale.getDefault());
 
-    public NotificationsAdapter(Context context, List<Notification> notificationList) {
+    public NotificationsAdapter(FragmentActivity context, List<Notification> notificationList) {
         this.notificationList = notificationList;
         this.context = context;
     }
@@ -58,9 +67,34 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         holder.itemView.setOnClickListener(v -> {
             EventRepository eventRepository = new EventRepository();
             eventRepository.getEvent(notification.getEventId(), event -> {
-                Intent passToUserEventDetails = new Intent(context, UEventDetailsActivity.class);
-                passToUserEventDetails.putExtra("Event", event);
-                context.startActivity(passToUserEventDetails);
+                if (notification.getCoOwnerInvite() &&
+                        notification.getTargetGroup() != Notification.NotificationTarget.CANCELED &&
+                        notification.getTargetGroup() == Notification.NotificationTarget.SELECTED) {
+                    if (context.getSupportFragmentManager().findFragmentByTag("co-org invite") != null) {
+                        return;
+                    }
+                    CoOrgInvitationFragment invitationFragment = CoOrgInvitationFragment.newInstance(new CoOrgInvitationFragment.AcceptInvitationListener() {
+                        @Override
+                        public void acceptInvite() {
+                            event.addOwner(notification.getEventId());
+                            eventRepository.setEvent(event);
+                            Toast.makeText(context, "Accepted! Check your organizer events page", Toast.LENGTH_LONG).show();
+                            notification.setTargetGroup(Notification.NotificationTarget.SELECTED);
+                        }
+
+                        @Override
+                        public void declineInvite() {
+                            Toast.makeText(context, "Invitation declined", Toast.LENGTH_SHORT).show();
+                            notification.setTargetGroup(Notification.NotificationTarget.CANCELED);
+                        }
+                    });
+                    invitationFragment.show(context.getSupportFragmentManager(), "co-org invite");
+                }
+                else {
+                    Intent passToUserEventDetails = new Intent(context, UEventDetailsActivity.class);
+                    passToUserEventDetails.putExtra("Event", event);
+                    context.startActivity(passToUserEventDetails);
+                }
             });
         });
     }

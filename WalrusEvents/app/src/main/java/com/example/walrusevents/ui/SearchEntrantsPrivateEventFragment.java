@@ -42,15 +42,13 @@ public class SearchEntrantsPrivateEventFragment extends DialogFragment {
     private View chosenItemView;
     private ConfirmInviteCallback callback;
     private String currentQuery="";
-    private String eventTitle;
 
     public interface ConfirmInviteCallback {
-        void sendInvite(Context context, String entrantId, String notifTitle, String notifMessage);
+        void sendInvite(String entrantId);
     }
 
-    public SearchEntrantsPrivateEventFragment(ConfirmInviteCallback callback, String eventTitle) {
+    public SearchEntrantsPrivateEventFragment(ConfirmInviteCallback callback) {
         this.callback = callback;
-        this.eventTitle = eventTitle;
     }
 
     @Nullable
@@ -89,6 +87,7 @@ public class SearchEntrantsPrivateEventFragment extends DialogFragment {
         searchBar.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                controller.setQuery("");
                 return false;
             }
         });
@@ -118,8 +117,7 @@ public class SearchEntrantsPrivateEventFragment extends DialogFragment {
                 return;
             }
 
-            String inviteMessage = String.format(Locale.getDefault(),"You were invited to %s!", eventTitle);
-            callback.sendInvite(getActivity(), controller.getChosenEntrant().getDeviceId(), "Invitation", inviteMessage);
+            callback.sendInvite(controller.getChosenEntrant().getDeviceId());
             dismiss();
         });
 

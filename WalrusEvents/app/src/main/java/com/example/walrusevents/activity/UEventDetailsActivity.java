@@ -199,6 +199,9 @@ public class UEventDetailsActivity extends AppCompatActivity
     }
 
     private boolean shouldHideLeaveButton() {
+        if (eventModel.getOwners().contains(DeviceIdManager.getOrCreate(this))) {
+            return true;
+        }
         if (!hasActiveWaitlistEntry()) {
             return false;
         }
@@ -219,11 +222,11 @@ public class UEventDetailsActivity extends AppCompatActivity
         }
 
         Entrant entrant = new Entrant(new Profile(deviceId, "User", "email@uab.ca"));
+        if (shouldHideLeaveButton()) {
+            view.getJoinButton().setVisibility(View.GONE);
+            return;
+        }
         if (hasActiveWaitlistEntry()) {
-            if (shouldHideLeaveButton()) {
-                view.getJoinButton().setVisibility(View.GONE);
-                return;
-            }
 
             view.getJoinButton().setVisibility(View.VISIBLE);
             view.getJoinButton().setEnabled(true);
