@@ -75,13 +75,11 @@ public class NotificationRepository {
     }
 
     public void getAllNotificationLogs(OnSuccessListener<QuerySnapshot> listener) {
-        // This ignores the 'profile' parent and finds ALL 'notifications' sub-collections
+        // Fetch all notifications from the 'notifications' collection group
         db.collectionGroup("notifications")
-                .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(listener)
                 .addOnFailureListener(e -> {
-                    // This will likely print the index creation link in your Logcat
                     android.util.Log.e("Firestore", "Error fetching group: ", e);
                 });
     }}
