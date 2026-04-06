@@ -89,6 +89,10 @@ public class SearchEntrantsPrivateEventFragment extends DialogFragment {
                 //TODO: Get the chosen entrant to be invited
             }
         });
+
+        confirmButton.setOnClickListener(v -> {
+            dismiss();
+        });
     }
 
 }

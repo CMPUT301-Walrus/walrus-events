@@ -37,6 +37,7 @@ import com.example.walrusevents.ui.PreLotteryPoolFragment;
 import com.example.walrusevents.ui.SearchEntrantsPrivateEventFragment;
 import com.example.walrusevents.util.DeviceIdManager;
 import com.example.walrusevents.util.PermissionGatekeeper;
+import com.example.walrusevents.util.SearchPrivateEntrantsController;
 
 import java.util.ArrayList;
 import java.util.List;
