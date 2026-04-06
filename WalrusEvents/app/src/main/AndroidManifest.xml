@@ -97,6 +97,9 @@
         <activity
             android:name=".activity.AdminInspectProfileActivity"
             android:exported="false" />
+        <activity
+            android:name=".activity.AdminAllCommentsActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

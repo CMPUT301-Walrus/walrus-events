@@ -41,6 +41,11 @@ public class AdminHubActivity extends AppCompatActivity {
             //TODO: go to admin notifications view
         });
 
+        view.getCommentsButton().setOnClickListener(v -> {
+            Intent goToAdminComments = new Intent(AdminHubActivity.this, AdminAllCommentsActivity.class);
+            startActivity(goToAdminComments);
+        });
+
         view.getBackButton().setOnClickListener(v -> {
             finish();
         });

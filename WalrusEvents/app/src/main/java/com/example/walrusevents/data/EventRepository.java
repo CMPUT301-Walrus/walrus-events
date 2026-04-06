@@ -134,6 +134,9 @@ public class EventRepository {
                     if (!querySnapshot.isEmpty()) {
                         lastFetchedEvent = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
                     }
+                    else {
+                        callback.onEventsLoaded(null);
+                    }
 
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
 
@@ -163,6 +166,7 @@ public class EventRepository {
 
                     if (querySnapshot == null || querySnapshot.isEmpty())
                     {
+                        callback.onEventsLoaded(null);
                         return;
                     }
                     ArrayList<Event> events = new ArrayList<>();
@@ -283,6 +287,40 @@ public class EventRepository {
                 });
     }
 
+    /**
+     * Initiate getting all comments from an event, regardless of parent
+     * @param eventId
+     * @param callback
+     */
+    public void initiateGetCommentsFromEvent(String eventId, CommentListCallback callback) {
+        eventsCollection
+                .document(eventId)
+                .collection("comments")
+                .limit(commentBatchSize)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (querySnapshot == null || querySnapshot.isEmpty())
+                    {
+                        callback.onCommentsLoaded(null);
+                        return;
+                    }
+                    ArrayList<Comment> comments = new ArrayList<>();
+
+                    lastFetchedComment = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+
+                        Comment comment = doc.toObject(Comment.class);
+
+                        comments.add(comment);
+                    }
+
+                    callback.onCommentsLoaded(comments);
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                });
+    }
+
     public void getNextCommentBatch(String eventId, String parentId, CommentListCallback callback) {
         eventsCollection
                 .document(eventId)
@@ -290,6 +328,42 @@ public class EventRepository {
                 .limit(commentBatchSize)
                 .startAfter(lastFetchedComment)
                 .whereEqualTo("parentId", parentId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+
+                    if (querySnapshot == null || querySnapshot.isEmpty())
+                    {
+                        callback.onCommentsLoaded(null);
+                        return;
+                    }
+                    ArrayList<Comment> comments = new ArrayList<>();
+
+                    lastFetchedComment = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+
+                        Comment comment = doc.toObject(Comment.class);
+
+                        comments.add(comment);
+                    }
+
+                    callback.onCommentsLoaded(comments);
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                });
+    }
+
+    /**
+     * Get the next batch of comments from an event, regardless of parent
+     * @param eventId
+     * @param callback
+     */
+    public void getNextCommentBatch(String eventId, CommentListCallback callback) {
+        eventsCollection
+                .document(eventId)
+                .collection("comments")
+                .limit(commentBatchSize)
+                .startAfter(lastFetchedComment)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
 
