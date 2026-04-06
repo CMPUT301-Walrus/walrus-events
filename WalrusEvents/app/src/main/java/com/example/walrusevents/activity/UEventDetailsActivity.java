@@ -169,57 +169,90 @@ public class UEventDetailsActivity extends AppCompatActivity
         waitlistRepository.getEntry(eventModel.getEventId(), deviceId, this);
 
         UserRole role = UserRoleManager.getRole();
-        if (role != UserRole.USER || eventModel.getIsPrivate() || !eventModel.isInRegistration()) {
+        if (role != UserRole.USER || eventModel.getIsPrivate()) {
             view.getJoinButton().setVisibility(View.GONE);
         }
     }
 
-    private void updateJoinButton(boolean joined, String deviceId) {
-        Entrant entrant = new Entrant(new Profile(deviceId, "User", "email@uab.ca"));
-        if (joined) {
-            view.getJoinButton().setText("- Leave");
-
-            if (entry != null && entry.getStatus() == WaitlistEntry.Status.ACCEPTED) {
-                view.getJoinButton().setEnabled(false);
-            }
-            else {
-                view.getJoinButton().setOnClickListener(v -> {
-                    WaitlistRepository waitRep = new WaitlistRepository();
-                    ProfileRepository pfRep = new ProfileRepository();
-                    EntrantController entrantController = new EntrantController(entrant, waitRep, pfRep);
-                    entrantController.leaveWaitlist(eventModel.getEventId(), this);
-                    updateJoinButton(false, DeviceIdManager.getOrCreate(this));
-                });
-            }
+    private void refreshWaitlistEntry() {
+        if (eventModel == null || waitlistRepository == null) {
+            return;
         }
-        else {
-            view.getJoinButton().setText("+ Join");
+        waitlistRepository.getEntry(eventModel.getEventId(), DeviceIdManager.getOrCreate(this), this);
+    }
+
+    private boolean canManageWaitlist() {
+        return eventModel != null
+                && UserRoleManager.getRole() == UserRole.USER
+                && !eventModel.getIsPrivate();
+    }
+
+    private boolean hasActiveWaitlistEntry() {
+        return entry != null && entry.getStatus() != WaitlistEntry.Status.CANCELED;
+    }
+
+    private boolean shouldHideLeaveButton() {
+        if (!hasActiveWaitlistEntry()) {
+            return false;
+        }
+        if (!eventModel.isInRegistration()) {
+            return true;
+        }
+
+        WaitlistEntry.Status status = entry.getStatus();
+        return status == WaitlistEntry.Status.INVITED
+                || status == WaitlistEntry.Status.ACCEPTED
+                || status == WaitlistEntry.Status.DECLINED;
+    }
+
+    private void updateJoinButton(String deviceId) {
+        if (!canManageWaitlist()) {
+            view.getJoinButton().setVisibility(View.GONE);
+            return;
+        }
+
+        Entrant entrant = new Entrant(new Profile(deviceId, "User", "email@uab.ca"));
+        if (hasActiveWaitlistEntry()) {
+            if (shouldHideLeaveButton()) {
+                view.getJoinButton().setVisibility(View.GONE);
+                return;
+            }
+
+            view.getJoinButton().setVisibility(View.VISIBLE);
+            view.getJoinButton().setEnabled(true);
+            view.getJoinButton().setText("- Leave");
             view.getJoinButton().setOnClickListener(v -> {
                 WaitlistRepository waitRep = new WaitlistRepository();
                 ProfileRepository pfRep = new ProfileRepository();
                 EntrantController entrantController = new EntrantController(entrant, waitRep, pfRep);
+                entrantController.leaveWaitlist(eventModel.getEventId(), this);
+            });
+        }
+        else {
+            view.getJoinButton().setVisibility(View.VISIBLE);
+            view.getJoinButton().setEnabled(true);
+            view.getJoinButton().setText("+ Join");
+            view.getJoinButton().setOnClickListener(v -> {
+                if (!eventModel.isInRegistration()) {
+                    Toast.makeText(this, "Registration deadline has passed.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                WaitlistRepository waitRep = new WaitlistRepository();
+                ProfileRepository pfRep = new ProfileRepository();
+                EntrantController entrantController = new EntrantController(entrant, waitRep, pfRep);
                 entrantController.joinWaitlist(eventModel.getEventId(), this);
-                updateJoinButton(true, DeviceIdManager.getOrCreate(this));
             });
         }
     }
 
     @Override
     public void onEntryLoaded(WaitlistEntry retrievedEntry) {
-        UserRole role = UserRoleManager.getRole();
-
         UEventDetailsActivity.this.entry = retrievedEntry;
         if (retrievedEntry != null) {
             checkForInvitation();
-            if (role == UserRole.USER && !eventModel.getIsPrivate()) {
-                updateJoinButton(true, DeviceIdManager.getOrCreate(this));
-            }
         }
-        else {
-            if (role == UserRole.USER && !eventModel.getIsPrivate()) {
-                updateJoinButton(false, DeviceIdManager.getOrCreate(this));
-            }
-        }
+        updateJoinButton(DeviceIdManager.getOrCreate(this));
     }
     /**
      * Checks if the user has an active invitation to respond to.
@@ -264,12 +297,14 @@ public class UEventDetailsActivity extends AppCompatActivity
     @Override
     public void onSuccess() {
         Toast.makeText(this, "Action Successful", Toast.LENGTH_SHORT).show();
+        refreshWaitlistEntry();
     }
 
     @Override
     public void onFailure(String errorMessage) {
         Log.e("UEventDetails", errorMessage);
         Toast.makeText(this, "Error: " + errorMessage, Toast.LENGTH_SHORT).show();
+        refreshWaitlistEntry();
     }
 
     @Override
@@ -280,6 +315,7 @@ public class UEventDetailsActivity extends AppCompatActivity
                     @Override
                     public void onSuccess() {
                         entry.setStatus(WaitlistEntry.Status.ACCEPTED);
+                        updateJoinButton(DeviceIdManager.getOrCreate(UEventDetailsActivity.this));
                         Toast.makeText(UEventDetailsActivity.this, "Accepted!", Toast.LENGTH_SHORT).show();
                     }
 
@@ -298,6 +334,7 @@ public class UEventDetailsActivity extends AppCompatActivity
                     @Override
                     public void onSuccess() {
                         entry.setStatus(WaitlistEntry.Status.DECLINED);
+                        updateJoinButton(DeviceIdManager.getOrCreate(UEventDetailsActivity.this));
                         Toast.makeText(UEventDetailsActivity.this, "Declined", Toast.LENGTH_SHORT).show();
                     }
 
