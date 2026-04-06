@@ -32,6 +32,7 @@ import com.example.walrusevents.ui.OEventPoolView;
 import com.example.walrusevents.ui.PostLotteryPoolFragment;
 import com.example.walrusevents.ui.PreLotteryPoolFragment;
 import com.example.walrusevents.ui.SearchEntrantsPrivateEventFragment;
+import com.example.walrusevents.ui.SendNotificationsFragment;
 import com.example.walrusevents.util.DeviceIdManager;
 import com.example.walrusevents.util.PermissionGatekeeper;
 import com.example.walrusevents.util.SearchPrivateEntrantsController;
@@ -155,6 +156,15 @@ public class OEventPoolActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        view.getSendNotificationsButton().setOnClickListener(v -> {
+            SendNotificationsFragment sendNotificationsFragment = new SendNotificationsFragment(eventModel, this);
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            if (fragmentManager.findFragmentByTag(CONFIG_NOTIFICATIONS_TAG) == null) {
+                sendNotificationsFragment.show(fragmentManager, CONFIG_NOTIFICATIONS_TAG);
+            }
+        });
+
         updateMapButtonVisibility();
     }
 
@@ -165,18 +175,6 @@ public class OEventPoolActivity extends AppCompatActivity {
         else {
             view.getMapButton().setVisibility(View.GONE);
         }
-
-        //Invite Button visibility based on isPrivate req
-        if(eventModel.getIsPrivate()){
-            view.getInviteButton().setVisibility(View.VISIBLE);
-        }else{
-            view.getInviteButton().setVisibility(View.GONE);
-        }
-
-        view.getInviteButton().setOnClickListener(v -> {
-            SearchEntrantsPrivateEventFragment fragment = new SearchEntrantsPrivateEventFragment();
-            fragment.show(getSupportFragmentManager(),"search");
-        });
     }
 
     /**
@@ -401,8 +399,8 @@ public class OEventPoolActivity extends AppCompatActivity {
                 //TODO: replace testEntrantId when entrant search is implemented
                 String testEntrantId = DeviceIdManager.getOrCreate(this);
                 view.getLotteryButton().setOnClickListener(v -> {
-                    controller.sendInvite(this, testEntrantId, "Invitation",
-                            String.format(Locale.getDefault(),"You were invited to %s!", eventModel.getTitle()));
+                    SearchEntrantsPrivateEventFragment fragment = new SearchEntrantsPrivateEventFragment();
+                    fragment.show(getSupportFragmentManager(),"search");
                 });
                 break;
             case 2:

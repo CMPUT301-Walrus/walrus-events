@@ -40,7 +40,7 @@ public class SendNotificationsFragmentCont extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         sendButton = view.findViewById(R.id.confirm_send_notif_button);
-        canceledEditText = view.findViewById(R.id.canceled_notifs_edit_text);
+        canceledEditText = view.findViewById(R.id.send_notifs_edit_text);
 
         canceledEditText.setText(String.format(Locale.getDefault(), "You've been removed from %s", eventModel.getTitle()));
 
