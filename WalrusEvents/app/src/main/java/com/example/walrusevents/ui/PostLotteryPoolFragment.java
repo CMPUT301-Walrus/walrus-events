@@ -1,3 +1,10 @@
+/**
+ * This fragment pops up when the organizer wants to view the finalized waitlist
+ * It provides details about the entrants in the waitlist and who was selected
+ * It also communicates with the rest of the application to send notifications to the entrants
+ * As well as what information should be updated coresponding to the lottery draw
+ */
+
 package com.example.walrusevents.ui;
 
 import android.app.Activity;

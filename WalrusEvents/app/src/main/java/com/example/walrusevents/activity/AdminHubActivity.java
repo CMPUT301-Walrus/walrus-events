@@ -1,3 +1,9 @@
+/**
+ * Hub for Admin-related activities
+ * Meant as a landing platform for the admin
+ * Can then navigate to different admin functionalities
+ */
+
 package com.example.walrusevents.activity;
 
 import android.content.Intent;
@@ -7,6 +13,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.walrusevents.R;
+import com.example.walrusevents.activity.AdminAllCommentsActivity;
+import com.example.walrusevents.activity.AdminAllProfilesActivity;
 import com.example.walrusevents.ui.AdminHubView;
 /*
  Admin View where the admin will redirect to all admin functionalities
@@ -30,6 +38,8 @@ public class AdminHubActivity extends AppCompatActivity {
 
         view.getImagesButton().setOnClickListener(v -> {
             //TODO: go to admin images view
+            Intent goToAdminImages = new Intent(AdminHubActivity.this,AdminAllImagesActivity.class);
+            startActivity(goToAdminImages);
         });
 
         view.getProfilesButton().setOnClickListener(v -> {

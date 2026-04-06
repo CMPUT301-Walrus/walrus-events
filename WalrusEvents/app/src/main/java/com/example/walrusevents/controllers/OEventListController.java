@@ -1,3 +1,9 @@
+/**
+ * This controller is in charge of managing the list of events view by an organizer
+ * It communicates with the rest of the app to retrieve and store events
+ * It is incharge of adding and removing events from the list of events owned by an organizer
+ */
+
 package com.example.walrusevents.controllers;
 
 import android.content.Context;

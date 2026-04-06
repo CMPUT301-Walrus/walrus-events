@@ -1,3 +1,8 @@
+/**
+ * This adapter is responsible for changing the comments in the admin view
+ * It handles the logic for adjusting the collectino of comments as an admin makes changes
+ */
+
 package com.example.walrusevents.util;
 
 import android.content.Context;

@@ -1,3 +1,8 @@
+/**
+ * This class manages the comments for an event
+ * It retrieves and stores information about the comments to make storing and retrieving comments easier
+ */
+
 package com.example.walrusevents.util;
 
 import android.view.View;

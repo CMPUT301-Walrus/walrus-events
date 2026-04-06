@@ -1,3 +1,7 @@
+/**
+ * This fragment pops up when the organizer wants to create an event
+ */
+
 package com.example.walrusevents.ui;
 
 import android.os.Bundle;

@@ -41,6 +41,7 @@ import java.util.List;
 /**
  * Class handles displaying event details for a particular event
  * Handles whether event was clicked on or scanned to go to event page
+ * Allows user to join/leave waitlist for the chosen event
  */
 public class UEventDetailsActivity extends AppCompatActivity
         implements EntrantController.ActionCallback, AcceptInvitationFragment.AcceptInvitationListener,

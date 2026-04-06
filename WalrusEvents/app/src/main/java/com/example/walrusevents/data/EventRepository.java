@@ -16,6 +16,9 @@ import java.util.ArrayList;
 /**
  * EventRepository
  * Class that manages communication with the events database in Firestore
+ * This repo manages getting events and comments from the database
+ * It retrieves said data from Firebase in batches to reduce latency
+ * It also manages add/delete/removing events and comments from a particular event
  */
 public class EventRepository {
 

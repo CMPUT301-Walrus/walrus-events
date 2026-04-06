@@ -1,3 +1,8 @@
+/**
+ * This activity is charge of managing the users view of the waitlist for event
+ * It allws usesr to see how many other entrants are on the list
+ */
+
 package com.example.walrusevents.activity;
 
 import android.content.Intent;

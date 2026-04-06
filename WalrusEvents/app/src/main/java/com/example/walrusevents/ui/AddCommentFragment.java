@@ -1,3 +1,9 @@
+/**
+ * Fragment pops up when a user wants to comment
+ * Allows user to write their comment and post
+ * It initalizes the data required for the app to store and manage said comment
+ */
+
 package com.example.walrusevents.ui;
 
 import static android.view.View.INVISIBLE;
