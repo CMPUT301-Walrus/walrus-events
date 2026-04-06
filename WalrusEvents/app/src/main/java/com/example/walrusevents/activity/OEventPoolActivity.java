@@ -29,8 +29,10 @@ import com.example.walrusevents.ui.FinalizedPoolFragment;
 import com.example.walrusevents.ui.OEventPoolView;
 import com.example.walrusevents.ui.PostLotteryPoolFragment;
 import com.example.walrusevents.ui.PreLotteryPoolFragment;
+import com.example.walrusevents.ui.SearchEntrantsPrivateEventFragment;
 import com.example.walrusevents.util.DeviceIdManager;
 import com.example.walrusevents.util.PermissionGatekeeper;
+import com.example.walrusevents.util.SearchPrivateEntrantsController;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -161,6 +163,18 @@ public class OEventPoolActivity extends AppCompatActivity {
         else {
             view.getMapButton().setVisibility(View.GONE);
         }
+
+        //Invite Button visibility based on isPrivate req
+        if(eventModel.getIsPrivate()){
+            view.getInviteButton().setVisibility(View.VISIBLE);
+        }else{
+            view.getInviteButton().setVisibility(View.GONE);
+        }
+
+        view.getInviteButton().setOnClickListener(v -> {
+            SearchEntrantsPrivateEventFragment fragment = new SearchEntrantsPrivateEventFragment();
+            fragment.show(getSupportFragmentManager(),"search");
+        });
     }
 
     /**
