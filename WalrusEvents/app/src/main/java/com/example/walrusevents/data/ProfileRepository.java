@@ -3,10 +3,12 @@ package com.example.walrusevents.data;
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.model.Profile;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +28,7 @@ public class ProfileRepository {
     private final FirebaseFirestore db;
     private final CollectionReference profileCollection;
     private final CollectionReference waitlistCollection;
+    private DocumentSnapshot lastFetchedProfile;
 
     public ProfileRepository() {
         db = FirebaseFirestore.getInstance();
@@ -95,6 +98,83 @@ public class ProfileRepository {
                         callback.onEntrantLoaded(null);
                     });
         }
+    }
+
+    /**
+     * Initiates a fetch of all Entrant profiles from Firestore.
+     * Returns null via the callback if no profiles are found.
+     *
+     * @param callback Receives the loaded Entrants (or null)
+     */
+    public void initiateGetAllProfiles(int batchSize, ProfileListCallback callback) {
+        profileCollection
+                .limit(batchSize)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        lastFetchedProfile = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
+                    }
+
+                    ArrayList<Entrant> entrants = new ArrayList<>();
+
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments())
+                    {
+                        Profile profile = new Profile();
+                        profile.setDeviceId(doc.getString("deviceId"));
+                        profile.setName(doc.getString("name"));
+                        profile.setEmail(doc.getString("email"));
+                        profile.setPhone(doc.getString("phone"));
+                        Boolean notif = doc.getBoolean("notificationsEnabled");
+                        profile.setNotificationsEnabled(notif != null ? notif : true);
+
+                        entrants.add(new Entrant(profile));
+                    }
+
+                    callback.onEntrantsLoaded(entrants);
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                    callback.onEntrantsLoaded(null);
+                });
+    }
+
+    /**
+     * Fetches the next batch of Entrant profiles from Firestore.
+     * Returns null via the callback if no profiles are found.
+     *
+     * @param callback Receives the loaded Entrants (or null)
+     */
+    public void getNextProfilesBatch(int batchSize, ProfileListCallback callback) {
+        profileCollection
+                .limit(batchSize)
+                .startAfter(lastFetchedProfile)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        lastFetchedProfile = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
+                    }
+
+                    ArrayList<Entrant> entrants = new ArrayList<>();
+
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments())
+                    {
+                        Profile profile = new Profile();
+                        profile.setDeviceId(doc.getString("deviceId"));
+                        profile.setName(doc.getString("name"));
+                        profile.setEmail(doc.getString("email"));
+                        profile.setPhone(doc.getString("phone"));
+                        Boolean notif = doc.getBoolean("notificationsEnabled");
+                        profile.setNotificationsEnabled(notif != null ? notif : true);
+
+                        entrants.add(new Entrant(profile));
+                    }
+
+                    callback.onEntrantsLoaded(entrants);
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                    callback.onEntrantsLoaded(null);
+                });
     }
 
     // ─── Write ────────────────────────────────────────────────────────────────
@@ -176,6 +256,10 @@ public class ProfileRepository {
 
     public interface ProfileCallback {
         void onEntrantLoaded(Entrant entrant);
+    }
+
+    public interface ProfileListCallback {
+        void onEntrantsLoaded(ArrayList<Entrant> entrants);
     }
 
     public interface SaveCallback {

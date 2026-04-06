@@ -2,6 +2,7 @@ package com.example.walrusevents.ui;
 
 import static android.view.View.INVISIBLE;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,39 +18,52 @@ import com.example.walrusevents.R;
 import com.example.walrusevents.model.WaitlistEntry;
 
 public class AcceptInvitationFragment extends DialogFragment {
+    private static final String ARG_STATUS = "status";
+    private static final String ARG_HEADER_TEXT = "header_text";
+
     public interface AcceptInvitationListener {
         void acceptInvite();
         void declineInvite();
     }
 
     private AcceptInvitationListener listener;
-    private WaitlistEntry.Status status;
-    private String headerText;
 
-    private void setListener(AcceptInvitationListener listener) {
-        this.listener = listener;
-    }
-    private void setInviteStatus(WaitlistEntry.Status status) {
-        this.status = status;
-    }
-    private void setHeaderText(String headerText) {
-        this.headerText = headerText;
-    }
-    public static AcceptInvitationFragment newInstance(AcceptInvitationListener listener, WaitlistEntry.Status status, String titleText){
+    public static AcceptInvitationFragment newInstance(WaitlistEntry.Status status, String titleText) {
         AcceptInvitationFragment fragment = new AcceptInvitationFragment();
-        fragment.setInviteStatus(status);
-        fragment.setListener(listener);
-        fragment.setHeaderText(titleText);
+        Bundle args = new Bundle();
+        args.putString(ARG_STATUS, status.name());
+        args.putString(ARG_HEADER_TEXT, titleText);
+        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (!(context instanceof AcceptInvitationListener)) {
+            throw new IllegalStateException("Host must implement AcceptInvitationListener");
+        }
+        listener = (AcceptInvitationListener) context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.accept_invitation_popup, container, true);
+        return inflater.inflate(R.layout.accept_invitation_popup, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        Bundle args = requireArguments();
+        WaitlistEntry.Status status = WaitlistEntry.Status.valueOf(args.getString(ARG_STATUS));
+        String headerText = args.getString(ARG_HEADER_TEXT, "Lottery Result");
 
         Button laterButton = view.findViewById(R.id.laterInviteButton);
         laterButton.setOnClickListener(v -> {

@@ -33,6 +33,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView23">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/canceled_notifs_edit_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="hint" />
@@ -40,20 +41,25 @@
 
     <TextView
         android:id="@+id/textView21"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="56dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
         android:text="For:"
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/textView22"
-        app:layout_constraintStart_toStartOf="@+id/textView20"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
     <TextView
         android:id="@+id/textView22"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
         android:text="Cancelled Entrants"
+        android:textAlignment="textStart"
         android:textColor="@color/darkBlue"
         android:textSize="30sp"
         android:textStyle="bold"
@@ -92,9 +98,12 @@
 
     <TextView
         android:id="@+id/textView23"
-        android:layout_width="176dp"
+        android:layout_width="0dp"
         android:layout_height="58dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
         android:text="(Chosen entrants that you remove or that cancel your invitation)"
+        android:textAlignment="viewStart"
         app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

@@ -94,22 +94,12 @@ public class OEventEditController {
         model.setEndConfirmationTime(endConfirmationTIme);
     }
 
-    public void setEntrantCapacity(String entrantCapacity) {
-        if (entrantCapacity.isEmpty()) {
-            model.setEntrantCapacity(0);
-        }
-        else {
-            model.setEntrantCapacity(Integer.parseInt(entrantCapacity));
-        }
+    public boolean setEntrantCapacity(String entrantCapacity) {
+        return model.setEntrantCapacity(parseCapacity(entrantCapacity));
     }
 
-    public void setApplicantCapacity(String applicantCapacity) {
-        if (applicantCapacity.isEmpty()) {
-            model.setApplicantCapacity(0);
-        }
-        else {
-            model.setApplicantCapacity(Integer.parseInt(applicantCapacity));
-        }
+    public boolean setApplicantCapacity(String applicantCapacity) {
+        return model.setApplicantCapacity(parseCapacity(applicantCapacity));
     }
 
     public void setThumbnail(Image thumbnail) {
@@ -224,6 +214,20 @@ public class OEventEditController {
 
         dialog.show();
     }
+
+    private int parseCapacity(String capacityText) {
+        if (capacityText == null) {
+            return 0;
+        }
+
+        String trimmed = capacityText.trim();
+        if (trimmed.isEmpty()) {
+            return 0;
+        }
+
+        return Integer.parseInt(trimmed);
+    }
+
     public void saveModel() {
         EventRepository eventRepository = new EventRepository();
 

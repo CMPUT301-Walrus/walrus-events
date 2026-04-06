@@ -5,12 +5,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.walrusevents.data.FirebaseAPIManager;
@@ -128,20 +130,39 @@ public class OEventEditActivity extends AppCompatActivity {
             eventEditController.openEndConfirmationDialog(this);
         });
 
+        // Geolocation toggle
+        SwitchCompat geoToggle = findViewById(R.id.geolocation_toggle);
+        if (geoToggle != null) {
+            geoToggle.setChecked(eventModel.getUseGeolocation());
+        }
+
         //Done button
         eventEditView.getDoneButton().setOnClickListener(v -> {
             // Get updated info from app
             String newTitle = eventEditView.getTitleView().getText().toString();
             String newDescription = eventEditView.getEditDescription().getText().toString();
+            String entrantCapacityText = eventEditView.getEditEntrantCapacity().getText().toString();
+            String applicantCapacityText = eventEditView.getEditApplicantCapacity().getText().toString();
 
             boolean isPrivate = eventEditView.getPrivateToggle().isChecked();
 
             // Update local info and Firebase info
             eventEditController.setTitle(newTitle);
             eventEditController.setIsPrivate(isPrivate);
+            eventModel.setUseGeolocation(geoToggle.isChecked());
             eventEditController.setDescription(newDescription);
-            eventEditController.setEntrantCapacity(eventEditView.getEditEntrantCapacity().getText().toString());
-            eventEditController.setApplicantCapacity(eventEditView.getEditApplicantCapacity().getText().toString());
+
+            try {
+                eventEditController.setEntrantCapacity(entrantCapacityText);
+                if (!eventEditController.setApplicantCapacity(applicantCapacityText)) {
+                    Toast.makeText(this, "Lottery applicants cannot exceed max entrants unless max entrants is blank.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Enter whole numbers for event capacities.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             eventEditController.saveModel();
 
             // Passes the updated model back to the previous activity (which should be OEventPoolActivity)

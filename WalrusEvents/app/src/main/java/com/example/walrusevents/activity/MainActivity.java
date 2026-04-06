@@ -30,7 +30,6 @@ import com.example.walrusevents.ui.NotificationInboxFragment;
 import com.example.walrusevents.util.DeviceIdManager;
 import com.example.walrusevents.util.MainSEventListController;
 import com.example.walrusevents.util.PermissionGatekeeper;
-import com.example.walrusevents.util.MainSFilterManager;
 import com.example.walrusevents.util.UserRole;
 import com.example.walrusevents.util.UserRoleManager;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -170,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         Button adminViewButton = findViewById(R.id.main_button);
         adminViewButton.setOnClickListener(v -> {
             //Go to "Admin View" from this button
-            Intent goAdminViewActivityIntent = new Intent(MainActivity.this,AdminViewActivity.class);
+            Intent goAdminViewActivityIntent = new Intent(MainActivity.this, AdminHubActivity.class);
             startActivity(goAdminViewActivityIntent);
 
         });
@@ -293,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             adminBtn.setVisibility(View.GONE);
             scanQRCodeButton.setVisibility(View.VISIBLE);
-            settingsBtn.setVisibility(View.VISIBLE);
+            settingsBtn.setVisibility(View.GONE);
             eventsBtn.setVisibility(View.VISIBLE);
         }
     }

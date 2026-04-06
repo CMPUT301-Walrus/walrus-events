@@ -66,7 +66,7 @@ public class EntrantController {
 
     /**
      * Leaves the waitlist by setting status to CANCELED.
-     * Entrants who have already ACCEPTED cannot self-cancel.
+     * Entrants who have been selected or already responded cannot self-cancel.
      */
     public void leaveWaitlist(String eventId, ActionCallback callback) {
         waitlistRepository.getEntry(eventId, entrant.getDeviceId(), entry -> {
@@ -74,8 +74,10 @@ public class EntrantController {
                 callback.onFailure("Not on the waitlist for this event.");
                 return;
             }
-            if (entry.getStatus() == WaitlistEntry.Status.ACCEPTED) {
-                callback.onFailure("Cannot leave, registration already confirmed.");
+            if (entry.getStatus() == WaitlistEntry.Status.INVITED
+                    || entry.getStatus() == WaitlistEntry.Status.ACCEPTED
+                    || entry.getStatus() == WaitlistEntry.Status.DECLINED) {
+                callback.onFailure("Cannot leave after selection or invite response.");
                 return;
             }
             waitlistRepository.updateStatus(eventId, entrant.getDeviceId(),

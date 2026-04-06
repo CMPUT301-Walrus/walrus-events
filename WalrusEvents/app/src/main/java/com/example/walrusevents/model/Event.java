@@ -143,6 +143,9 @@ public class Event implements Serializable {
             return false;
         }
         this.entrantCapacity = entrantCapacity;
+        if (entrantCapacity != 0 && applicantCapacity > entrantCapacity) {
+            applicantCapacity = entrantCapacity;
+        }
         return true;
     }
 
@@ -160,7 +163,10 @@ public class Event implements Serializable {
      * @return success ? true : false
      */
     public boolean setApplicantCapacity(int applicantCapacity) {
-        if (applicantCapacity < 0 || applicantCapacity > entrantCapacity) {
+        if (applicantCapacity < 0) {
+            return false;
+        }
+        if (entrantCapacity != 0 && applicantCapacity > entrantCapacity) {
             return false;
         }
         this.applicantCapacity = applicantCapacity;
@@ -210,11 +216,23 @@ public class Event implements Serializable {
     }
 
     public void addOwner(String ownerId) {
+        if (owners == null) {
+            owners = new ArrayList<>();
+        }
         if (owners.contains(ownerId)) {
             return;
         }
         owners.add(ownerId);
     }
+
+    public boolean isOwner(String ownerId) {
+        return ownerId != null && owners != null && owners.contains(ownerId);
+    }
+
+    public boolean isCoOrganizer(String ownerId) {
+        return isOwner(ownerId) && owners.size() > 1 && !ownerId.equals(owners.get(0));
+    }
+
     public boolean getIsPrivate() {
         return isPrivate;
     }

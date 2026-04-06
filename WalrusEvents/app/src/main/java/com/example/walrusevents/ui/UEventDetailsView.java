@@ -13,7 +13,7 @@ public class UEventDetailsView {
     private TextView eventName;
     private TextView description;
     private ImageView eventPoster;
-    private Button backButton;
+    private ImageView backButton;
     private Button joinButton;
     private Button seePoolButton;
     private Button viewCommentsButton;
@@ -44,7 +44,7 @@ public class UEventDetailsView {
         return eventPoster;
     }
 
-    public Button getBackButton() {
+    public ImageView getBackButton() {
         return backButton;
     }
 

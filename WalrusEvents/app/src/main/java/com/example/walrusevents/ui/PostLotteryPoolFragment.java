@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.walrusevents.controllers.OEventPoolController;
 import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.WaitlistEntry;
@@ -26,8 +27,9 @@ import java.util.List;
 
 public class PostLotteryPoolFragment extends Fragment {
     private Event eventModel;
-    WaitlistRepository waitlistRepository;
-    ProfileRepository profileRepository;
+    private OEventPoolController controller;
+    private WaitlistRepository waitlistRepository;
+    private ProfileRepository profileRepository;
     private ArrayList<Entrant> acceptedList;
     private EntrantArrayAdapter acceptedListAdapter;
     private ArrayList<Entrant> chosenList;
@@ -38,9 +40,10 @@ public class PostLotteryPoolFragment extends Fragment {
     private EntrantArrayAdapter notChosenListAdapter;
     private ArrayList<String> selectedForRemoval;
 
-    public PostLotteryPoolFragment(Event eventModel, ArrayList<String> selectedForRemoval) {
+    public PostLotteryPoolFragment(Event eventModel, OEventPoolController controller, ArrayList<String> selectedForRemoval) {
         this.eventModel = eventModel;
         this.selectedForRemoval = selectedForRemoval;
+        this.controller = controller;
         waitlistRepository = new WaitlistRepository();
         profileRepository = new ProfileRepository();
     }
@@ -107,32 +110,9 @@ public class PostLotteryPoolFragment extends Fragment {
     }
 
     private void setupList(View view, ArrayList<Entrant> list, EntrantArrayAdapter adapter, int listViewId, WaitlistEntry.Status status) {
-
         ListView listView = view.findViewById(listViewId);
-
         listView.setAdapter(adapter);
 
-        waitlistRepository.getEntriesByStatus(eventModel.getEventId(), status, new WaitlistRepository.EntryListCallback() {
-            @Override
-            public void onEntriesLoaded(List<WaitlistEntry> entries) {
-                ArrayList<String> deviceIds = new ArrayList<>();
-                for (WaitlistEntry entry: entries) {
-                    deviceIds.add(entry.getEntrantId());
-                }
-                profileRepository.getProfilesInList(deviceIds, new ProfileRepository.ProfileCallback() {
-                    @Override
-                    public void onEntrantLoaded(Entrant entrant) {
-                        if (entrant == null)
-                        {
-                            System.out.println("null entrant");
-                        }
-                        else {
-                            list.add(entrant);
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-                });
-            }
-        });
+        controller.fillEntrantListByStatus(list, adapter, status);
     }
 }

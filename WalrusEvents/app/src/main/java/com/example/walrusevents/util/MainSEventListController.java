@@ -1,14 +1,10 @@
 package com.example.walrusevents.util;
 
 import android.content.Context;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ListView;
 
-import com.example.walrusevents.data.WaitlistRepository;
-import com.example.walrusevents.model.Event;
 import com.example.walrusevents.data.EventRepository;
-import com.example.walrusevents.ui.NameEventFragment;
+import com.example.walrusevents.model.Event;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,7 +15,6 @@ public class MainSEventListController implements EventRepository.EventListCallba
     private EventRepository eventRepository;
 
     private MainSFilterManager filterManager;
-    private Context context;
 
     /**
      * Constructor for the Main Screen Event List
@@ -30,10 +25,10 @@ public class MainSEventListController implements EventRepository.EventListCallba
     public MainSEventListController(Context context, EventRepository eventRepository, ListView eventListView) {
         //Initialize EventController
         eventList = new ArrayList<>();
-        eventListAdapter = new MainSEventArrayAdapter(context, eventList);
+        ArrayList<Event> displayedEvents = new ArrayList<>();
+        eventListAdapter = new MainSEventArrayAdapter(context, displayedEvents);
         eventListView.setAdapter(eventListAdapter);
         this.eventRepository = eventRepository;
-        this.context = context;
         this.filterManager=new MainSFilterManager(eventList,eventListAdapter);
     }
 
@@ -54,10 +49,9 @@ public class MainSEventListController implements EventRepository.EventListCallba
      */
     @Override
     public void onEventsLoaded(ArrayList<Event> events) {
-        if (events == null || events.isEmpty()) {
+        if (events == null) {
             return;
         }
-        //eventList.addAll(events);
         for (Event newEvent : events) {
             boolean exists = false;
 
@@ -72,8 +66,7 @@ public class MainSEventListController implements EventRepository.EventListCallba
                 eventList.add(newEvent);
             }
         }
-        //filterManager.applyFilters();
-        eventListAdapter.notifyDataSetChanged();
+        filterManager.updateData(eventList);
         //eventRepository.getNextEventBatch(this);
         if (events.size() == 2) {
             eventRepository.getNextEventBatch(this);
