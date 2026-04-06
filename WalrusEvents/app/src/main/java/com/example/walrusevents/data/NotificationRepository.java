@@ -21,7 +21,7 @@ import java.util.List;
 public class NotificationRepository {
     private final FirebaseFirestore db;
     private final String collectionPath = "notifications";
-
+    private final String LOG_PATH = "notification_logs";
     public NotificationRepository() {
         this.db = FirebaseFirestore.getInstance();
     }
@@ -62,4 +62,26 @@ public class NotificationRepository {
                 .get()
                 .addOnSuccessListener(listener);
     }
-}
+
+    /**
+     * The following two functions were written by Gemini 3, Google DeepMind
+     * Fed notification related files and asked for querying for admin
+     * 06/04/26
+     * @param notification
+     */
+    public void logGlobalNotification(Notification notification) {
+        // This stores a single copy in a top-level collection for the Admin
+        db.collection(LOG_PATH).add(notification);
+    }
+
+    public void getAllNotificationLogs(OnSuccessListener<QuerySnapshot> listener) {
+        // This ignores the 'profile' parent and finds ALL 'notifications' sub-collections
+        db.collectionGroup("notifications")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(listener)
+                .addOnFailureListener(e -> {
+                    // This will likely print the index creation link in your Logcat
+                    android.util.Log.e("Firestore", "Error fetching group: ", e);
+                });
+    }}
