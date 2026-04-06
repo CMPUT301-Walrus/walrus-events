@@ -62,4 +62,10 @@ public class OEventDetailsController {
             imgRepo.storeGeneratedBitmap(model.getPoster(), fileName, listener);
         }
     }
+    /*
+    * Store an event poster from the organizer's gallery ?? Image upload written here ??
+     */
+    public void getEventPosterInGallery(){
+        //
+    }
 }

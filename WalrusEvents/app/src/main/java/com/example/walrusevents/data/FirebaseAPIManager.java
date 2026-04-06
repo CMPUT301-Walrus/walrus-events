@@ -30,7 +30,7 @@ public class FirebaseAPIManager {
 
 
     public void uploadImage(Uri fileUri, String fileName, OnUploadCompleteListener listener) {
-        StorageReference fileRef = storageReference.child("posters/" + fileName);
+        StorageReference fileRef = storageReference.child("posters/" + fileName+".jpg");
 
         fileRef.putFile(fileUri)
                 .addOnSuccessListener(taskSnapshot -> {
