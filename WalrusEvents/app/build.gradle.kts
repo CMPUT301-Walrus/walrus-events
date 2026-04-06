@@ -45,6 +45,7 @@ dependencies {
     implementation(libs.fragment.testing)
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
+    implementation(libs.uiautomator)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
