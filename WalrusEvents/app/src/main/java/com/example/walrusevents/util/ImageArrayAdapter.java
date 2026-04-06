@@ -13,6 +13,9 @@ import com.example.walrusevents.R;
 
 import java.util.ArrayList;
 
+/*
+* Array Adapter for the Admin See Images View
+ */
 public class ImageArrayAdapter extends ArrayAdapter<Uri> {
     private Context context;
     private ArrayList<Uri> imageUris;

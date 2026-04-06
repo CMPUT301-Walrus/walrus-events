@@ -40,4 +40,8 @@ public class ImageRepository {
         // It automatically overwrites the old one!
         storeImage(newImageUri, imageId, listener);
     }
+
+    public void deleteImage(Uri fileUri, FirebaseAPIManager.OnImageDeletedListener listener){
+        firebaseAPIMgr.deleteImage(fileUri,listener);
+    }
 }
