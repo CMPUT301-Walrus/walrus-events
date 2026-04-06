@@ -48,6 +48,16 @@ public class EventPosterFragment extends Fragment {
         ImageView imageView = view.findViewById(R.id.eventPosterImage);
         ProgressBar progressBar = view.findViewById(R.id.posterProgressBar);
 
+        // Find the back button from your RelativeLayout
+        android.widget.Button backButton = view.findViewById(R.id.back_button);
+
+        // Set the click listener to go back
+        backButton.setOnClickListener(v -> {
+            if (getParentFragmentManager() != null) {
+                getParentFragmentManager().popBackStack();
+            }
+        });
+
         // This would be passed from the QR scan
         eventId = getArguments().getString("event_id");
 
