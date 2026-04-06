@@ -4,6 +4,7 @@ import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.model.Profile;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
@@ -252,6 +253,57 @@ public class ProfileRepository {
                 });
     }
 
+/*
+* Query profiles by phone number, name, email for private event invitations
+ */
+    public void getProfilesByInfo(String query, ProfileListCallback callback){
+        String search=query.trim();
+
+        String prefixEnd = search + "\uf8ff";
+        profileCollection
+                .where(Filter.or(
+                        // Checks if Name STARTS with the search string
+                        Filter.and(
+                                Filter.greaterThanOrEqualTo("name", search),
+                                Filter.lessThanOrEqualTo("name", prefixEnd)
+                        ),
+                        // Checks if Email starts with search
+                        Filter.and(
+                                Filter.greaterThanOrEqualTo("email", search),
+                                Filter.lessThanOrEqualTo("email", prefixEnd)
+                        ),
+                        // Checks if Phone starts with search
+                        Filter.and(
+                                Filter.greaterThanOrEqualTo("phone", search),
+                                Filter.lessThanOrEqualTo("phone", prefixEnd)
+                        )
+                ))
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    ArrayList<Entrant> entrants = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        Profile profile = new Profile();
+                        profile.setDeviceId(doc.getString("deviceId"));
+                        profile.setName(doc.getString("name"));
+                        profile.setEmail(doc.getString("email"));
+                        profile.setPhone(doc.getString("phone"));
+                        Boolean notif = doc.getBoolean("notificationsEnabled");
+                        profile.setNotificationsEnabled(notif != null ? notif : true);
+
+                        entrants.add(new Entrant(profile));
+                    }
+                    callback.onEntrantsLoaded(entrants);
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                    callback.onEntrantsLoaded(null);
+                });
+    }
+
+    public void resetPagination(){
+        lastFetchedProfile=null;
+    }
+
     // ─── Callback Interfaces ──────────────────────────────────────────────────
 
     public interface ProfileCallback {
@@ -266,4 +318,7 @@ public class ProfileRepository {
         void onSuccess();
         void onFailure(String error);
     }
+
+
+
 }

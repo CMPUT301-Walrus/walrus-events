@@ -2,6 +2,7 @@ package com.example.walrusevents.ui;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,22 +15,17 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.walrusevents.controllers.OEventPoolController;
-import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.WaitlistEntry;
-import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Entrant;
-import com.example.walrusevents.model.Event;
 import com.example.walrusevents.util.EntrantArrayAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Locale;
 
 public class PostLotteryPoolFragment extends Fragment {
-    private Event eventModel;
-    private OEventPoolController controller;
-    private WaitlistRepository waitlistRepository;
-    private ProfileRepository profileRepository;
+    private final OEventPoolController controller;
+    private final ArrayList<String> selectedForRemoval;
     private ArrayList<Entrant> acceptedList;
     private EntrantArrayAdapter acceptedListAdapter;
     private ArrayList<Entrant> chosenList;
@@ -38,14 +34,10 @@ public class PostLotteryPoolFragment extends Fragment {
     private EntrantArrayAdapter canceledListAdapter;
     private ArrayList<Entrant> notChosenList;
     private EntrantArrayAdapter notChosenListAdapter;
-    private ArrayList<String> selectedForRemoval;
 
-    public PostLotteryPoolFragment(Event eventModel, OEventPoolController controller, ArrayList<String> selectedForRemoval) {
-        this.eventModel = eventModel;
+    public PostLotteryPoolFragment(OEventPoolController controller, ArrayList<String> selectedForRemoval) {
         this.selectedForRemoval = selectedForRemoval;
         this.controller = controller;
-        waitlistRepository = new WaitlistRepository();
-        profileRepository = new ProfileRepository();
     }
 
     @Override
@@ -59,20 +51,41 @@ public class PostLotteryPoolFragment extends Fragment {
     }
     private void createLists(View view) {
         Activity context = getActivity();
+        TextView acceptedText = view.findViewById(R.id.accepted_text);
+        TextView chosenText = view.findViewById(R.id.chosen_text);
+        TextView canceledText = view.findViewById(R.id.canceled_text);
+        TextView notChosenText = view.findViewById(R.id.not_chosen_text);
+
         acceptedList = new ArrayList<>();
+        chosenList = new ArrayList<>();
+        canceledList = new ArrayList<>();
+        notChosenList = new ArrayList<>();
+
         acceptedListAdapter = new EntrantArrayAdapter(context, acceptedList);
+        registerCountObserver(acceptedListAdapter, () -> {
+            acceptedText.setText(String.format(Locale.getDefault(), "Accepted (%d)", acceptedList.size()));
+            chosenText.setText(getAwaitingConfirmationLabel());
+        });
         setupList(view, acceptedList, acceptedListAdapter, R.id.accepted_list, WaitlistEntry.Status.ACCEPTED);
 
-        chosenList = new ArrayList<>();
         chosenListAdapter = new EntrantArrayAdapter(context, chosenList);
+        registerCountObserver(chosenListAdapter, () -> chosenText.setText(getAwaitingConfirmationLabel()));
         setupList(view, chosenList, chosenListAdapter, R.id.chosen_list, WaitlistEntry.Status.INVITED);
 
-        canceledList = new ArrayList<>();
         canceledListAdapter = new EntrantArrayAdapter(context, canceledList);
+        registerCountObserver(canceledListAdapter, () -> {
+            canceledText.setText(String.format(Locale.getDefault(),
+                    "Canceled (%d)",
+                    canceledList.size()));
+            chosenText.setText(getAwaitingConfirmationLabel());
+        });
         setupList(view, canceledList, canceledListAdapter, R.id.canceled_list, WaitlistEntry.Status.CANCELED);
+        controller.fillEntrantListByStatus(canceledList, canceledListAdapter, WaitlistEntry.Status.DECLINED);
 
-        notChosenList = new ArrayList<>();
         notChosenListAdapter = new EntrantArrayAdapter(context, notChosenList);
+        registerCountObserver(notChosenListAdapter, () -> notChosenText.setText(String.format(Locale.getDefault(),
+                "Not Chosen (%d)",
+                notChosenList.size())));
         setupList(view, notChosenList, notChosenListAdapter, R.id.not_chosen_list, WaitlistEntry.Status.NOT_CHOSEN);
 
         ListView chosenListView = view.findViewById(R.id.chosen_list);
@@ -94,6 +107,11 @@ public class PostLotteryPoolFragment extends Fragment {
                 view1.findViewById(R.id.waitlist_entry_background_selected).setVisibility(View.VISIBLE);
             }
         });
+
+        acceptedText.setText(String.format(Locale.getDefault(), "Accepted (%d)", acceptedList.size()));
+        chosenText.setText(getAwaitingConfirmationLabel());
+        canceledText.setText(String.format(Locale.getDefault(), "Canceled (%d)", canceledList.size()));
+        notChosenText.setText(String.format(Locale.getDefault(), "Not Chosen (%d)", notChosenList.size()));
     }
 
     public int getAcceptedCount() {
@@ -114,5 +132,22 @@ public class PostLotteryPoolFragment extends Fragment {
         listView.setAdapter(adapter);
 
         controller.fillEntrantListByStatus(list, adapter, status);
+    }
+
+    private void registerCountObserver(EntrantArrayAdapter adapter, Runnable onChanged) {
+        adapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                onChanged.run();
+            }
+        });
+    }
+
+    private String getAwaitingConfirmationLabel() {
+        int respondedCount = acceptedList.size() + canceledList.size();
+        return String.format(Locale.getDefault(),
+                "Awaiting Confirmation (%d/%d)",
+                acceptedList.size(),
+                respondedCount);
     }
 }
