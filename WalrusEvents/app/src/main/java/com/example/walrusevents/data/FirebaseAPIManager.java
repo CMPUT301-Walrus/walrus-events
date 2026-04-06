@@ -111,6 +111,21 @@ public class FirebaseAPIManager {
         });
     }
 
+    public void deleteImage(Uri uri, OnImageDeletedListener listener){
+        //
+        StorageReference fileRef =
+                FirebaseStorage.getInstance().getReferenceFromUrl(uri.toString());
+        fileRef.delete()
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("Image","success deleted");
+                    listener.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Image",e.getMessage());
+                    listener.onFailure(e.getMessage());
+                });
+    }
+
     // Interfaces for communication back to the Repository
     public interface OnUploadCompleteListener {
         void onSuccess();
@@ -124,6 +139,11 @@ public class FirebaseAPIManager {
 
     public interface OnImagesLoadedListener{
         void onSuccess(ArrayList<Uri> imagesList);
+        void onFailure(String error);
+    }
+
+    public interface OnImageDeletedListener{
+        void onSuccess();
         void onFailure(String error);
     }
 

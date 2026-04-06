@@ -8,8 +8,11 @@ package com.example.walrusevents.activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.walrusevents.R;
@@ -50,5 +53,35 @@ public class AdminAllImagesActivity extends AppCompatActivity {
         });
 
         view.getBackButton().setOnClickListener(v -> {finish();});
+
+        view.getImagesListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Uri uri = imageList.get(position);
+                   new AlertDialog.Builder(AdminAllImagesActivity.this)
+                           .setTitle("Delete Image")
+                           .setMessage("Are you sure you want to delete this image?")
+                        .setPositiveButton("Delete", (dialog, which) -> {
+
+                            api.deleteImage(uri,
+                                    new FirebaseAPIManager.OnImageDeletedListener() {
+                                        @Override
+                                        public void onSuccess() {
+                                            imageList.remove(position);
+                                            imageArrayAdapter.notifyDataSetChanged();
+                                        }
+
+                                        @Override
+                                        public void onFailure(String error) {
+                                            Log.e("DELETE", error);
+                                        }
+                                    });
+
+                        })
+                        .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                        .show();
+            }
+        });
     }
 }
