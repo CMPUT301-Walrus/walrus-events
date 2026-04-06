@@ -6,13 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.walrusevents.controllers.OEventPoolController;
 import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.WaitlistEntry;
@@ -22,22 +20,18 @@ import com.example.walrusevents.model.Event;
 import com.example.walrusevents.util.EntrantArrayAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 public class PreLotteryPoolFragment extends Fragment {
-    private Event eventModel;
+    private final Event eventModel;
+    private final WaitlistRepository waitlistRepository;
+    private final ProfileRepository profileRepository;
     private ArrayList<Entrant> entrantList;
     private EntrantArrayAdapter eventListAdapter;
-    private WaitlistRepository waitlistRepository;
-    private ProfileRepository profileRepository;
-    private TextView entrantCountText;
 
-    public PreLotteryPoolFragment(Event eventModel, TextView entrantCountText) {
+    public PreLotteryPoolFragment(Event eventModel) {
         this.eventModel = eventModel;
         waitlistRepository = new WaitlistRepository();
         profileRepository = new ProfileRepository();
-        this.entrantCountText = entrantCountText;
     }
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -56,7 +50,7 @@ public class PreLotteryPoolFragment extends Fragment {
 
         entrantListView.setAdapter(eventListAdapter);
 
-        waitlistRepository.getAllEntries(eventModel.getEventId(), entries -> {
+        waitlistRepository.getEntriesByStatus(eventModel.getEventId(), WaitlistEntry.Status.PENDING, entries -> {
             ArrayList<String> deviceIds = new ArrayList<>();
             for (WaitlistEntry entry: entries) {
                 deviceIds.add(entry.getEntrantId());
@@ -72,11 +66,6 @@ public class PreLotteryPoolFragment extends Fragment {
                     eventListAdapter.notifyDataSetChanged();
                 }
             });
-
-            entrantCountText.setText(String.format(Locale.getDefault(),
-                    "(%d/%d)",
-                    entries.size(),
-                    eventModel.getEntrantCapacity()));
         });
     }
 }
