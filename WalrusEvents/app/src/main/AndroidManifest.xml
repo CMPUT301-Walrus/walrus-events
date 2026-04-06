@@ -75,13 +75,10 @@
             android:exported="true" />
         <activity
             android:name=".activity.UEventDetailsActivity"
-            android:exported="true"></activity>
+            android:exported="true"/>
         <activity
             android:name=".activity.USettingsActivity"
-            android:exported="true"></activity>
-        <activity
-            android:name=".activity.AdminViewActivity"
-            android:exported="true"></activity>
+            android:exported="true"/>
         <activity
             android:name=".activity.QRCodeActivity"
             android:exported="false" />
@@ -91,6 +88,12 @@
             android:theme="@style/zxing_CaptureTheme"
             android:windowSoftInputMode="stateAlwaysHidden"
             tools:ignore="Instantiatable" />
+        <activity
+            android:name=".activity.AdminHubActivity"
+            android:exported="true"/>
+        <activity
+            android:name=".activity.AdminProfilesActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

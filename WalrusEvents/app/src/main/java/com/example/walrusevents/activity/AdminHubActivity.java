@@ -1,0 +1,50 @@
+package com.example.walrusevents.activity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.walrusevents.R;
+import com.example.walrusevents.ui.AdminHubView;
+import com.example.walrusevents.util.PermissionGatekeeper;
+/*
+ Admin View where the admin will redirect to all admin functionalities
+ wip: base view w/o admin functionalities yet
+ */
+
+public class AdminHubActivity extends AppCompatActivity {
+    private AdminHubView view;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.admin_main);
+
+        //Future Buttons: Events, Images, Profiles, Notif Log
+        view = new AdminHubView(this);
+
+        view.getEventsButton().setOnClickListener(v -> {
+            //TODO: go to admin events view
+        });
+
+        view.getImagesButton().setOnClickListener(v -> {
+            //TODO: go to admin images view
+        });
+
+        view.getProfilesButton().setOnClickListener(v -> {
+            Intent goToAdminProfiles = new Intent(AdminHubActivity.this, AdminProfilesActivity.class);
+            startActivity(goToAdminProfiles);
+        });
+
+        view.getNotificationsButton().setOnClickListener(v -> {
+            //TODO: go to admin notifications view
+        });
+
+        view.getBackButton().setOnClickListener(v -> {
+            finish();
+        });
+    }
+}
