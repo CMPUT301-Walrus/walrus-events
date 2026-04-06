@@ -93,42 +93,80 @@ public class Event implements Serializable {
         return description;
     }
 
+    /**
+     * Used to edit description of event
+     * @param description event description set by organizer
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public String getStartRegistrationTime() {
-        return startRegistrationTime;
-    }
+    /**
+     * Gets start time for event registraction
+     * @return
+     */
+    public String getStartRegistrationTime() { return startRegistrationTime; }
 
+    /**
+     * Sets start time for event registration
+     * @param startRegistrationTime start time for registration
+     */
     public void setStartRegistrationTime(String startRegistrationTime) {
         this.startRegistrationTime = startRegistrationTime;
     }
 
+    /**
+     * Gets end time for event registration
+     * @return end time for registration
+     */
     public String getEndRegistrationTime() {
         return endRegistrationTime;
     }
 
+    /**
+     * Sets end time for event registration
+     * @param endRegistrationTime end time for registration
+     */
     public void setEndRegistrationTime(String endRegistrationTime) {
         this.endRegistrationTime = endRegistrationTime;
     }
 
+    /**
+     * Gets start time for event confirmation
+     * @return start time for confirmation
+     */
     public String getStartConfirmationTime() {
         return startConfirmationTime;
     }
 
+    /**
+     * Sets start time for event confirmation
+     * @param startConfirmationTime start time for confirmation
+     */
     public void setStartConfirmationTime(String startConfirmationTime) {
         this.startConfirmationTime = startConfirmationTime;
     }
 
+    /**
+     * Gets end time for event confirmation
+     * @return end time for confirmation
+     */
     public String getEndConfirmationTime() {
         return endConfirmationTime;
     }
 
+    /**
+     * Sets end time for event confirmation
+     * @param endConfirmationTime end time for confirmation
+     */
     public void setEndConfirmationTime(String endConfirmationTime) {
         this.endConfirmationTime = endConfirmationTime;
     }
 
+    /**
+     * Gets the maximum amount of entrants that can sign up for the event.
+     * @return entrantCapacity the current capacity
+     */
     public int getEntrantCapacity() {
         return entrantCapacity;
     }
@@ -173,15 +211,27 @@ public class Event implements Serializable {
         return true;
     }
 
+    /**
+     * Sets the number of participants in the event
+     * @param numOpenSeats number of avaiable spaces for an event
+     */
     public void setNumParticipants(int numOpenSeats){
 
         this.numParticipants=numOpenSeats;
     }
 
+    /**
+     * Gets the number of participants in the event
+     * @return numParticipants number of participants
+     */
     public int getNumParticipants(){
         return numParticipants;
     }
 
+    /**
+     * Returns whether an event has open seats
+     * @return
+     */
     public boolean hasOpenSeats(){
         if(entrantCapacity!=0){
             return numParticipants<entrantCapacity;
@@ -207,14 +257,24 @@ public class Event implements Serializable {
         this.poster = poster;
     }
 
-    public ArrayList<String> getOwners() {
-        return owners;
-    }
+    /**
+     * Gets list of owners for event
+     * @return
+     */
+    public ArrayList<String> getOwners() { return owners; }
 
+    /**
+     * Sets list of owners for event
+     * @param owners
+     */
     public void setOwners(ArrayList<String> owners) {
         this.owners = owners;
     }
 
+    /**
+     * Adds owner to list of owners for a given event
+     * @param ownerId
+     */
     public void addOwner(String ownerId) {
         if (owners == null) {
             owners = new ArrayList<>();
@@ -225,18 +285,36 @@ public class Event implements Serializable {
         owners.add(ownerId);
     }
 
+    /**
+     * Returns whether the given user is an owner for a particular event
+     * @param ownerId
+     * @return
+     */
     public boolean isOwner(String ownerId) {
         return ownerId != null && owners != null && owners.contains(ownerId);
     }
 
+    /**
+     * Returns whether the given user is a co-organizer for a particular event
+     * @param ownerId
+     * @return
+     */
     public boolean isCoOrganizer(String ownerId) {
         return isOwner(ownerId) && owners.size() > 1 && !ownerId.equals(owners.get(0));
     }
 
+    /**
+     * Returns whether the event is private or not
+     * @return
+     */
     public boolean getIsPrivate() {
         return isPrivate;
     }
 
+    /**
+     * Sets an event to private or public
+     * @param isPrivate private ? true : false
+     */
     public void setIsPrivate(boolean isPrivate) {
         this.isPrivate = isPrivate;
     }
@@ -244,8 +322,6 @@ public class Event implements Serializable {
     /**
      * Calls QR Code generators to make a unique QR code for event
      */
-
-
     public void generateEventQRCode() {
         this.qrCodeImage = QRGenerator.generateQRCode("walrusevents://event/" + this.eventId);
     }
@@ -294,6 +370,10 @@ public class Event implements Serializable {
         this.useGeolocation = useGeolocation;
     }
 
+    /**
+     * Returns whether the event is currently in registration
+     * @return
+     */
     public boolean isInRegistration() {
         if (isPrivate) {
             return false;
@@ -307,6 +387,10 @@ public class Event implements Serializable {
                 && LocalDateTime.now().isAfter(LocalDateTime.parse(startRegistrationTime));
     }
 
+    /**
+     * Returns whether the event is currently in confirmation
+     * @return
+     */
     public boolean isInConfirmation() {
         if (isInRegistration() && !isPrivate) {
             return false;

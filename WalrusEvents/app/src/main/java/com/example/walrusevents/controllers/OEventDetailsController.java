@@ -1,3 +1,8 @@
+/**
+ * This controller is in charge of managing the event details for a particular event
+ * It talks to the other parts of the app (including Firebase) to store and retrieve details
+ */
+
 package com.example.walrusevents.controllers;
 
 import android.graphics.Bitmap;

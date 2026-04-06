@@ -1,3 +1,9 @@
+/**
+ * Load all profile related activities and data
+ * This is meant for the Admin so everything must be loaded with transparency
+ * This is where removal and banning of profiles can be done as well as deleting events
+ */
+
 package com.example.walrusevents.activity;
 
 import android.os.Bundle;

@@ -1,3 +1,8 @@
+/**
+ * This fragment pops up when an organizer wants to invite an entrant to a private event
+ * Outstanding issues: Not done (I think)
+ */
+
 package com.example.walrusevents.ui;
 
 import android.os.Bundle;

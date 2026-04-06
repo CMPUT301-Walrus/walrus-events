@@ -1,3 +1,8 @@
+/**
+ * This fragment pops up when an organizer wants to edit the dates related to an event
+ * It shows a calendar to make date picking easy
+ */
+
 package com.example.walrusevents.ui;
 
 import android.app.Dialog;

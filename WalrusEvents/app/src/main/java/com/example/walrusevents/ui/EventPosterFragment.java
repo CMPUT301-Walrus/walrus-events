@@ -1,3 +1,8 @@
+/**
+ * This fragment pops up when a user wants to view the poster for an event
+ * It retrieves said image from Firebase and displays it
+ */
+
 package com.example.walrusevents.ui;
 
 import android.graphics.drawable.Drawable;

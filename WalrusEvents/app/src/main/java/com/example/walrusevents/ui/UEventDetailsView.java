@@ -1,3 +1,7 @@
+/**
+ * This view is responsible for showing users the details of an event
+ */
+
 package com.example.walrusevents.ui;
 
 import android.app.Activity;

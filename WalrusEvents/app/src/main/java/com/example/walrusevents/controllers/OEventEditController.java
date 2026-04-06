@@ -1,3 +1,8 @@
+/**
+ * This controller is in charge of managing an events details when an organizer edits them
+ * Primarily composed of retrieving and storing information from Firebase
+ */
+
 package com.example.walrusevents.controllers;
 
 import android.app.Activity;

@@ -1,3 +1,8 @@
+/**
+ * This fragment pops up to hold the comments related to a partiuclar event
+ * It shows all comments and allows users to add/edit comments
+ */
+
 package com.example.walrusevents.ui;
 
 import android.app.Activity;
@@ -24,6 +29,7 @@ import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.Comment;
 import com.example.walrusevents.model.Event;
+import com.example.walrusevents.ui.AddCommentFragment;
 import com.example.walrusevents.util.CommentsAdapter;
 import com.example.walrusevents.util.DeviceIdManager;
 import com.example.walrusevents.util.UserRole;

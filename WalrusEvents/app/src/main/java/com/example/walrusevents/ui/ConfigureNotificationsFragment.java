@@ -1,3 +1,7 @@
+/**
+ * This fragment pops up when a user wants to configure the notifications for the particular event
+ */
+
 package com.example.walrusevents.ui;
 
 import android.os.Bundle;

@@ -1,3 +1,8 @@
+/**
+ * This class manages the collection of all events for the main screen
+ * It handles the logic for adjusting the collection of events as an changes occur in the app
+ */
+
 package com.example.walrusevents.util;
 
 import android.content.Context;
@@ -5,6 +10,7 @@ import android.widget.ListView;
 
 import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.model.Event;
+import com.example.walrusevents.util.MainSFilterManager;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

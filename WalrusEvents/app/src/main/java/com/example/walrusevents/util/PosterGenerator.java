@@ -1,3 +1,8 @@
+/**
+ * This class generates a poster based on the event
+ * It handles the logic for creating the poster and constructing it as an Bitmap
+ */
+
 package com.example.walrusevents.util;
 
 import android.graphics.Bitmap;

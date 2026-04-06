@@ -1,3 +1,9 @@
+/**
+ * This fragment is responsible for popping up when an entrant gets prompted to accept an invite
+ * It allows the entrant to accept or decline
+ * Handles logic for communcating to the rest of the app about said decision
+ */
+
 package com.example.walrusevents.ui;
 
 import static android.view.View.INVISIBLE;

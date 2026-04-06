@@ -129,6 +129,11 @@ public class Profile {
         this.phone = null;
     }
 
+    /**
+     * Helper method to check if a value is valid
+     * @param value value to check
+     * @return
+     */
     private boolean hasValue(String value) {
         return value != null && !value.trim().isEmpty();
     }
@@ -162,6 +167,10 @@ public class Profile {
         notifications.remove(notification);
     }
 
+    /**
+     * Set notifications collection for profile
+     * @param notifications
+     */
     public void setNotifications(Collection<Notification> notifications) {
         this.notifications = notifications;
     }

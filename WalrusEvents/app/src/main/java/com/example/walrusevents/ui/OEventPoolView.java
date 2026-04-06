@@ -1,3 +1,7 @@
+/**
+ * This view is responsible for showing the pool of entrants to the organizer of the event
+ */
+
 package com.example.walrusevents.ui;
 
 import android.app.Activity;

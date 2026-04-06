@@ -1,3 +1,7 @@
+/**
+ * This fragment pops up when the user wants to view their notifications in their inbox
+ */
+
 package com.example.walrusevents.ui;
 
 import android.os.Bundle;
