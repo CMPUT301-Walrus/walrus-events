@@ -152,6 +152,12 @@ public class OEventPoolActivity extends AppCompatActivity {
      * Updates the activity based on the stored event. Call when any event details may have changed.
      */
     public void refresh() {
+        if (eventModel == null) {
+            return;
+        }
+
+        view.getTitleText().setText(eventModel.getTitle());
+
         if (eventModel.isInRegistration()) {
             PreLotteryPoolFragment preLotteryFragment = new PreLotteryPoolFragment(eventModel, view.getEntrantCountText());
             getSupportFragmentManager().beginTransaction()

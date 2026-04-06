@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -114,6 +115,8 @@ public class OEventEditActivity extends AppCompatActivity {
             // Get updated info from app
             String newTitle = eventEditView.getTitleView().getText().toString();
             String newDescription = eventEditView.getEditDescription().getText().toString();
+            String entrantCapacityText = eventEditView.getEditEntrantCapacity().getText().toString();
+            String applicantCapacityText = eventEditView.getEditApplicantCapacity().getText().toString();
 
             boolean isPrivate = eventEditView.getPrivateToggle().isChecked();
 
@@ -122,8 +125,18 @@ public class OEventEditActivity extends AppCompatActivity {
             eventEditController.setIsPrivate(isPrivate);
             eventModel.setUseGeolocation(geoToggle.isChecked());
             eventEditController.setDescription(newDescription);
-            eventEditController.setEntrantCapacity(eventEditView.getEditEntrantCapacity().getText().toString());
-            eventEditController.setApplicantCapacity(eventEditView.getEditApplicantCapacity().getText().toString());
+
+            try {
+                eventEditController.setEntrantCapacity(entrantCapacityText);
+                if (!eventEditController.setApplicantCapacity(applicantCapacityText)) {
+                    Toast.makeText(this, "Lottery applicants cannot exceed max entrants unless max entrants is blank.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Enter whole numbers for event capacities.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             eventEditController.saveModel();
 
             // Passes the updated model back to the previous activity (which should be OEventPoolActivity)
