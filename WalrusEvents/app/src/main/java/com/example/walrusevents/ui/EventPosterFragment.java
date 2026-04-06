@@ -1,3 +1,8 @@
+/**
+ * This fragment pops up when a user wants to view the poster for an event
+ * It retrieves said image from Firebase and displays it
+ */
+
 package com.example.walrusevents.ui;
 
 import android.graphics.drawable.Drawable;
@@ -42,6 +47,16 @@ public class EventPosterFragment extends Fragment {
 
         ImageView imageView = view.findViewById(R.id.eventPosterImage);
         ProgressBar progressBar = view.findViewById(R.id.posterProgressBar);
+
+        // Find the back button from your RelativeLayout
+        android.widget.Button backButton = view.findViewById(R.id.back_button);
+
+        // Set the click listener to go back
+        backButton.setOnClickListener(v -> {
+            if (getParentFragmentManager() != null) {
+                getParentFragmentManager().popBackStack();
+            }
+        });
 
         // This would be passed from the QR scan
         eventId = getArguments().getString("event_id");

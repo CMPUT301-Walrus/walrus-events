@@ -1,3 +1,9 @@
+/**
+ * Edit Event Activity
+ * This is meant as the hub that allows organizers to edit an event they own/co-own
+ * They can edit dates, description, capacity, and more
+ */
+
 package com.example.walrusevents.activity;
 
 import android.content.Intent;

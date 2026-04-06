@@ -1,3 +1,7 @@
+/**
+ * This fragment pops up when the organizer wants to view the finalized waitlist
+ */
+
 package com.example.walrusevents.ui;
 
 import android.app.Activity;

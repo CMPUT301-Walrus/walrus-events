@@ -1,3 +1,8 @@
+/**
+ * OEventListView
+ *
+ */
+
 package com.example.walrusevents.ui;
 
 import android.app.Activity;
@@ -7,10 +12,6 @@ import android.widget.ListView;
 
 import com.example.walrusevents.R;
 
-/**
- * OEventListView
- *
- */
 public class OEventListView {
     private ListView eventList;
     private Button addButton;

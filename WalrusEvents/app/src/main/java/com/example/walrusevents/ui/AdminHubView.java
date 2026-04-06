@@ -1,3 +1,9 @@
+/**
+ * View popes up when admin access their admin page
+ * It wil allow admin to navigate to all other views related to comments, events, profiles, etc.
+ */
+
+
 package com.example.walrusevents.ui;
 
 import android.app.Activity;

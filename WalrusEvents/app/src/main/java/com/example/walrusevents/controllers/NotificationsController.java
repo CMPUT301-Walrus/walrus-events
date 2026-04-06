@@ -1,3 +1,9 @@
+/**
+ * This controller is in charge of managing the notifications for the app
+ * It allows organizers (and who ever else needs them) to send notifications
+ * Allows entrants and other users to receive them by checking their inbox
+ */
+
 package com.example.walrusevents.controllers;
 
 import android.content.Context;

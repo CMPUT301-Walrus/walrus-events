@@ -1,3 +1,8 @@
+/**
+ * This adapter is responsible for changing the comments in the user view
+ * It handles the logic for adjusting the collection of comments as an user comments
+ */
+
 package com.example.walrusevents.util;
 
 import android.content.Context;
@@ -23,6 +28,9 @@ import com.example.walrusevents.R;
 import com.example.walrusevents.model.Comment;
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.ui.AddCommentFragment;
+import com.example.walrusevents.util.CommentViewHolder;
+import com.example.walrusevents.util.DeviceIdManager;
+import com.example.walrusevents.util.UserRoleManager;
 
 import java.util.ArrayList;
 import java.util.Locale;

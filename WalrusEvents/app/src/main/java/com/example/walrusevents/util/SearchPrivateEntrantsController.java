@@ -1,9 +1,15 @@
+/**
+ * This controller is repsonsible for searching through entrants for private events
+ * It queries and filters for specific information
+ */
+
 package com.example.walrusevents.util;
 
 import android.content.Context;
 
 import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.model.Entrant;
+import com.example.walrusevents.util.EntrantArrayAdapter;
 
 import java.util.ArrayList;
 import android.widget.ListView;

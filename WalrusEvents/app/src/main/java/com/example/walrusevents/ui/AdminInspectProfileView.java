@@ -1,3 +1,8 @@
+/**
+ * View popes up when admin wants to inspect a profile
+ * It handles the interface for admins removing or banning entrants and organizers
+ */
+
 package com.example.walrusevents.ui;
 
 import android.app.Activity;

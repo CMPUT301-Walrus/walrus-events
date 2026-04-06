@@ -1,3 +1,8 @@
+/**
+ * This activity is activated when someone views the QR code for an event
+ * It displays it larger so that you can be scanned by an external device
+ */
+
 package com.example.walrusevents.activity;
 
 import android.graphics.Bitmap;

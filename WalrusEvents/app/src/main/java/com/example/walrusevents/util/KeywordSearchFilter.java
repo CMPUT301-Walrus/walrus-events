@@ -1,3 +1,8 @@
+/**
+ * This class allows the user to search for events by keyword
+ * It handles the logic for querying the database for events that contain the keyword
+ */
+
 package com.example.walrusevents.util;
 
 import android.widget.Filter;

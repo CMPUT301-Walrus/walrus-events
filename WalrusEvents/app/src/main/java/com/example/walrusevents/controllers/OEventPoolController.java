@@ -1,3 +1,9 @@
+/**
+ * This controller is in charge of the pool of entrants for a particular event
+ * It gives organizers the power to send invites and other notifications by communicating with the rest of the app
+ * It also gives organizers the power to export the list of entrants to a CSV file
+ */
+
 package com.example.walrusevents.controllers;
 
 import android.app.Activity;
@@ -15,6 +21,7 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 
+import com.example.walrusevents.controllers.NotificationsController;
 import com.example.walrusevents.data.NotificationRepository;
 import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.data.WaitlistRepository;

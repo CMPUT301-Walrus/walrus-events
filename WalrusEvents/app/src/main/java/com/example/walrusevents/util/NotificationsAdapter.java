@@ -1,3 +1,8 @@
+/**
+ * This class manages the collection of notifications related to a user
+ * It handles the logic for adjusting the collection of notifications as they change
+ */
+
 package com.example.walrusevents.util;
 
 import android.content.Context;

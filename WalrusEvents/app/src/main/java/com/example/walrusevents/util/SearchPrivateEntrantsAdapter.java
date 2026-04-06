@@ -1,3 +1,8 @@
+/**
+ * This adapter manages the collection of all entants for a partifulcar event
+ * In particular it is repsonsible for managing entrants for private events
+ */
+
 package com.example.walrusevents.util;
 
 import android.content.Context;

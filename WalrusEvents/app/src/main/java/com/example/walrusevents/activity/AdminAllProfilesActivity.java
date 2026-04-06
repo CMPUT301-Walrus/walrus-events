@@ -1,3 +1,9 @@
+/**
+ * Load all profile related activities and data
+ * This is meant for the Admin so everything must be loaded with transparency
+ * Allow options to manage profiles as per project description
+ */
+
 package com.example.walrusevents.activity;
 
 import android.content.Intent;

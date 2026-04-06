@@ -1,7 +1,15 @@
+/**
+ * This repo is in charge of storing and retrieving images from Firebase
+ * It manages converting images from the app and uploading them to Firebase in a storage friendly format (and vise versa)
+ */
+
 package com.example.walrusevents.data;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
+
+import com.example.walrusevents.data.FirebaseAPIManager;
+
 import java.io.File;
 
 public class ImageRepository {
