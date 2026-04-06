@@ -1,5 +1,10 @@
 package com.example.walrusevents.util;
 
+import android.content.Context;
+
+import com.example.walrusevents.data.ProfilePermissionsRepository;
+import com.example.walrusevents.model.AccountRole;
+import com.example.walrusevents.model.ProfilePermissions;
 import com.google.firebase.firestore.auth.User;
 
 /*
@@ -18,19 +23,48 @@ public class UserRoleManager {
         currentRole = role;
     }
 
+    public interface NextRoleCallback {
+        void onRoleChanged();
+    }
+
     /*
     * Shifts on to the next Role
      */
-    public static void nextRole(){
+    public static void nextRole(Context context, NextRoleCallback callback){
+        ProfilePermissionsRepository profilePermissionsRepository = new ProfilePermissionsRepository();
         switch (currentRole){
             case USER:
-                currentRole=UserRole.ORGANIZER;
+                profilePermissionsRepository.getOrCreatePermissions(DeviceIdManager.getOrCreate(context), permissions -> {
+                    if (permissions.getRoleEnum() == null)
+                    {
+                        return;
+                    }
+                    if (permissions.getRoleEnum().ordinal() > AccountRole.ENTRANT.ordinal()) {
+                        currentRole=UserRole.ORGANIZER;
+                        callback.onRoleChanged();
+                    }
+                });
                 break;
             case ORGANIZER:
-                currentRole=UserRole.ADMIN;
+                profilePermissionsRepository.getOrCreatePermissions(DeviceIdManager.getOrCreate(context), permissions -> {
+                    System.out.println(permissions.getRoleEnum());
+                    if (permissions.getRoleEnum() == null)
+                    {
+                        currentRole=UserRole.USER;
+                    }
+                    else if (permissions.getRoleEnum().ordinal() > AccountRole.ORGANIZER.ordinal()) {
+                        currentRole=UserRole.ADMIN;
+                    }
+                    else {
+                        currentRole=UserRole.USER;
+                    }
+                    callback.onRoleChanged();
+                });
+
                 break;
             case ADMIN:
                 currentRole=UserRole.USER;
+                callback.onRoleChanged();
                 break;
 
         }

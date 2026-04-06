@@ -13,6 +13,7 @@ public class AdminHubView extends AppCompatActivity {
     private Button imagesButton;
     private Button profilesButton;
     private Button notificationsButton;
+    private Button commentsButton;
     private ImageView backButton;
 
     public AdminHubView(Activity activity) {
@@ -20,6 +21,7 @@ public class AdminHubView extends AppCompatActivity {
         imagesButton = activity.findViewById(R.id.admin_view_images_button);
         profilesButton = activity.findViewById(R.id.admin_view_profiles_button);
         notificationsButton = activity.findViewById(R.id.admin_notif_log_button);
+        commentsButton = activity.findViewById(R.id.admin_comments_button);
         backButton = activity.findViewById(R.id.admin_hub_back_button);
     }
 
@@ -37,6 +39,10 @@ public class AdminHubView extends AppCompatActivity {
 
     public Button getNotificationsButton() {
         return notificationsButton;
+    }
+
+    public Button getCommentsButton() {
+        return commentsButton;
     }
 
     public ImageView getBackButton() {

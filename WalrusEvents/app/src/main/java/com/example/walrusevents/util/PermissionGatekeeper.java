@@ -7,12 +7,13 @@ import com.example.walrusevents.R;
 import com.example.walrusevents.data.ProfilePermissionsRepository;
 import com.example.walrusevents.model.ProfilePermissions;
 
+import java.security.Permissions;
+
 /**
  * Shared activity gate that ensures permissions exist and banned accounts stop
  * before normal activity setup continues.
  */
 public final class PermissionGatekeeper {
-
     public interface AllowedCallback {
         void onAllowed(ProfilePermissions permissions);
     }
