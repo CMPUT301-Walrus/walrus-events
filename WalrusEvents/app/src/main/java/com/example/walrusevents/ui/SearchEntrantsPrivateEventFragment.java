@@ -1,5 +1,6 @@
 package com.example.walrusevents.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,9 +18,12 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.example.walrusevents.R;
+import com.example.walrusevents.controllers.NotificationsController;
 import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.util.SearchPrivateEntrantsController;
+
+import java.util.Locale;
 
 /*
 * WIP
@@ -34,8 +39,19 @@ public class SearchEntrantsPrivateEventFragment extends DialogFragment {
     private Button confirmButton;
     private ListView listView;
     private ImageView backButton;
-
+    private View chosenItemView;
+    private ConfirmInviteCallback callback;
     private String currentQuery="";
+    private String eventTitle;
+
+    public interface ConfirmInviteCallback {
+        void sendInvite(Context context, String entrantId, String notifTitle, String notifMessage);
+    }
+
+    public SearchEntrantsPrivateEventFragment(ConfirmInviteCallback callback, String eventTitle) {
+        this.callback = callback;
+        this.eventTitle = eventTitle;
+    }
 
     @Nullable
     @Override
@@ -83,16 +99,31 @@ public class SearchEntrantsPrivateEventFragment extends DialogFragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Unselect previously clicked item
+                if (chosenItemView != null) {
+                    chosenItemView.findViewById(R.id.waitlist_entry_background_selected).setVisibility(View.GONE);
+                }
+
                 //the chosen person to invite
                 Entrant chosenEntrant = (Entrant) parent.getItemAtPosition(position);
                 controller.setChosenEntrant(chosenEntrant);
-                //TODO: Get the chosen entrant to be invited
+                chosenItemView = view;
+                view.findViewById(R.id.waitlist_entry_background_selected).setVisibility(View.VISIBLE);
             }
         });
 
         confirmButton.setOnClickListener(v -> {
+            if (controller.getChosenEntrant() == null) {
+                Toast.makeText(getActivity(), "No entrant chosen", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String inviteMessage = String.format(Locale.getDefault(),"You were invited to %s!", eventTitle);
+            callback.sendInvite(getActivity(), controller.getChosenEntrant().getDeviceId(), "Invitation", inviteMessage);
             dismiss();
         });
+
+        backButton.setOnClickListener(v -> dismiss());
     }
 
 }

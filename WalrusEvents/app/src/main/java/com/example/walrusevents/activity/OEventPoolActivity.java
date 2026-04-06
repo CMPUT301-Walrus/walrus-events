@@ -396,10 +396,8 @@ public class OEventPoolActivity extends AppCompatActivity {
                 view.getLotteryButton().setVisibility(View.VISIBLE);
                 view.getLotteryButton().setText("Invite");
 
-                //TODO: replace testEntrantId when entrant search is implemented
-                String testEntrantId = DeviceIdManager.getOrCreate(this);
                 view.getLotteryButton().setOnClickListener(v -> {
-                    SearchEntrantsPrivateEventFragment fragment = new SearchEntrantsPrivateEventFragment();
+                    SearchEntrantsPrivateEventFragment fragment = new SearchEntrantsPrivateEventFragment(controller::sendInvite, eventModel.getTitle());
                     fragment.show(getSupportFragmentManager(),"search");
                 });
                 break;
