@@ -1,3 +1,6 @@
+/**
+ * This view is made for displaying all notifications for the Admin
+ */
 package com.example.walrusevents.ui;
 
 import android.app.Activity;

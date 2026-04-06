@@ -1,3 +1,6 @@
+/**
+ * This activity is made for displaying all notifications for the Admin
+ */
 package com.example.walrusevents.activity;
 
 import android.os.Bundle;
