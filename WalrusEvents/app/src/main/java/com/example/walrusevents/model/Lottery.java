@@ -35,7 +35,7 @@ public class Lottery implements WaitlistRepository.SaveCallback {
      *  Returns false if the draw fails
      */
     public boolean drawToCapacity(List<WaitlistEntry> entrants, int capacity) {
-        //if (capacity < 1) return false; /* Draw failed: capacity needs to be at least one */
+        if (capacity < 1) return false; /* Draw failed: capacity needs to be at least one */
 
         int length = entrants.size();
         if (length < 1) return false; // Draw failed: no entrants exist

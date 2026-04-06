@@ -5,6 +5,6 @@ package com.example.walrusevents.util;
  */
 public enum UserRole {
     USER,
-    ADMIN,
-    ORGANIZER //to look at the organizer point of view as well?
+    ORGANIZER, //to look at the organizer point of view as well?
+    ADMIN
 }

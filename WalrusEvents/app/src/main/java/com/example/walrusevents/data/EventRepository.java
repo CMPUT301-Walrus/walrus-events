@@ -189,7 +189,6 @@ public class EventRepository {
      * @param eventId ID of the event to be deleted
      */
     public void deleteEvent(String eventId) {
-
         eventsCollection
                 .document(eventId)
                 .delete();

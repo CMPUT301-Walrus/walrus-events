@@ -92,7 +92,10 @@
             android:name=".activity.AdminHubActivity"
             android:exported="true"/>
         <activity
-            android:name=".activity.AdminProfilesActivity"
+            android:name=".activity.AdminAllProfilesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AdminInspectProfileActivity"
             android:exported="false" />
     </application>
 

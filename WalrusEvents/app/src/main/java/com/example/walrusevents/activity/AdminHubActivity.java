@@ -2,14 +2,12 @@ package com.example.walrusevents.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.walrusevents.R;
 import com.example.walrusevents.ui.AdminHubView;
-import com.example.walrusevents.util.PermissionGatekeeper;
 /*
  Admin View where the admin will redirect to all admin functionalities
  wip: base view w/o admin functionalities yet
@@ -35,7 +33,7 @@ public class AdminHubActivity extends AppCompatActivity {
         });
 
         view.getProfilesButton().setOnClickListener(v -> {
-            Intent goToAdminProfiles = new Intent(AdminHubActivity.this, AdminProfilesActivity.class);
+            Intent goToAdminProfiles = new Intent(AdminHubActivity.this, AdminAllProfilesActivity.class);
             startActivity(goToAdminProfiles);
         });
 
