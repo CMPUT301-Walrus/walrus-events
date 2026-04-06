@@ -72,8 +72,10 @@ public class OEventPoolActivity extends AppCompatActivity {
             new ActivityResultCallback<Uri>() {
                 @Override
                 public void onActivityResult(Uri uri) {
-                    getContentResolver().takePersistableUriPermission(uri, FLAG_GRANT_WRITE_URI_PERMISSION);
-                    controller.writeCSV(OEventPoolActivity.this, uri, getContentResolver(), finalList);
+                    if (uri != null) {
+                        getContentResolver().takePersistableUriPermission(uri, FLAG_GRANT_WRITE_URI_PERMISSION);
+                        controller.writeCSV(OEventPoolActivity.this, uri, getContentResolver(), finalList);
+                    }
                 }
             });
 

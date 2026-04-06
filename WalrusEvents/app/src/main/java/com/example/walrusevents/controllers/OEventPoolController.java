@@ -169,7 +169,7 @@ public class OEventPoolController {
         DocumentFile directory = DocumentFile.fromTreeUri(context, uri);
 
         String fileName = String.format(Locale.getDefault(), "%s Final List.csv", eventModel.getTitle());
-        DocumentFile newFile = directory.createFile("text/csv", "a.csv");
+        DocumentFile newFile = directory.createFile("text/csv", fileName);
         try {
             OutputStream outputStream = contentResolver.openOutputStream(newFile.getUri());
             outputStream.write(csvBuilder.toString().getBytes());
