@@ -27,8 +27,7 @@ import com.example.walrusevents.ui.AddCommentFragment;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
-        implements ProfileRepository.ProfileCallback {
+public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder> {
     private Context context;
     private String eventId;
     private ArrayList<Comment> commentsList;
@@ -45,9 +44,20 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
         inOwnerView = owners.contains(DeviceIdManager.getOrCreate(context)) && UserRoleManager.getRole() == UserRole.ORGANIZER;
     }
 
-    @Override
-    public void onEntrantLoaded(Entrant entrant) {
-        String entrantName = entrant.getProfile().getName();
+    public void setCommentName(Entrant entrant, TextView nameTextView) {
+        String displayedName;
+        if (entrant == null) {
+            displayedName = "Deleted User";
+        }
+        else {
+            displayedName = entrant.getProfile().getName();
+            if (owners.contains(entrant.getDeviceId())) {
+                nameTextView.setTypeface(nameTextView.getTypeface(), Typeface.BOLD);
+                displayedName += " (Organizer)";
+            }
+        }
+
+        nameTextView.setText(displayedName);
     }
 
     @NonNull
@@ -69,16 +79,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentViewHolder>
         holder.getRepliesView().setAdapter(repliesAdapter);
 
         ProfileRepository profileRepository = new ProfileRepository();
-        profileRepository.getProfile(comment.getEntrantId(), entrant -> {
-            String displayedName = entrant.getProfile().getName();
-            TextView nameView = holder.getNameText();
-            if (owners.contains(entrant.getDeviceId())) {
-                nameView.setTypeface(nameView.getTypeface(), Typeface.BOLD);
-                displayedName += " (Organizer)";
-            }
-
-            nameView.setText(displayedName);
-        });
+        profileRepository.getProfile(comment.getEntrantId(), entrant ->
+            setCommentName(entrant, holder.getNameText()));
 
         EventRepository eventRepository = new EventRepository();
 

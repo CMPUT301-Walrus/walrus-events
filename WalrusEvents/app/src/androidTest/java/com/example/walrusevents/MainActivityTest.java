@@ -54,9 +54,7 @@ public class MainActivityTest {
     public void setUp() {
         Intents.init();
         // Ensure we start from a known state (USER role)
-        while (UserRoleManager.getRole() != UserRole.USER) {
-            UserRoleManager.nextRole();
-        }
+        UserRoleManager.setRole(UserRole.USER);
     }
 
     @After
