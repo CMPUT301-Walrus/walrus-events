@@ -22,21 +22,21 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="200dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/back_send_notif_p2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView23">
+        app:layout_constraintTop_toBottomOf="@+id/send_notif_description">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/canceled_notifs_edit_text"
+            android:id="@+id/send_notifs_edit_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="hint" />
+            android:gravity="top"
+            android:hint="Write a message" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
@@ -47,13 +47,12 @@
         android:layout_marginEnd="20dp"
         android:text="For:"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/textView22"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
     <TextView
-        android:id="@+id/textView22"
+        android:id="@+id/send_notif_category"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -63,7 +62,6 @@
         android:textColor="@color/darkBlue"
         android:textSize="30sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textView23"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -86,28 +84,28 @@
         android:id="@+id/back_send_notif_p2"
         android:layout_width="61dp"
         android:layout_height="58dp"
+        android:layout_marginTop="10dp"
         android:backgroundTint="#FFD24B"
         android:contentDescription="Back"
-        app:srcCompat="@android:drawable/ic_menu_revert"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/confirm_send_notif_button"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
-        app:layout_constraintVertical_bias="0.197" />
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@android:drawable/ic_menu_revert" />
 
     <TextView
-        android:id="@+id/textView23"
+        android:id="@+id/send_notif_description"
         android:layout_width="0dp"
         android:layout_height="58dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:text="(Chosen entrants that you remove or that cancel your invitation)"
+        android:text="(Entrants that you remove or cancel their invitation)"
         android:textAlignment="viewStart"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView22" />
+        app:layout_constraintTop_toBottomOf="@+id/send_notif_category" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

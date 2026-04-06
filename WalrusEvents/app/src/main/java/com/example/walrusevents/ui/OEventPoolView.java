@@ -23,7 +23,6 @@ public class OEventPoolView {
     private FragmentContainerView fragmentContainer;
     private TextView titleText;
     private TextView entrantCountText;
-    private Button inviteButton;
 
     public OEventPoolView(Activity context) {
         settingsButton = context.findViewById(R.id.settings_org_button);
@@ -35,8 +34,6 @@ public class OEventPoolView {
         fragmentContainer = context.findViewById(R.id.waiting_list_fragment);
         titleText = context.findViewById(R.id.org_waitlist_title);
         entrantCountText = context.findViewById(R.id.org_entrant_count);
-
-        inviteButton=context.findViewById(R.id.invite_private_event_button);
     }
 
     public FragmentContainerView getFragmentContainerView() {
@@ -72,9 +69,5 @@ public class OEventPoolView {
 
     public ImageView getMapButton() {
         return mapButton;
-    }
-
-    public Button getInviteButton(){
-        return inviteButton;
     }
 }

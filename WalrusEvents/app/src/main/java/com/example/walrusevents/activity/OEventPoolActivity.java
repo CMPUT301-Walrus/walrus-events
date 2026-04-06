@@ -23,6 +23,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.model.Lottery;
@@ -32,11 +33,13 @@ import com.example.walrusevents.model.Notification;
 import com.example.walrusevents.model.WaitlistEntry;
 import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Event;
+import com.example.walrusevents.ui.ConfigureLotteryFragment;
 import com.example.walrusevents.ui.FinalizedPoolFragment;
 import com.example.walrusevents.ui.OEventPoolView;
 import com.example.walrusevents.ui.PostLotteryPoolFragment;
 import com.example.walrusevents.ui.PreLotteryPoolFragment;
 import com.example.walrusevents.ui.SearchEntrantsPrivateEventFragment;
+import com.example.walrusevents.ui.SendNotificationsFragment;
 import com.example.walrusevents.util.DeviceIdManager;
 import com.example.walrusevents.util.PermissionGatekeeper;
 import com.example.walrusevents.util.SearchPrivateEntrantsController;
@@ -160,6 +163,15 @@ public class OEventPoolActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        view.getSendNotificationsButton().setOnClickListener(v -> {
+            SendNotificationsFragment sendNotificationsFragment = new SendNotificationsFragment(eventModel, this);
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            if (fragmentManager.findFragmentByTag(CONFIG_NOTIFICATIONS_TAG) == null) {
+                sendNotificationsFragment.show(fragmentManager, CONFIG_NOTIFICATIONS_TAG);
+            }
+        });
+
         updateMapButtonVisibility();
     }
 
@@ -170,18 +182,6 @@ public class OEventPoolActivity extends AppCompatActivity {
         else {
             view.getMapButton().setVisibility(View.GONE);
         }
-
-        //Invite Button visibility based on isPrivate req
-        if(eventModel.getIsPrivate()){
-            view.getInviteButton().setVisibility(View.VISIBLE);
-        }else{
-            view.getInviteButton().setVisibility(View.GONE);
-        }
-
-        view.getInviteButton().setOnClickListener(v -> {
-            SearchEntrantsPrivateEventFragment fragment = new SearchEntrantsPrivateEventFragment();
-            fragment.show(getSupportFragmentManager(),"search");
-        });
     }
 
     /**
@@ -396,7 +396,7 @@ public class OEventPoolActivity extends AppCompatActivity {
                 view.getLotteryButton().setVisibility(View.VISIBLE);
                 view.getLotteryButton().setText("Replace Canceled");
                 view.getLotteryButton().setOnClickListener(v -> {
-                    runLotteryWithoutNotifications();
+                    waitlistRepository.getAllEntries(eventModel.getEventId(), entries -> doLottery(entries, true));
                 });
                 break;
             case 1:
@@ -406,8 +406,8 @@ public class OEventPoolActivity extends AppCompatActivity {
                 //TODO: replace testEntrantId when entrant search is implemented
                 String testEntrantId = DeviceIdManager.getOrCreate(this);
                 view.getLotteryButton().setOnClickListener(v -> {
-                    controller.sendInvite(this, testEntrantId, "Invitation",
-                            String.format(Locale.getDefault(),"You were invited to %s!", eventModel.getTitle()));
+                    SearchEntrantsPrivateEventFragment fragment = new SearchEntrantsPrivateEventFragment();
+                    fragment.show(getSupportFragmentManager(),"search");
                 });
                 break;
             case 2:
@@ -427,13 +427,15 @@ public class OEventPoolActivity extends AppCompatActivity {
                 break;
             case 4:
                 view.getLotteryButton().setVisibility(View.VISIBLE);
-                view.getLotteryButton().setText("Confirm Selection");
+                view.getLotteryButton().setText("Draw Selection");
                 view.getLotteryButton().setOnClickListener(v -> {
-                    if (eventModel.getApplicantCapacity() <= 0) {
-                        Toast.makeText(this, "Set the applicant capacity before confirming the selection", Toast.LENGTH_SHORT).show();
-                        return;
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    if (fragmentManager.findFragmentByTag(CONFIG_LOTTERY_TAG) == null) {
+                        ConfigureLotteryFragment configureLotteryFragment = new ConfigureLotteryFragment(eventModel, this);
+                        configureLotteryFragment.show(getSupportFragmentManager(), CONFIG_LOTTERY_TAG);
                     }
-                    runLotteryWithoutNotifications();
+
+                    //runLotteryWithoutNotifications();
                 });
                 break;
         }
