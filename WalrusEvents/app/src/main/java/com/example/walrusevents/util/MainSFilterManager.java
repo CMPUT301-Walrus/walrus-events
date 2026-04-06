@@ -24,7 +24,7 @@ public class MainSFilterManager {
     private MainSEventArrayAdapter arrayAdapter;
 
     public MainSFilterManager(ArrayList<Event> eventList, MainSEventArrayAdapter mainScreenAdapter){
-        this.originalList=eventList;
+        this.originalList=new ArrayList<>(eventList);
         this.filteredList=new ArrayList<Event>();
         this.arrayAdapter=mainScreenAdapter;
     }
@@ -58,18 +58,16 @@ public class MainSFilterManager {
     }
 
     public void applyFilters() {
-        filteredList = new ArrayList<Event>();
-        if (!isWithoutFilters()) {
-
-            //filteredList.clear();
-
-            boolean matchesKeyword = true;
-            boolean matchesSeats = true;
-            boolean matchesAvailability = true;
-            boolean isAlreadyInList =false;
-
+        ArrayList<Event> nextFilteredList = new ArrayList<>();
+        if (isWithoutFilters()) {
+            nextFilteredList.addAll(originalList);
+        } else {
             for (Event event : originalList) {
                 // Keyword filter
+                boolean matchesKeyword = true;
+                boolean matchesSeats = true;
+                boolean matchesAvailability = true;
+
                 if (keyword != null && !keyword.isEmpty()) {
                     matchesKeyword =
                             event.getTitle().toLowerCase().contains(keyword.toLowerCase()) ||
@@ -90,28 +88,22 @@ public class MainSFilterManager {
                         matchesAvailability =
                                 !eventEndTime.isBefore(selectedStartTime) &&
                                         !eventStartTime.isAfter(selectedEndTime);
-
                     } else {
                         matchesAvailability = false;
                     }
                 }
 
-                //QUICK FIX AAH
-                isAlreadyInList = filteredList.contains(event);
-
-                if (matchesKeyword && matchesSeats && matchesAvailability&& (!isAlreadyInList)) {
-                    filteredList.add(event);
+                if (matchesKeyword && matchesSeats && matchesAvailability) {
+                    nextFilteredList.add(event);
                 }
             }
-            arrayAdapter.clear();
-            arrayAdapter.addAll(filteredList);
-            arrayAdapter.notifyDataSetChanged();
-            Log.d("FilteredList",filteredList.toString());
-        } else {
-            arrayAdapter.clear();
-            arrayAdapter.addAll(originalList);
-            arrayAdapter.notifyDataSetChanged();
         }
+
+        filteredList = nextFilteredList;
+        arrayAdapter.clear();
+        arrayAdapter.addAll(filteredList);
+        arrayAdapter.notifyDataSetChanged();
+        Log.d("FilteredList", filteredList.toString());
     }
 
     public boolean isWithoutFilters(){
