@@ -16,6 +16,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.model.Lottery;
@@ -25,6 +26,7 @@ import com.example.walrusevents.model.Notification;
 import com.example.walrusevents.model.WaitlistEntry;
 import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Event;
+import com.example.walrusevents.ui.ConfigureLotteryFragment;
 import com.example.walrusevents.ui.FinalizedPoolFragment;
 import com.example.walrusevents.ui.OEventPoolView;
 import com.example.walrusevents.ui.PostLotteryPoolFragment;
@@ -420,13 +422,15 @@ public class OEventPoolActivity extends AppCompatActivity {
                 break;
             case 4:
                 view.getLotteryButton().setVisibility(View.VISIBLE);
-                view.getLotteryButton().setText("Confirm Selection");
+                view.getLotteryButton().setText("Draw Selection");
                 view.getLotteryButton().setOnClickListener(v -> {
-                    if (eventModel.getApplicantCapacity() <= 0) {
-                        Toast.makeText(this, "Set the applicant capacity before confirming the selection", Toast.LENGTH_SHORT).show();
-                        return;
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    if (fragmentManager.findFragmentByTag(CONFIG_LOTTERY_TAG) == null) {
+                        ConfigureLotteryFragment configureLotteryFragment = new ConfigureLotteryFragment(eventModel, this);
+                        configureLotteryFragment.show(getSupportFragmentManager(), CONFIG_LOTTERY_TAG);
                     }
-                    runLotteryWithoutNotifications();
+
+                    //runLotteryWithoutNotifications();
                 });
                 break;
         }

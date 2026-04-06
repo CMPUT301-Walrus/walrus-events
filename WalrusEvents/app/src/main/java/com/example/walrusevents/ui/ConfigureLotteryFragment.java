@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,9 +44,17 @@ public class ConfigureLotteryFragment extends DialogFragment {
         cancelButton.setOnClickListener(v -> dismiss());
 
         confirmButton.setOnClickListener(v -> {
+            int configuredCapacity = 0;
             if (applicantCapText.getText() != null && !applicantCapText.getText().isEmpty()) {
-                eventModel.setApplicantCapacity(Integer.parseInt(applicantCapText.getText().toString()));
+                configuredCapacity = Integer.parseInt(applicantCapText.getText().toString());
             }
+
+            if (configuredCapacity <= 0) {
+                Toast.makeText(activity, "Set the applicant capacity before drawing selection", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            eventModel.setApplicantCapacity(configuredCapacity);
 
             if (activity.getSupportFragmentManager().findFragmentByTag(OEventPoolActivity.CONFIG_NOTIFICATIONS_TAG) == null) {
                 ConfigureNotificationsFragment configureNotificationsFragment = new ConfigureNotificationsFragment(eventModel, activity);
