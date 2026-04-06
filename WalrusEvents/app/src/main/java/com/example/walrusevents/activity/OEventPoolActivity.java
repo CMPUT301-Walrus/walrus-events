@@ -133,6 +133,19 @@ public class OEventPoolActivity extends AppCompatActivity {
         view.getBackButton().setOnClickListener(v -> {
             finish();
         });
+
+        view.getMapButton().setOnClickListener(v -> {
+            Intent intent = new Intent(this, MapsActivity.class);
+            intent.putExtra("eventId", eventModel.getEventId());
+            startActivity(intent);
+        });
+
+        // Toggle map button visibility based on geolocation requirement
+        if (eventModel.getUseGeolocation()) {
+            view.getMapButton().setVisibility(View.VISIBLE);
+        } else {
+            view.getMapButton().setVisibility(View.GONE);
+        }
     }
 
     /**
