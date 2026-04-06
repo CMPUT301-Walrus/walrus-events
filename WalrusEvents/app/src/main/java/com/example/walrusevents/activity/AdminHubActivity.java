@@ -30,6 +30,8 @@ public class AdminHubActivity extends AppCompatActivity {
 
         view.getImagesButton().setOnClickListener(v -> {
             //TODO: go to admin images view
+            Intent goToAdminImages = new Intent(AdminHubActivity.this,AdminAllImagesActivity.class);
+            startActivity(goToAdminImages);
         });
 
         view.getProfilesButton().setOnClickListener(v -> {
