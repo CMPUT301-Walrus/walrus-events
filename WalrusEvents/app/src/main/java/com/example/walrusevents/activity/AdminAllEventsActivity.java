@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -27,24 +28,34 @@ public class AdminAllEventsActivity extends AppCompatActivity {
 
     private MainSEventArrayAdapter adapter;
 
+    private ArrayList<Event> eventList;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.all_events_admin);
         view = new AdminAllEventsView(this);
-        ArrayList<Event> eventlist =new ArrayList<>();
-        adapter=new MainSEventArrayAdapter(this,eventlist);
+        eventList =new ArrayList<>();
+        adapter=new MainSEventArrayAdapter(this,eventList);
         eventRepository=new EventRepository();
-        controller=new MainSEventListController(this,eventRepository,view.getListView());
-        controller.loadEvents();
+        //controller=new MainSEventListController(this,eventRepository,view.getListView());
+        //controller.loadEvents();
+
+        eventRepository.initiateGetAllEvents(events -> {
+            if (events != null) {
+                eventList.clear();
+                eventList.addAll(events);
+                adapter.notifyDataSetChanged();
+            }
+        });
 
         view.getBackButton().setOnClickListener(v -> {finish();});
 
         view.getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(!eventlist.isEmpty()) {
-                    Event event = eventlist.get(position);
+                if(!eventList.isEmpty()) {
+                    Event event = eventList.get(position);
                     String eventId = event.getEventId();
                     new AlertDialog.Builder(AdminAllEventsActivity.this)
                             .setTitle("Delete Event")
@@ -54,8 +65,9 @@ public class AdminAllEventsActivity extends AppCompatActivity {
                                         new EventRepository.OnEventDeletedListener() {
                                             @Override
                                             public void onSuccess() {
-                                                eventlist.remove(position);
+                                                eventList.remove(position);
                                                 adapter.notifyDataSetChanged();
+                                                Toast.makeText(AdminAllEventsActivity.this, "Event deleted", Toast.LENGTH_SHORT).show();
                                             }
 
                                             @Override
