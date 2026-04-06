@@ -44,6 +44,9 @@ public class NotificationsController {
     public void sendNotifications(Context context, String eventId, String title, String message, Notification.NotificationTarget targetGroup) {
         Notification notification = new Notification(title, message, eventId, targetGroup);
 
+        // Log noitification for admin
+        notifRepo.logGlobalNotification(notification);
+
         // Find all users in this event who match the target group
         waitlistRepo.getAllEntries(eventId, entries -> {
             for (WaitlistEntry entry : entries) {
