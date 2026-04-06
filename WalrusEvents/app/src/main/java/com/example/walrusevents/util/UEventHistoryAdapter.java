@@ -20,25 +20,94 @@ import java.util.ArrayList;
 /**
  * UEventHistoryAdapter
  * Drives the user's event history ListView.
- * Each row shows the event title, registration deadline, and a colour-coded
- * status badge reflecting the user's WaitlistEntry.Status for that event.
+ * Each row shows the event title, description, and a colour-coded
+ * status badge reflecting the user's relationship to that event.
  */
 public class UEventHistoryAdapter extends ArrayAdapter<UEventHistoryAdapter.HistoryItem> {
 
     /**
-     * Pairs an Event with the current user's waitlist status for it.
+     * Encapsulates the chip content so the history list can show waitlist
+     * statuses and role-based statuses without changing the row layout.
+     */
+    public static final class HistoryStatus {
+        private final String label;
+        private final int color;
+        private final int priority;
+
+        private HistoryStatus(String label, int color, int priority) {
+            this.label = label;
+            this.color = color;
+            this.priority = priority;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public int getColor() {
+            return color;
+        }
+
+        public int getPriority() {
+            return priority;
+        }
+
+        public static HistoryStatus fromWaitlistStatus(@Nullable WaitlistEntry.Status status) {
+            if (status == null) {
+                return new HistoryStatus("Pending", 0xFFFFD24B, 1);
+            }
+
+            switch (status) {
+                case INVITED:
+                    return new HistoryStatus("Invited", 0xFF4CAF50, 1);
+                case NOT_CHOSEN:
+                    return new HistoryStatus("Not Selected", 0xFFEB78FF, 1);
+                case ACCEPTED:
+                    return new HistoryStatus("Confirmed", 0xFF00BCD4, 1);
+                case DECLINED:
+                    return new HistoryStatus("Declined", 0xFFB91C1C, 1);
+                case CANCELED:
+                    return new HistoryStatus("Cancelled", 0xFF6B7280, 1);
+                default:
+                    return new HistoryStatus("Pending", 0xFFFFD24B, 1);
+            }
+        }
+
+        public static HistoryStatus coOrganizer() {
+            return new HistoryStatus("Co-Organizer", 0xFF2563EB, 2);
+        }
+    }
+
+    /**
+     * Pairs an Event with the current user's history status for it.
      */
     public static class HistoryItem {
         public final Event event;
-        public final WaitlistEntry.Status status;
+        public final HistoryStatus status;
 
         public HistoryItem(Event event, WaitlistEntry.Status status) {
+            this(event, HistoryStatus.fromWaitlistStatus(status));
+        }
+
+        public HistoryItem(Event event, HistoryStatus status) {
             this.event = event;
             this.status = status;
         }
 
+        public static HistoryItem coOrganizer(Event event) {
+            return new HistoryItem(event, HistoryStatus.coOrganizer());
+        }
+
         public Event getEvent() {
             return event;
+        }
+
+        public HistoryStatus getStatus() {
+            return status;
+        }
+
+        public int getStatusPriority() {
+            return status.getPriority();
         }
     }
 
@@ -69,34 +138,13 @@ public class UEventHistoryAdapter extends ArrayAdapter<UEventHistoryAdapter.Hist
         eventDescription.setText(event.getDescription());
 
         statusChip.setVisibility(View.VISIBLE);
-        statusChip.setText(statusLabel(item.status));
+        HistoryStatus status = item.getStatus();
+        statusChip.setText(status.getLabel());
         GradientDrawable bg = new GradientDrawable();
         bg.setShape(GradientDrawable.RECTANGLE);
-        bg.setColor(statusColor(item.status));
+        bg.setColor(status.getColor());
         statusChip.setBackground(bg);
 
         return convertView;
-    }
-
-    private String statusLabel(WaitlistEntry.Status status) {
-        switch (status) {
-            case INVITED:   return "Invited";
-            case NOT_CHOSEN:return "Not Selected";
-            case ACCEPTED:  return "Confirmed";
-            case DECLINED:  return "Declined";
-            case CANCELED: return "Cancelled";
-            default:        return "Pending";
-        }
-    }
-
-    private int statusColor(WaitlistEntry.Status status) {
-        switch (status) {
-            case INVITED:   return 0xFF4CAF50; // green
-            case NOT_CHOSEN:return 0xFFEB78FF; // purple
-            case ACCEPTED:  return 0xFF00BCD4; // teal
-            case DECLINED:  return 0xFFB91C1C; // red
-            case CANCELED: return 0xFF6B7280; // grey
-            default:        return 0xFFFFD24B; // yellow (PENDING)
-        }
     }
 }
