@@ -78,16 +78,27 @@ public class UEventsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 UEventHistoryAdapter.HistoryItem historyItem = (UEventHistoryAdapter.HistoryItem) adapterView.getItemAtPosition(i);
-                Event selectedEvent = historyItem.getEvent();
-                Intent passToUserEventDetails = new Intent(UEventsActivity.this, UEventDetailsActivity.class);
-
-                // packaging serializable object into Intent referenced from Peter Mortensen in Stack Overflow https://stackoverflow.com/questions/14333449/passing-data-through-intent-using-serializable. March 12, 2026
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("Event", selectedEvent);
-                passToUserEventDetails.putExtras(bundle);
-                startActivity(passToUserEventDetails);
+                openHistoryItem(historyItem);
             }
         });
+    }
+
+    private void openHistoryItem(@Nullable UEventHistoryAdapter.HistoryItem historyItem) {
+        if (historyItem == null || historyItem.getEvent() == null) {
+            return;
+        }
+
+        Event selectedEvent = historyItem.getEvent();
+        Class<?> destination = historyItem.opensOrganizerView(deviceId)
+                ? OEventPoolActivity.class
+                : UEventDetailsActivity.class;
+        Intent eventIntent = new Intent(UEventsActivity.this, destination);
+
+        // packaging serializable object into Intent referenced from Peter Mortensen in Stack Overflow https://stackoverflow.com/questions/14333449/passing-data-through-intent-using-serializable. March 12, 2026
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("Event", selectedEvent);
+        eventIntent.putExtras(bundle);
+        startActivity(eventIntent);
     }
 
     /**

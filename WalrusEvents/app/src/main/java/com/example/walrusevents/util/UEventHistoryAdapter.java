@@ -33,11 +33,17 @@ public class UEventHistoryAdapter extends ArrayAdapter<UEventHistoryAdapter.Hist
         private final String label;
         private final int color;
         private final int priority;
+        private final boolean organizerView;
 
         private HistoryStatus(String label, int color, int priority) {
+            this(label, color, priority, false);
+        }
+
+        private HistoryStatus(String label, int color, int priority, boolean organizerView) {
             this.label = label;
             this.color = color;
             this.priority = priority;
+            this.organizerView = organizerView;
         }
 
         public String getLabel() {
@@ -50,6 +56,10 @@ public class UEventHistoryAdapter extends ArrayAdapter<UEventHistoryAdapter.Hist
 
         public int getPriority() {
             return priority;
+        }
+
+        public boolean opensOrganizerView() {
+            return organizerView;
         }
 
         public static HistoryStatus fromWaitlistStatus(@Nullable WaitlistEntry.Status status) {
@@ -74,7 +84,7 @@ public class UEventHistoryAdapter extends ArrayAdapter<UEventHistoryAdapter.Hist
         }
 
         public static HistoryStatus coOrganizer() {
-            return new HistoryStatus("Co-Organizer", 0xFF2563EB, 2);
+            return new HistoryStatus("Co-Organizer", 0xFF2563EB, 2, true);
         }
     }
 
@@ -108,6 +118,13 @@ public class UEventHistoryAdapter extends ArrayAdapter<UEventHistoryAdapter.Hist
 
         public int getStatusPriority() {
             return status.getPriority();
+        }
+
+        public boolean opensOrganizerView(@Nullable String deviceId) {
+            return status != null
+                    && status.opensOrganizerView()
+                    && event != null
+                    && event.isCoOrganizer(deviceId);
         }
     }
 
