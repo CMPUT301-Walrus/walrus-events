@@ -57,6 +57,10 @@ public class Event implements Serializable {
         numParticipants=1; //TEMP num Participants
     }
 
+    public Event(String integrationTestParty, String s) {
+
+    }
+
     /**
      * Gets unique id for event
      * @return eventId
