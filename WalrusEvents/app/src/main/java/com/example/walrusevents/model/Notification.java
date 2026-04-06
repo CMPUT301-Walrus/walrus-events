@@ -128,7 +128,9 @@ public class Notification {
             case ACCEPTED: return NotificationTarget.SELECTED;
             case NOT_CHOSEN: return NotificationTarget.NOT_SELECTED;
             case PENDING: return NotificationTarget.WAITING_LIST;
-            case CANCELED: return NotificationTarget.CANCELED;
+            case CANCELED:
+            case DECLINED:
+                return NotificationTarget.CANCELED;
             default: return NotificationTarget.ALL;
         }
     }
