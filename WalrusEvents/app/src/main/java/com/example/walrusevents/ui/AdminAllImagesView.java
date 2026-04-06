@@ -1,8 +1,6 @@
 package com.example.walrusevents.ui;
 
 import android.app.Activity;
-import android.media.Image;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 

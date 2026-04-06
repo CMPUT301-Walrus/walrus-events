@@ -102,6 +102,8 @@
             android:exported="false" />
         <activity android:name=".activity.AdminAllImagesActivity"
             android:exported="false"/>
+        <activity android:name=".activity.AdminAllEventsActivity"
+            android:exported="false"/>
     </application>
 
 </manifest>

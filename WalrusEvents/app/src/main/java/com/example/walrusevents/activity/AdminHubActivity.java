@@ -34,6 +34,8 @@ public class AdminHubActivity extends AppCompatActivity {
 
         view.getEventsButton().setOnClickListener(v -> {
             //TODO: go to admin events view
+            Intent goToAdminEvents = new Intent(AdminHubActivity.this,AdminAllEventsActivity.class);
+            startActivity(goToAdminEvents);
         });
 
         view.getImagesButton().setOnClickListener(v -> {

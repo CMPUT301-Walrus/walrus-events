@@ -37,7 +37,7 @@ public class SearchPrivateEntrantsController implements ProfileRepository.Profil
     public void loadAllEntrants(){
         listAdapter.clear();
         profileRepository.resetPagination();
-        profileRepository.initiateGetAllProfiles(15,this);
+        profileRepository.initiateGetAllProfiles(10,this);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class SearchPrivateEntrantsController implements ProfileRepository.Profil
 
         updateData(entrants);
         //listAdapter.notifyDataSetChanged();
-        if (entrants.size() == 15){
+        if (entrants.size() == 10){
             profileRepository.getNextProfilesBatch(10, this);
         }
 

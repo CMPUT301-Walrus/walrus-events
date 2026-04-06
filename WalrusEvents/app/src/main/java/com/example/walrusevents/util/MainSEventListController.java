@@ -28,6 +28,8 @@ public class MainSEventListController implements EventRepository.EventListCallba
     private EventRepository eventRepository;
     private MainSFilterManager filterManager;
 
+    private boolean isJustEvents=false;
+
     /**
      * Constructor for the Main Screen Event List
      * @param context
@@ -108,12 +110,14 @@ public class MainSEventListController implements EventRepository.EventListCallba
                 eventList.add(newEvent);
             }
         }
-        filterManager.updateData(eventList);
-        //eventRepository.getNextEventBatch(this);
-        if (events.size() == 2) {
-            eventRepository.getNextEventBatch(this);
-        }
-        System.out.printf("%d event(s) loaded", events.size());
+
+            filterManager.updateData(eventList);
+
+            //eventRepository.getNextEventBatch(this);
+            if (events.size() == 2) {
+                eventRepository.getNextEventBatch(this);
+            }
+            System.out.printf("%d event(s) loaded", events.size());
     }
 
     public void setKeyword(String keyword) {
@@ -135,5 +139,9 @@ public class MainSEventListController implements EventRepository.EventListCallba
 
     public void setDateRange(LocalDateTime start, LocalDateTime end){
         filterManager.setSelectedRange(start,end);
+    }
+
+    public void setIsJustEvent(boolean bool){
+        this.isJustEvents=bool;
     }
 }
