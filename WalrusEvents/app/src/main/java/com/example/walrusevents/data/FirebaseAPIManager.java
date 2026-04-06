@@ -13,6 +13,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
+
 public class FirebaseAPIManager {
 
     /**
@@ -49,6 +51,7 @@ public class FirebaseAPIManager {
                     Log.e("FirebaseAPI", "Upload failed for " + fileName + ": " + e.getMessage());
                     listener.onFailure(e.getMessage());
                 });
+        //storageReference.listAll();
     }
 
     /**
@@ -72,6 +75,39 @@ public class FirebaseAPIManager {
                 });
     }
 
+    public void getAllImages(OnImagesLoadedListener listener) {
+        ArrayList<Uri> imageList = new ArrayList<>();
+        StorageReference listRef = storageReference.child("posters/");
+
+        listRef.listAll().addOnSuccessListener(listResult -> {
+            if (listResult.getItems().isEmpty()) {
+                listener.onSuccess(imageList);
+                return;
+            }
+
+            final int total = listResult.getItems().size();
+            final int[] count = {0};
+
+            for (StorageReference fileRef : listResult.getItems()) {
+                fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    imageList.add(uri);
+                    count[0]++;
+
+                    if (count[0] == total) {
+                        listener.onSuccess(imageList); // ALL done
+                    }
+                }).addOnFailureListener(e -> {
+                    count[0]++;
+                    if (count[0] == total) {
+                        listener.onSuccess(imageList);
+                    }
+                });
+            }
+        }).addOnFailureListener(e -> {
+            listener.onFailure(e.getMessage());
+        });
+    }
+
     // Interfaces for communication back to the Repository
     public interface OnUploadCompleteListener {
         void onSuccess();
@@ -80,6 +116,11 @@ public class FirebaseAPIManager {
 
     public interface OnDownloadCompleteListener {
         void onSuccess(String imageUrl);
+        void onFailure(String error);
+    }
+
+    public interface OnImagesLoadedListener{
+        void onSuccess(ArrayList<Uri> imagesList);
         void onFailure(String error);
     }
 
