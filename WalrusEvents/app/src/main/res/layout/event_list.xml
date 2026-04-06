@@ -131,11 +131,11 @@
         <Button
             android:id="@+id/settings_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:backgroundTint="@color/yellow"
             android:text="Settings"
-            android:textColor="@color/black" />
+            android:textColor="@android:color/black" />
 
         <Button
             android:id="@+id/main_button"
