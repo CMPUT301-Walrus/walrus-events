@@ -83,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
         eventListController = new MainSEventListController(this, eventRepository, eventListView);
         eventListController.loadEvents();
 
+        eventListController.setFeatured(this, findViewById(R.id.featured_event_name), findViewById(R.id.featured_event_thumbnail));
+
         /*
          * Search Bar
          */
@@ -279,10 +281,11 @@ public class MainActivity extends AppCompatActivity {
         }
         initialProfileSetupLaunched = false;
         eventListController.loadEvents();
+        eventListController.setFeatured(this, findViewById(R.id.featured_event_name), findViewById(R.id.featured_event_thumbnail));
         ensureProfileSetupState();
     }
 
-    private void updateRoleText(){
+    public void updateRoleText(){
         UserRole role = UserRoleManager.getRole();
         changeUserRoleButton.setText("Role:"+role.toString());
 
