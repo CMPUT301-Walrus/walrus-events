@@ -1,3 +1,9 @@
+/**
+ * This view is responsible for showing an organizer the details of an event
+ * This page allows the organizer to edit the details for an event
+ * It updates the information for the event and tells the controller to update the database
+ */
+
 package com.example.walrusevents.ui;
 
 import android.app.Activity;

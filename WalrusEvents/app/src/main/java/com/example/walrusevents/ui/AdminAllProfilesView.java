@@ -1,3 +1,7 @@
+/**
+ * View popes up when admin wants to view all profiles to manage them
+ */
+
 package com.example.walrusevents.ui;
 
 import android.app.Activity;

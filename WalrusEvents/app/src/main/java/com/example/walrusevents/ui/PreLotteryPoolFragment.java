@@ -1,3 +1,8 @@
+/**
+ * This fragment pops up when the organizer wants to view the pre-lottery waitlist
+ * It will give the organizer the ability to draw the lottery and progress to the PostLotteryPoolFragment
+ */
+
 package com.example.walrusevents.ui;
 
 import android.app.Activity;

@@ -1,3 +1,8 @@
+/**
+ * This manager initiates the connection with Firebase
+ * It is meant to act as the hub for all communication with the Firebase database for the rest of the app
+ * Provides a clean interface to store and retrieve data seamlessly
+ */
 package com.example.walrusevents.data;
 
 import android.graphics.Bitmap;

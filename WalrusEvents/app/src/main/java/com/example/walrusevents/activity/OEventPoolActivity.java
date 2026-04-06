@@ -1,3 +1,10 @@
+/**
+ * This is where organizers can view the pool of entrants for their specified event
+ * It is also where can choose to invite winner from the lottery
+ * This activity is responsible for managing the entrants that join the lottery
+ * It is also responsible to initaiting the lottery and sending notifications
+ */
+
 package com.example.walrusevents.activity;
 
 import static android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION;

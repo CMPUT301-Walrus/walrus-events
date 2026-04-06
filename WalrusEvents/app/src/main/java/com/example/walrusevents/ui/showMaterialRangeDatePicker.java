@@ -1,3 +1,7 @@
+/**
+ * This class allows the user to see the date range they can pick for an event
+ */
+
 package com.example.walrusevents.ui;
 
 import androidx.core.util.Pair;

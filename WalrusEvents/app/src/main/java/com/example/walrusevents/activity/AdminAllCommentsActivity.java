@@ -1,3 +1,9 @@
+/**
+ * Load all comment related activities and data
+ * This is meant for the Admin so everything must be loaded with transparency
+ * Allow options to manage comments as per project description
+ */
+
 package com.example.walrusevents.activity;
 
 import android.app.appsearch.EmbeddingVector;

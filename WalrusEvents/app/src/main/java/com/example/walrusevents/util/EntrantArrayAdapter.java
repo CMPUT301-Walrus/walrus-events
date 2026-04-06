@@ -1,3 +1,8 @@
+/**
+ * This adapter manages the collection of all entants for a partifulcar event
+ * It handles the logic for adjusting the collection of entrants as an changes occur in the app
+ */
+
 package com.example.walrusevents.util;
 
 import android.content.Context;

@@ -1,3 +1,7 @@
+/**
+ * This fragment pops up when an organizer wants to send notifications to other users about their event
+ */
+
 package com.example.walrusevents.ui;
 
 import android.content.Context;

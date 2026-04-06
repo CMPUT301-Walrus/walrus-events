@@ -18,6 +18,7 @@ import com.example.walrusevents.util.PermissionGatekeeper;
 /**
  * Shows the "My Events" view for the organizer. Initializes and connects event repository, the
  * organizer event list view and organizer event list controller.
+ * Shows organizer all events they own/co-own
  */
 public class OEventsActivity extends AppCompatActivity {
     private OEventListView eventListView;

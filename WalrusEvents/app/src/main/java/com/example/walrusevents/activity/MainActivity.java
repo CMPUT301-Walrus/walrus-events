@@ -1,3 +1,11 @@
+/**
+ * Landing page for the app
+ * The user is also allowed to change their role
+ * From here the user can navigate to different events depending on their role
+ * The user can also navigate to the settings page inbox
+ * This is the hub to which all other branchs of the app are connected to
+ */
+
 package com.example.walrusevents.activity;
 
 import android.content.Intent;

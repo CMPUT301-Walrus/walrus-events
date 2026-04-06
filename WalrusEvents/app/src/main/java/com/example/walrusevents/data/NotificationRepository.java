@@ -1,3 +1,8 @@
+/**
+ * This repo is in charge of storing and retrieving notifications from Firebase
+ * It manages converting notifications from the app and uploading them to Firebase
+ */
+
 package com.example.walrusevents.data;
 
 import com.example.walrusevents.model.Notification;

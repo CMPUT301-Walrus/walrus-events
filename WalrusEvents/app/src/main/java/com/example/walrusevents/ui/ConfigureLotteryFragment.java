@@ -1,3 +1,7 @@
+/**
+ * This fragment pops up when the organizer wants to configure the lottery
+ */
+
 package com.example.walrusevents.ui;
 
 import android.os.Bundle;
@@ -15,6 +19,7 @@ import androidx.fragment.app.FragmentManager;
 import com.example.walrusevents.R;
 import com.example.walrusevents.activity.OEventPoolActivity;
 import com.example.walrusevents.model.Event;
+import com.example.walrusevents.ui.ConfigureNotificationsFragment;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Locale;

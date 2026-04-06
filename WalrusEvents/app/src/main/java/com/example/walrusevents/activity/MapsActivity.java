@@ -1,3 +1,8 @@
+/**
+ * This activity is activated when an organizer wants to view the map of entrants for their event
+ * It will create the map and place markers for each entrant
+ */
+
 package com.example.walrusevents.activity;
 
 import androidx.fragment.app.FragmentActivity;
