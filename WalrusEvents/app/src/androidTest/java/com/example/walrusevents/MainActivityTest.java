@@ -19,7 +19,7 @@ import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.example.walrusevents.activity.AdminViewActivity;
+import com.example.walrusevents.activity.AdminHubActivity;
 import com.example.walrusevents.activity.MainActivity;
 import com.example.walrusevents.activity.OEventsActivity;
 import com.example.walrusevents.activity.UEventDetailsActivity;
@@ -123,7 +123,7 @@ public class MainActivityTest {
             onView(withId(R.id.main_button)).perform(click());
 
             // 3. Verify Intent
-            intended(hasComponent(AdminViewActivity.class.getName()));
+            intended(hasComponent(AdminHubActivity.class.getName()));
         }
     }
 

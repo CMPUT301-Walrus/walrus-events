@@ -10,7 +10,7 @@
         android:id="@+id/textView17"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="30dp"
         android:text="Images"
         android:textColor="@color/darkBlue"
         android:textSize="30sp"
@@ -21,11 +21,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
-        android:layout_width="379dp"
-        android:layout_height="671dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="1dp"
+        android:id="@+id/listView3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView17"
         app:layout_constraintVertical_bias="0.496" />
@@ -34,10 +37,12 @@
         android:id="@+id/back_admin_images"
         android:layout_width="56dp"
         android:layout_height="42dp"
-        android:layout_marginTop="48dp"
-        app:layout_constraintEnd_toStartOf="@+id/textView17"
-        app:layout_constraintHorizontal_bias="0.353"
+        android:layout_marginTop="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/listView3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@android:drawable/ic_menu_revert" />
 </androidx.constraintlayout.widget.ConstraintLayout>
