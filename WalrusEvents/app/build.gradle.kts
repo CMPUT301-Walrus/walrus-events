@@ -1,12 +1,17 @@
 plugins {
     alias(libs.plugins.android.application)
+
+    // add the google services gradle plugin
     id("com.google.gms.google-services")
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
+
 }
 
 android {
     namespace = "com.example.walrusevents"
-    compileSdk = 36
+    compileSdk {
+        version = release(36)
+    }
 
     defaultConfig {
         applicationId = "com.example.walrusevents"
@@ -44,7 +49,6 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.fragment.testing)
     implementation(libs.play.services.maps)
-    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
