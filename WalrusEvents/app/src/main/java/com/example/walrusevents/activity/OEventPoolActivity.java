@@ -243,7 +243,12 @@ public class OEventPoolActivity extends AppCompatActivity {
             case 2:
                 view.getLotteryButton().setText("Export List");
                 view.getLotteryButton().setOnClickListener(v -> {
-                    writeCSVLauncher.launch(null);
+                    if (finalList != null && !finalList.isEmpty()) {
+                        writeCSVLauncher.launch(null);
+                    }
+                    else {
+                        Toast.makeText(this, "There are no entrants", Toast.LENGTH_SHORT).show();
+                    }
                 });
                 break;
         }
