@@ -36,6 +36,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.List;
+
 /**
  * Class handles displaying event details for a particular event
  * Handles whether event was clicked on or scanned to go to event page
@@ -52,6 +54,7 @@ public class UEventDetailsActivity extends AppCompatActivity
     private WaitlistRepository waitlistRepository;
     private EventRepository eventRepository;
     private Entrant me;
+    private boolean atCapacity;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,6 +65,7 @@ public class UEventDetailsActivity extends AppCompatActivity
     private void initializeUi() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.event_details);
+        atCapacity = true;
 
         waitlistRepository = new WaitlistRepository();
         eventRepository = new EventRepository();
@@ -180,6 +184,20 @@ public class UEventDetailsActivity extends AppCompatActivity
         if (role != UserRole.USER || eventModel.getIsPrivate()) {
             view.getJoinButton().setVisibility(View.GONE);
         }
+
+        if (eventModel.getEntrantCapacity() == 0) {
+            atCapacity = false;
+        }
+        else {
+            eventRepository.getEvent(eventModel.getEventId(), event -> {
+                waitlistRepository.getEntriesByStatus(eventModel.getEventId(), WaitlistEntry.Status.PENDING, entries -> {
+                    if (entries.size() < eventModel.getEntrantCapacity()) {
+                        atCapacity = false;
+                        updateJoinButton(DeviceIdManager.getOrCreate(this));
+                    }
+                });
+            });
+        }
     }
 
     private void refreshWaitlistEntry() {
@@ -205,6 +223,9 @@ public class UEventDetailsActivity extends AppCompatActivity
         }
         if (!hasActiveWaitlistEntry()) {
             return false;
+        }
+        if (atCapacity) {
+            return true;
         }
         if (!eventModel.isInRegistration()) {
             return true;
