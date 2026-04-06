@@ -8,6 +8,9 @@ import android.widget.ListView;
 
 import com.example.walrusevents.R;
 
+/*
+* UI of the Admin All Images View
+ */
 public class AdminAllImagesView {
     private ListView imagesListView;
 

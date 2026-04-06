@@ -75,6 +75,9 @@ public class FirebaseAPIManager {
                 });
     }
 
+    /*
+    * Get all Uri of images in Firebase Storage
+     */
     public void getAllImages(OnImagesLoadedListener listener) {
         ArrayList<Uri> imageList = new ArrayList<>();
         StorageReference listRef = storageReference.child("posters/");

@@ -1,3 +1,8 @@
+/*
+* Oversees the Admin Images Uploaded Activity
+* load all the images from the Storage
+* be able to choose an image and remove it
+ */
 package com.example.walrusevents.activity;
 
 import android.net.Uri;
