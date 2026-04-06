@@ -1,7 +1,12 @@
 package com.example.walrusevents.activity;
 
+import static android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
+
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.PopupMenu;
@@ -13,7 +18,10 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.model.Lottery;
 import com.example.walrusevents.controllers.OEventPoolController;
 import com.example.walrusevents.R;
@@ -37,6 +45,7 @@ public class OEventPoolActivity extends AppCompatActivity {
     private OEventPoolView view;
     private OEventPoolController controller;
     private ArrayList<String> selectedForRemoval;
+    private ArrayList<Entrant> finalList;
 
     ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -55,6 +64,16 @@ public class OEventPoolActivity extends AppCompatActivity {
                     else if (o.getResultCode() == Activity.RESULT_CANCELED) {
                         // If back button is pressed, do not update eventModel
                     }
+                }
+            });
+
+    ActivityResultLauncher<Uri> writeCSVLauncher = registerForActivityResult(
+            new ActivityResultContracts.OpenDocumentTree(),
+            new ActivityResultCallback<Uri>() {
+                @Override
+                public void onActivityResult(Uri uri) {
+                    getContentResolver().takePersistableUriPermission(uri, FLAG_GRANT_WRITE_URI_PERMISSION);
+                    controller.writeCSV(OEventPoolActivity.this, uri, getContentResolver(), finalList);
                 }
             });
 
@@ -139,81 +158,99 @@ public class OEventPoolActivity extends AppCompatActivity {
      * Updates the activity based on the stored event. Call when any event details may have changed.
      */
     public void refresh() {
+        controller = new OEventPoolController(eventModel);
         if (eventModel.isInRegistration()) {
             PreLotteryPoolFragment preLotteryFragment = new PreLotteryPoolFragment(eventModel, view.getEntrantCountText());
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.waiting_list_fragment, preLotteryFragment)
                     .commit();
-            controller = new OEventPoolController(this, eventModel, view.getFragmentContainerView(), preLotteryFragment);
         }
         else if (eventModel.isInConfirmation()) {
             selectedForRemoval = new ArrayList<>();
-            PostLotteryPoolFragment postLotteryFragment = new PostLotteryPoolFragment(eventModel, selectedForRemoval);
+            PostLotteryPoolFragment postLotteryFragment = new PostLotteryPoolFragment(eventModel, controller, selectedForRemoval);
 
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.waiting_list_fragment, postLotteryFragment)
                     .commit();
-            controller = new OEventPoolController(this, eventModel, view.getFragmentContainerView(), postLotteryFragment);
         }
         else {
-            FinalizedPoolFragment finalizedPoolFragment = new FinalizedPoolFragment(eventModel);
+            finalList = new ArrayList<>();
+            FinalizedPoolFragment finalizedPoolFragment = new FinalizedPoolFragment(eventModel, controller, finalList);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.waiting_list_fragment, finalizedPoolFragment)
                     .commit();
-            controller = new OEventPoolController(this, eventModel, view.getFragmentContainerView(), finalizedPoolFragment);
         }
 
-        //Only show the lottery/invite button if the event hasn't ended yet
+        //Turn lottery button to an export csv button if registration and confirmation has passed
         if (eventModel.isInRegistration() || eventModel.isInConfirmation()) {
-            view.getLotteryButton().setVisibility(View.VISIBLE);
             //Turn lottery button to an invite button if the event is private
             if (!eventModel.getIsPrivate()) {
-                //Currently draws the lottery automatically upon clicking. More deliberate forms of execution can be done later.
+                setLotteryButton(0);
+            }
+            else {
+                setLotteryButton(1);
+            }
+        }
+        else {
+            setLotteryButton(2);
+        }
+    }
+
+    /**
+     * Sets the lottery button to lottery/join/export list
+     * @param mode 0 -> lottery, 1 -> invite, 2 -> export list
+     */
+    private void setLotteryButton(int mode) {
+        switch (mode) {
+            case 0:
                 view.getLotteryButton().setText("Lottery");
                 view.getLotteryButton().setOnClickListener(v -> {
                     WaitlistRepository collectForLottery = new WaitlistRepository();
-                    collectForLottery.getAllEntries(eventModel.getEventId(), new WaitlistRepository.EntryListCallback() {
-                        @Override
-                        public void onEntriesLoaded(List<WaitlistEntry> entries) {
-                            Lottery lottery = new Lottery();
-                            //Draw the lottery
-                            boolean lotterySuccess = lottery.drawToCapacity(entries, eventModel.getApplicantCapacity());
-
-                            //Guard statement for if the lottery didn't succeed
-                            if (!lotterySuccess) {
-                                Toast.makeText(OEventPoolActivity.this, "Lottery Failed", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-
-                            //Update the waitlist with the new state of the list
-                            for (WaitlistEntry entrant: entries) {
-                                lottery.updateWaitlist(eventModel.getEventId(), entrant, OEventPoolActivity.this);
-                            }
-                            controller.sendNotifications(OEventPoolActivity.this,
-                                    String.format(Locale.getDefault(), "%s Lottery Result", eventModel.getTitle()),
-                                    "You've been selected!",
-                                    Notification.NotificationTarget.SELECTED);
-                            controller.sendNotifications(OEventPoolActivity.this,
-                                    String.format(Locale.getDefault(), "%s Lottery Result", eventModel.getTitle()),
-                                    "You were not selected",
-                                    Notification.NotificationTarget.NOT_SELECTED);
-                            refresh();
-                        }
-                    });
+                    collectForLottery.getAllEntries(eventModel.getEventId(), this::doLottery);
                 });
-            }
-            else {
+                break;
+            case 1:
                 view.getLotteryButton().setText("Invite");
 
+                //TODO: replace testEntrantId when entrant search is implemented
                 String testEntrantId = DeviceIdManager.getOrCreate(this);
                 view.getLotteryButton().setOnClickListener(v -> {
                     controller.sendInvite(this, testEntrantId, "Invitation",
                             String.format(Locale.getDefault(),"You were invited to %s!", eventModel.getTitle()));
                 });
-            }
+                break;
+            case 2:
+                view.getLotteryButton().setText("Export List");
+                view.getLotteryButton().setOnClickListener(v -> {
+                    writeCSVLauncher.launch(null);
+                });
+                break;
         }
-        else {
-            view.getLotteryButton().setVisibility(View.GONE);
+    }
+
+    private void doLottery(List<WaitlistEntry> entries) {
+        Lottery lottery = new Lottery();
+        //Draw the lottery
+        boolean lotterySuccess = lottery.drawToCapacity(entries, eventModel.getApplicantCapacity());
+
+        //Guard statement for if the lottery didn't succeed
+        if (!lotterySuccess) {
+            Toast.makeText(OEventPoolActivity.this, "Lottery Failed", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        //Update the waitlist with the new state of the list
+        for (WaitlistEntry entrant: entries) {
+            lottery.updateWaitlist(eventModel.getEventId(), entrant, OEventPoolActivity.this);
+        }
+        controller.sendNotifications(OEventPoolActivity.this,
+                String.format(Locale.getDefault(), "%s Lottery Result", eventModel.getTitle()),
+                "You've been selected!",
+                Notification.NotificationTarget.SELECTED);
+        controller.sendNotifications(OEventPoolActivity.this,
+                String.format(Locale.getDefault(), "%s Lottery Result", eventModel.getTitle()),
+                "You were not selected",
+                Notification.NotificationTarget.NOT_SELECTED);
+        refresh();
     }
 }
