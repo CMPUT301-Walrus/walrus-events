@@ -44,7 +44,7 @@ public class UEventDetailsView {
         return eventPoster;
     }
 
-    public Button getBackButton() {
+    public ImageView getBackButton() {
         return backButton;
     }
 
