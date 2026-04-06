@@ -1,12 +1,16 @@
 package com.example.walrusevents.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
@@ -23,10 +27,24 @@ public class OEventEditActivity extends AppCompatActivity {
     private OEventEditView eventEditView;
     private OEventEditController eventEditController;
     private Event eventModel;
+    private ActivityResultLauncher<PickVisualMediaRequest> imagePickerLauncher;
+    private Uri selectedImageUri;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         PermissionGatekeeper.requireNotBanned(this, false, permissions -> initializeUi());
+        //start activity(the image gallery) and get the result of the uri back here
+        imagePickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.PickVisualMedia(),
+                uri -> {
+                    if (uri != null) {
+                        selectedImageUri = uri;
+                        Log.d("Image","Selected"+uri.toString());
+                        saveUploadedPoster();
+                    }else{
+                        Log.d("Image","image not selected");
+                    }
+                });
     }
 
     private void initializeUi() {
@@ -70,6 +88,7 @@ public class OEventEditActivity extends AppCompatActivity {
                 // Glide handles the background download and UI thread update
                 Glide.with(OEventEditActivity.this)
                         .load(imageUrl)
+                        .skipMemoryCache(true)
                         .placeholder(R.drawable.rounded_light_blue_square) // Show while loading
                         .error(R.drawable.image_not_found_placeholder)   // Show if missing
                         .into(eventEditView.getEditPosterImage());
@@ -83,6 +102,13 @@ public class OEventEditActivity extends AppCompatActivity {
 
         eventEditView.getEditPosterImage().setOnClickListener(v -> {
             //TODO: Allow for selection of poster
+            Log.d("Image","clicks allows for you to upload image");
+            imagePickerLauncher.launch(new PickVisualMediaRequest.Builder()
+                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                    .build());
+            Log.d("Imaeg","selecteduri"+selectedImageUri);
+            //saveUploadedPoster();
+
         });
 
         //Thumbnail
@@ -161,6 +187,29 @@ public class OEventEditActivity extends AppCompatActivity {
         else {
             eventEditView.getEditRegistrationEnd().setVisibility(TextView.VISIBLE);
             eventEditView.getEditRegistrationStart().setVisibility(TextView.VISIBLE);
+        }
+    }
+
+    private void saveUploadedPoster(){
+        if (selectedImageUri != null) {
+
+            FirebaseAPIManager apiMgr = new FirebaseAPIManager();
+            ImageRepository imageRepo = new ImageRepository(apiMgr);
+
+            String fileName = eventModel.getEventId();
+            imageRepo.storeImage(selectedImageUri, fileName, new FirebaseAPIManager.OnUploadCompleteListener() {
+                @Override
+                public void onSuccess() {
+                    Log.d("Image","Uploaded??");
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    Log.d("Image","Not uploaded:"+error);
+                }
+            });
+
+
         }
     }
 }

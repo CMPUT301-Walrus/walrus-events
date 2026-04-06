@@ -126,6 +126,7 @@ public class UEventDetailsActivity extends AppCompatActivity
             public void onSuccess(String imageUrl) {
                 Glide.with(UEventDetailsActivity.this)
                         .load(imageUrl)
+                        .skipMemoryCache(true)
                         .placeholder(R.drawable.rounded_light_blue_square)
                         .error(R.drawable.image_not_found_placeholder)
                         .into(view.getEventPoster());
