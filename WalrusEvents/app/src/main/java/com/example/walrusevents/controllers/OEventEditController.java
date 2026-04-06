@@ -1,3 +1,8 @@
+/**
+ * This controller is in charge of managing an events details when an organizer edits them
+ * Primarily composed of retrieving and storing information from Firebase
+ */
+
 package com.example.walrusevents.controllers;
 
 import android.app.Activity;
@@ -6,7 +11,7 @@ import android.graphics.Bitmap;
 import android.media.Image;
 import android.widget.DatePicker;
 
-import com.example.walrusevents.EventRepository;
+import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.data.FirebaseAPIManager;
 import com.example.walrusevents.data.ImageRepository;
 import com.example.walrusevents.model.Event;
@@ -59,6 +64,7 @@ public class OEventEditController {
         if (model.getEndConfirmationTime() != null) {
             confirmationEnd = LocalDateTime.parse(model.getEndConfirmationTime());
             listener.updateConfirmationEnd(confirmationEnd);
+            System.out.println(confirmationEnd);
         }
 
         listener.updateEntrantCapacity(model.getEntrantCapacity());
@@ -67,6 +73,10 @@ public class OEventEditController {
 
     public void setTitle(String title) {
         model.setTitle(title);
+    }
+
+    public void setIsPrivate(boolean isPrivate) {
+        model.setIsPrivate(isPrivate);
     }
 
     public void setDescription(String description) {
@@ -89,22 +99,12 @@ public class OEventEditController {
         model.setEndConfirmationTime(endConfirmationTIme);
     }
 
-    public void setEntrantCapacity(String entrantCapacity) {
-        if (entrantCapacity.isEmpty()) {
-            model.setEntrantCapacity(0);
-        }
-        else {
-            model.setEntrantCapacity(Integer.parseInt(entrantCapacity));
-        }
+    public boolean setEntrantCapacity(String entrantCapacity) {
+        return model.setEntrantCapacity(parseCapacity(entrantCapacity));
     }
 
-    public void setApplicantCapacity(String applicantCapacity) {
-        if (applicantCapacity.isEmpty()) {
-            model.setApplicantCapacity(0);
-        }
-        else {
-            model.setApplicantCapacity(Integer.parseInt(applicantCapacity));
-        }
+    public boolean setApplicantCapacity(String applicantCapacity) {
+        return model.setApplicantCapacity(parseCapacity(applicantCapacity));
     }
 
     public void setThumbnail(Image thumbnail) {
@@ -219,6 +219,20 @@ public class OEventEditController {
 
         dialog.show();
     }
+
+    private int parseCapacity(String capacityText) {
+        if (capacityText == null) {
+            return 0;
+        }
+
+        String trimmed = capacityText.trim();
+        if (trimmed.isEmpty()) {
+            return 0;
+        }
+
+        return Integer.parseInt(trimmed);
+    }
+
     public void saveModel() {
         EventRepository eventRepository = new EventRepository();
 

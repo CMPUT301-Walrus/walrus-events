@@ -1,9 +1,15 @@
+/**
+ * This activity is charge of managing the users view of the waitlist for event
+ * It allws usesr to see how many other entrants are on the list
+ */
+
 package com.example.walrusevents.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -13,15 +19,15 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.walrusevents.R;
-import com.example.walrusevents.WaitlistEntry;
-import com.example.walrusevents.WaitlistRepository;
+import com.example.walrusevents.model.WaitlistEntry;
+import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Event;
 
 import java.util.List;
 
 public class UViewWaitlistActivity extends AppCompatActivity implements WaitlistRepository.EntryListCallback {
     private Event event;
-    private Button backToEvent;
+    private ImageView backToEvent;
     private TextView eventTitle;
     private TextView countEntrants;
     private List<WaitlistEntry> waitlist;
@@ -29,6 +35,10 @@ public class UViewWaitlistActivity extends AppCompatActivity implements Waitlist
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initializeUi();
+    }
+
+    private void initializeUi() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.user_view_waitlist_activity);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -60,33 +70,26 @@ public class UViewWaitlistActivity extends AppCompatActivity implements Waitlist
          */
         backToEvent = findViewById(R.id.back_to_event);
         backToEvent.setOnClickListener(v -> {
-            Intent goBack = new Intent(UViewWaitlistActivity.this, UEventDetailsActivity.class);
-
-            // packaging serializable object into Intent referenced from Peter Mortensen in Stack Overflow https://stackoverflow.com/questions/14333449/passing-data-through-intent-using-serializable. March 12, 2026
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("Event", event);
-            goBack.putExtras(bundle);
-            startActivity(goBack);
+            finish();
         });
 
-        // TODO: Display Waitlist entries in ListView
         countEntrants = findViewById(R.id.count_entrants);
         WaitlistRepository getWaitlist = new WaitlistRepository();
         getWaitlist.getAllEntries(event.getEventId(), this);
-
     }
 
     public Integer countValidEntrants(List<WaitlistEntry> entries) {
         Integer count = 0;
         for(WaitlistEntry entry: entries) {
-            if(entry.getStatus() != WaitlistEntry.Status.DECLINED && entry.getStatus() != WaitlistEntry.Status.CANCELLED) count++;
+            if(entry.getStatus() != WaitlistEntry.Status.DECLINED && entry.getStatus() != WaitlistEntry.Status.CANCELED) count++;
         }
+
         return count;
     }
-
     @Override
     public void onEntriesLoaded(List<WaitlistEntry> entries) {
         Integer eCount = countValidEntrants(entries);
         countEntrants.setText(eCount.toString());
+        event.setNumParticipants(eCount);
     }
 }

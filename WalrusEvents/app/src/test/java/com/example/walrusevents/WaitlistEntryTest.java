@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import com.example.walrusevents.model.WaitlistEntry;
+
 /**
  * Unit tests for the WaitlistEntry class.
  */
@@ -69,7 +71,7 @@ public class WaitlistEntryTest {
     @Test
     public void waitlistEntry_canTransitionToCancelled() {
         WaitlistEntry entry = new WaitlistEntry(DEVICE_ID, "0");
-        entry.setStatus(WaitlistEntry.Status.CANCELLED);
-        assertEquals(WaitlistEntry.Status.CANCELLED, entry.getStatus());
+        entry.setStatus(WaitlistEntry.Status.CANCELED);
+        assertEquals(WaitlistEntry.Status.CANCELED, entry.getStatus());
     }
 }

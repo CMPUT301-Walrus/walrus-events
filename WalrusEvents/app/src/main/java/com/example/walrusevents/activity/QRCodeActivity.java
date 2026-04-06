@@ -1,3 +1,8 @@
+/**
+ * This activity is activated when someone views the QR code for an event
+ * It displays it larger so that you can be scanned by an external device
+ */
+
 package com.example.walrusevents.activity;
 
 import android.graphics.Bitmap;
@@ -9,11 +14,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.walrusevents.R;
 import com.example.walrusevents.util.QRGenerator;
+import com.example.walrusevents.util.PermissionGatekeeper;
 
 public class QRCodeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PermissionGatekeeper.requireNotBanned(this, false, permissions -> initializeUi());
+    }
+
+    private void initializeUi() {
         // Use the XML layout that matches your storyboard design
         setContentView(R.layout.qr_code);
 

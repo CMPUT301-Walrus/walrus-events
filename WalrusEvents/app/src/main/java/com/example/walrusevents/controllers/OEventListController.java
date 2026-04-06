@@ -1,3 +1,9 @@
+/**
+ * This controller is in charge of managing the list of events view by an organizer
+ * It communicates with the rest of the app to retrieve and store events
+ * It is incharge of adding and removing events from the list of events owned by an organizer
+ */
+
 package com.example.walrusevents.controllers;
 
 import android.content.Context;
@@ -8,12 +14,13 @@ import android.widget.ListView;
 
 import androidx.fragment.app.FragmentManager;
 
-import com.example.walrusevents.EventRepository;
-import com.example.walrusevents.OEventArrayAdapter;
+import com.example.walrusevents.data.EventRepository;
+import com.example.walrusevents.util.OEventArrayAdapter;
 import com.example.walrusevents.activity.OEventPoolActivity;
 import com.example.walrusevents.data.FirebaseAPIManager;
 import com.example.walrusevents.model.Event;
 import com.example.walrusevents.ui.NameEventFragment;
+import com.example.walrusevents.util.DeviceIdManager;
 import com.example.walrusevents.util.PosterGenerator;
 import com.example.walrusevents.util.QRGenerator;
 
@@ -24,19 +31,21 @@ public class OEventListController implements NameEventFragment.NameEventListener
     private ArrayList<Event> eventList;
     private OEventArrayAdapter eventListAdapter;
     private EventRepository eventRepository;
+    private String deviceId;
 
     /**
      * Constructor for the organizer event list controller
      * @param context
-     * @param eventRepository
+     * @param deviceId
      * @param eventListView
      */
-    public OEventListController(Context context, EventRepository eventRepository, ListView eventListView) {
+    public OEventListController(Context context, String deviceId, ListView eventListView) {
         //Initialize EventController
         eventList = new ArrayList<>();
+        this.deviceId = deviceId;
         eventListAdapter = new OEventArrayAdapter(context, eventList);
         eventListView.setAdapter(eventListAdapter);
-        this.eventRepository = eventRepository;
+        eventRepository = new EventRepository();
     }
 
     /**
@@ -87,31 +96,34 @@ public class OEventListController implements NameEventFragment.NameEventListener
      * Creates an event with the specified title and adds it to eventList and the database
      * @param title The title to be given to the new event
      */
-    public void addEvent(String title) {
+    public void addEvent(String title, boolean isPrivate) {
         // Create new event
-        Event event = new Event(title, "Default description");
+        Event event = new Event(title, "", deviceId);
+        event.setIsPrivate(isPrivate);
 
         // Get new eventId from creating the event in eventRepo
         String eventId = eventRepository.addEvent(event);
 
-        // Generate QR code and poster
-        Bitmap qrCode = QRGenerator.generateQRCode(eventId);
-        Bitmap poster = PosterGenerator.createEventPoster(title, event.getDescription(), qrCode);
+        if (!isPrivate) {
+            // Generate QR code and poster
+            Bitmap qrCode = QRGenerator.generateQRCode(eventId);
+            Bitmap poster = PosterGenerator.createEventPoster(title, event.getDescription(), qrCode);
 
-        // Upload poster to Firebase
-        // EventPosterFragment will download it via eventId.jpg
-        FirebaseAPIManager apiManager = new FirebaseAPIManager();
-        apiManager.uploadBitmap(poster, eventId, new FirebaseAPIManager.OnUploadCompleteListener() {
-            @Override
-            public void onSuccess() {
-                Log.d("QR_LOG", "Poster and QR generated/uploaded for ID: " + eventId);
-            }
+            // Upload poster to Firebase
+            // EventPosterFragment will download it via eventId.jpg
+            FirebaseAPIManager apiManager = new FirebaseAPIManager();
+            apiManager.uploadBitmap(poster, eventId, new FirebaseAPIManager.OnUploadCompleteListener() {
+                @Override
+                public void onSuccess() {
+                    Log.d("QR_LOG", "Poster and QR generated/uploaded for ID: " + eventId);
+                }
 
-            @Override
-            public void onFailure(String error) {
-                Log.e("QR_LOG", "Failed to upload poster: " + error);
-            }
-        });
+                @Override
+                public void onFailure(String error) {
+                    Log.e("QR_LOG", "Failed to upload poster: " + error);
+                }
+            });
+        }
 
         // Update local UI
         eventList.add(event);

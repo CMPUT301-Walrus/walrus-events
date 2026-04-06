@@ -22,6 +22,16 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/private_event_toggle"
+                android:layout_width="212dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="323dp"
+                android:paddingTop="10dp"
+                android:text="Private Event"
+                android:textAlignment="center"
+                android:textSize="20sp" />
+
             <ImageView
                 android:id="@+id/editPoster"
                 android:layout_width="match_parent"
@@ -56,6 +66,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:background="#C6FAF6"
+                    android:gravity="top"
                     android:hint="Edit Description"
                     android:maxLines="8"
                     android:minLines="8"
@@ -194,6 +205,16 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/geolocation_toggle"
+                android:layout_width="290dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Require Geolocation to Join"
+                android:textSize="18sp"
+                android:thumbTint="#FFD24B"
+                app:trackTint="#0F9BE7" />
 
             <Button
                 android:id="@+id/doneButton"

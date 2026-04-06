@@ -1,3 +1,11 @@
+/**
+ * Landing page for the app
+ * The user is also allowed to change their role
+ * From here the user can navigate to different events depending on their role
+ * The user can also navigate to the settings page inbox
+ * This is the hub to which all other branchs of the app are connected to
+ */
+
 package com.example.walrusevents.activity;
 
 import android.content.Intent;
@@ -5,28 +13,44 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
+import androidx.core.util.Pair;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.walrusevents.controllers.NotificationsController;
+import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.model.Entrant;
-import com.example.walrusevents.EventRepository;
+import com.example.walrusevents.model.Notification;
 import com.example.walrusevents.model.Profile;
-import com.example.walrusevents.ProfileRepository;
+import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.R;
 import com.example.walrusevents.model.Event;
+import com.example.walrusevents.ui.NotificationInboxFragment;
 import com.example.walrusevents.util.DeviceIdManager;
 import com.example.walrusevents.util.MainSEventListController;
+import com.example.walrusevents.util.PermissionGatekeeper;
 import com.example.walrusevents.util.UserRole;
 import com.example.walrusevents.util.UserRoleManager;
+import com.google.android.material.datepicker.MaterialDatePicker;
 
-public class MainActivity extends AppCompatActivity implements ProfileRepository.SaveCallback {
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
+public class MainActivity extends AppCompatActivity {
 
     private EventRepository eventRepository;
+    private ProfileRepository profileRepository;
 
     private ListView eventListView;
 
@@ -34,10 +58,21 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
 
     private Button changeUserRoleButton;
 
+    private Button scanQRCodeButton;
+    private Button adminViewButton;
+    private ImageView settingsButton;
+    private ImageView eventsButton;
+    private boolean initialProfileSetupLaunched;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        PermissionGatekeeper.requireNotBanned(this, true, permissions -> initializeUi());
+    }
+
+    private void initializeUi() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.event_list);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -52,47 +87,118 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
          */
         eventListView = findViewById(R.id.event_list_view);
         eventRepository = new EventRepository();
+        profileRepository = new ProfileRepository();
         eventListController = new MainSEventListController(this, eventRepository, eventListView);
         eventListController.loadEvents();
 
-        /*
-        * When set to User, OnItemClick an event goes to event_details from eventListView
-         */
-        eventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(UserRoleManager.getRole() == UserRole.USER) {
-                    Event event_selected = (Event) adapterView.getItemAtPosition(i);
-                    Intent passToUserEventDetails = new Intent(MainActivity.this, UEventDetailsActivity.class);
+        eventListController.setFeatured(this, findViewById(R.id.featured_event_name), findViewById(R.id.featured_event_thumbnail));
 
-                    // packaging serializable object into Intent referenced from Peter Mortensen in Stack Overflow https://stackoverflow.com/questions/14333449/passing-data-through-intent-using-serializable. March 12, 2026
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("event", event_selected);
-                    passToUserEventDetails.putExtras(bundle);
-                    startActivity(passToUserEventDetails);
-                }
+        /*
+         * Search Bar
+         */
+        SearchView searchBar = findViewById(R.id.search_bar);
+        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //to reset to all public events to filter
+                eventListController.setKeyword(newText);
+                //eventListController.resetFilters();
+                //eventListController.loadEvents();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //eventListController.getSearchFilter().filter(query);
+                eventListController.setKeyword(query);
+                //eventListController.loadEventsbyKeyword(query);
+                return true;
+            }
+        });
+        searchBar.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+
+                eventListController.setKeyword("");
+                eventListController.loadEvents();
+                return false;
+            }
+        });
+
+        /*
+        * Capacity and Availability Filters
+         */
+        CheckBox capacitySortCheckbox=findViewById(R.id.capacity_sort_button);
+        CheckBox availabilitySortCheckbox=findViewById(R.id.availability_sort_button);
+
+        capacitySortCheckbox.setOnCheckedChangeListener((buttonView, isChecked) ->{
+            if(isChecked){
+                eventListController.setOpenSeatsFilter(true);
+
+            }
+            else{
+                eventListController.setOpenSeatsFilter(false);
+
+            }
+        });
+
+        availabilitySortCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                //GO TO SCHEDULE FRAGMENT
+                //TODO: setup fragment and get the ModalDateRangePicker to pick the selected dates
+                showDateRangePicker();
+
+
+            }else{
+                //revert?
+                eventListController.setDateRange(null,null);
+                eventListController.loadEvents();
             }
         });
 
 
+        //When set to User, OnItemClick an event goes to event_details from eventListView
+        eventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Event event_selected = (Event) adapterView.getItemAtPosition(i);
 
-        //TODO: Button to change between admin / user / organizer(?)
+                //Swap to role to user if an organizer looks at an event they didn't organize
+                UserRole userRole = UserRoleManager.getRole();
+                if (userRole == UserRole.ORGANIZER && !event_selected.getOwners().contains(DeviceIdManager.getOrCreate(MainActivity.this))) {
+                    UserRoleManager.setRole(UserRole.USER);
+                    updateRoleText();
+                    Toast.makeText(MainActivity.this, "Role changed to user", Toast.LENGTH_SHORT).show();
+                }
+                Intent passToUserEventDetails = new Intent(MainActivity.this, UEventDetailsActivity.class);
+                passToUserEventDetails.putExtra("Event", event_selected);
+                startActivity(passToUserEventDetails);
+            }
+        });
+
+
         /*
         * Admin View Button
-        * CURRENTLY connected to MAin Button (instead of back button in StoryBoards)
+        * CURRENTLY connected to Main Button (instead of back button in StoryBoards)
          */
-        //nav bar - basically useless, it needs its admin view which will have every admin task
-        Button adminViewButton = findViewById(R.id.main_button);
+        adminViewButton = findViewById(R.id.main_button);
         adminViewButton.setOnClickListener(v -> {
             //Go to "Admin View" from this button
-            Intent goAdminViewActivityIntent = new Intent(MainActivity.this,AdminViewActivity.class);
+            Intent goAdminViewActivityIntent = new Intent(MainActivity.this, AdminHubActivity.class);
             startActivity(goAdminViewActivityIntent);
 
         });
 
-        //TODO: Main Buttons for MainView - Settings, MainScreen, MyEvents
-        Button settingsButton = findViewById(R.id.settings_button);
-        Button eventsButton = findViewById(R.id.my_events_button);
+        // Click listener for qr code scanner button
+        scanQRCodeButton = findViewById(R.id.scan_qr_code_button);
+        scanQRCodeButton.setOnClickListener(v -> {
+            Intent goScannerIntent = new Intent(MainActivity.this, UQRCodeScannerActivity.class);
+            startActivity(goScannerIntent);
+        });
+
+        settingsButton = findViewById(R.id.settings_button);
+        eventsButton = findViewById(R.id.my_events_button);
+        ImageButton inboxButton = findViewById(R.id.inbox_button);
 
         /*
         * Role Change Button
@@ -100,28 +206,11 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
          */
         changeUserRoleButton = findViewById(R.id.changeRoleButton);
         updateRoleText();
+        updateVisibility(adminViewButton, settingsButton, eventsButton);
         changeUserRoleButton.setOnClickListener(v -> {
-            //Changes role in a loop user-organizer-admin
-            UserRoleManager.nextRole();
-            updateRoleText();
-
-            //Handling the View for Admin
-            if(UserRoleManager.getRole()==UserRole.ADMIN){
-                //show button for adminView
-                adminViewButton.setVisibility(View.VISIBLE);
-                adminViewButton.setText("Admin");
-                settingsButton.setVisibility(View.INVISIBLE);
-                eventsButton.setVisibility(View.INVISIBLE);
-
-            } else {
-                adminViewButton.setVisibility(View.INVISIBLE);
-                settingsButton.setVisibility(View.VISIBLE);
-                eventsButton.setVisibility(View.VISIBLE);
-
-            }
+            // Changes role in a loop user-organizer-admin
+            UserRoleManager.nextRole(this, this::updateRoleText);
         });
-
-        //TODO: Views for User:  Settings(Profile), MyEvents(Signed in Events)
 
         /*
         * My Events onClick
@@ -142,10 +231,7 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
 
         });
 
-        ProfileRepository profileRepository = new ProfileRepository();
-        String deviceId = DeviceIdManager.getOrCreate(this);
-        Profile placeholderProfile = new Profile(deviceId,"placeholderName","placeholderEmail");
-        profileRepository.saveProfile(new Entrant(placeholderProfile), this);
+        ensureProfileSetupState();
         /*
         * Settings onClick
          */
@@ -154,22 +240,153 @@ public class MainActivity extends AppCompatActivity implements ProfileRepository
             startActivity(goUSettingsActivityIntent);
         });
 
+        /**
+         * Inbox onClick
+         */
+        inboxButton.setOnClickListener(v -> {
+            NotificationInboxFragment inboxFragment = new NotificationInboxFragment();
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main, inboxFragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
     }
 
-    private void updateRoleText(){
+    /**
+     * This method handles displaying the correct UI depending on which role is active
+     * @param adminBtn Button should be dispalyed admin role only
+     * @param settingsBtn button to access settings
+     * @param eventsBtn button to access my events
+     */
+    private void updateVisibility(Button adminBtn, ImageView settingsBtn, ImageView eventsBtn) {
+        UserRole currentRole = UserRoleManager.getRole();
+
+        if(currentRole == UserRole.ADMIN) {
+            adminBtn.setVisibility(View.VISIBLE);
+            adminBtn.setText("Admin");
+            scanQRCodeButton.setVisibility(View.VISIBLE);
+            settingsBtn.setVisibility(View.INVISIBLE);
+            eventsBtn.setVisibility(View.INVISIBLE);
+        } else if (currentRole == UserRole.USER) {
+            adminBtn.setVisibility(View.GONE);
+            scanQRCodeButton.setVisibility(View.VISIBLE);
+            settingsBtn.setVisibility(View.VISIBLE);
+            eventsBtn.setVisibility(View.VISIBLE);
+        } else {
+            adminBtn.setVisibility(View.GONE);
+            scanQRCodeButton.setVisibility(View.VISIBLE);
+            settingsBtn.setVisibility(View.GONE);
+            eventsBtn.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        if (eventListController == null || profileRepository == null) {
+            return;
+        }
+        initialProfileSetupLaunched = false;
+        eventListController.loadEvents();
+        eventListController.setFeatured(this, findViewById(R.id.featured_event_name), findViewById(R.id.featured_event_thumbnail));
+        ensureProfileSetupState();
+    }
+
+    public void updateRoleText(){
         UserRole role = UserRoleManager.getRole();
         changeUserRoleButton.setText("Role:"+role.toString());
 
+        //Handling the View for Admin
+        updateVisibility(adminViewButton, settingsButton, eventsButton);
     }
 
-//TEMPORARY
-    @Override
-    public void onSuccess() {
+    private void ensureProfileSetupState() {
+        String deviceId = DeviceIdManager.getOrCreate(this);
+        profileRepository.getProfile(deviceId, entrant -> runOnUiThread(() -> {
+            if (entrant == null) {
+                createProfileAndLaunchSettings(deviceId);
+                return;
+            }
 
+            Profile profile = entrant.getProfile();
+            if (profile == null || !profile.hasRequiredContactInfo()) {
+                launchSettings();
+            }
+        }));
     }
 
-    @Override
-    public void onFailure(String error) {
+    private void createProfileAndLaunchSettings(String deviceId) {
+        Profile profile = new Profile(deviceId);
+        profileRepository.saveProfile(new Entrant(profile), new ProfileRepository.SaveCallback() {
+            @Override
+            public void onSuccess() {
+                runOnUiThread(() -> launchSettings());
+            }
 
+            @Override
+            public void onFailure(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(
+                            MainActivity.this,
+                            error != null ? error : "Unable to create profile.",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                    launchSettings();
+                });
+            }
+        });
     }
+
+    private void launchSettings() {
+        if (initialProfileSetupLaunched || isFinishing() || isDestroyed()) {
+            return;
+        }
+
+        initialProfileSetupLaunched = true;
+        Intent intent = new Intent(MainActivity.this, USettingsActivity.class);
+        intent.putExtra(USettingsActivity.INITIAL_PROFILE_SETUP, initialProfileSetupLaunched);
+        startActivity(intent);
+    }
+
+    private void showDateRangePicker() {
+
+        MaterialDatePicker<Pair<Long, Long>> picker =
+                MaterialDatePicker.Builder.dateRangePicker()
+                        .setTitleText("Select availability")
+                        .build();
+
+        picker.addOnPositiveButtonClickListener(selection -> {
+
+            if (selection == null) return;
+
+            Long startMillis = selection.first;
+            Long endMillis = selection.second;
+
+            if (startMillis != null && endMillis != null) {
+
+                LocalDateTime start = Instant.ofEpochMilli(startMillis)
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()
+                        .atStartOfDay();
+
+                LocalDateTime end = Instant.ofEpochMilli(endMillis)
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()
+                        .atTime(23, 59, 59);
+
+                //apply
+                eventListController.setDateRange(start,end);
+            }
+        });
+
+        picker.addOnNegativeButtonClickListener(dialog -> {
+            // Optional: reset checkbox if user cancels
+            CheckBox checkbox = findViewById(R.id.availability_sort_button);
+            checkbox.setChecked(false);
+        });
+
+        picker.show(getSupportFragmentManager(), "DATE_RANGE_PICKER");
+    }
+
 }

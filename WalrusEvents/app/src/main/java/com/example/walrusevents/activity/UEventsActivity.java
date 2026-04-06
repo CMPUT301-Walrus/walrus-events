@@ -16,19 +16,21 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.walrusevents.EventRepository;
+import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.R;
-import com.example.walrusevents.WaitlistEntry;
-import com.example.walrusevents.WaitlistRepository;
+import com.example.walrusevents.model.WaitlistEntry;
+import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.util.UEventHistoryAdapter;
+import com.example.walrusevents.util.PermissionGatekeeper;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * UEventsActivity
- * Shows the signed-in user's event history: every event they are (or were)
- * on a waitlist for, along with their current WaitlistEntry status.
+ * Shows the signed-in user's event history: waitlist activity plus any
+ * co-organized events, each with a badge describing that relationship.
  */
 public class UEventsActivity extends AppCompatActivity {
 
@@ -45,6 +47,10 @@ public class UEventsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PermissionGatekeeper.requireNotBanned(this, false, permissions -> initializeUi());
+    }
+
+    private void initializeUi() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.user_history_events);
 
@@ -77,7 +83,7 @@ public class UEventsActivity extends AppCompatActivity {
 
                 // packaging serializable object into Intent referenced from Peter Mortensen in Stack Overflow https://stackoverflow.com/questions/14333449/passing-data-through-intent-using-serializable. March 12, 2026
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("event", selectedEvent);
+                bundle.putSerializable("Event", selectedEvent);
                 passToUserEventDetails.putExtras(bundle);
                 startActivity(passToUserEventDetails);
             }
@@ -85,35 +91,22 @@ public class UEventsActivity extends AppCompatActivity {
     }
 
     /**
-     * Loads all events, then checks each one for a waitlist entry belonging
-     * to this device. Only events where an entry exists are shown.
+     * Loads all history sources for this device and publishes a single merged list.
      */
     private void loadHistory() {
-        waitlistRepository.getEntriesByEntrant(deviceId, entries -> {
-            if (entries == null || entries.isEmpty()) {
-                showEmptyState();
-                return;
-            }
+        LinkedHashMap<String, UEventHistoryAdapter.HistoryItem> results = new LinkedHashMap<>();
+        AtomicInteger pendingSources = new AtomicInteger(2);
 
-            AtomicInteger remaining = new AtomicInteger(entries.size());
-            ArrayList<UEventHistoryAdapter.HistoryItem> results = new ArrayList<>();
-
-            for (WaitlistEntry entry : entries) {
-                eventRepository.getEvent(entry.getEventId(), event -> {
-                    if (event != null) {
-                        results.add(new UEventHistoryAdapter.HistoryItem(event, entry.getStatus()));
-                    }
-                    if (remaining.decrementAndGet() == 0) {
-                        publishResults(results);
-                    }
-                });
-            }
-        });
+        loadWaitlistHistory(results, pendingSources);
+        loadCoOrganizerHistory(results, pendingSources);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if (waitlistRepository == null || eventRepository == null || deviceId == null) {
+            return;
+        }
         loadHistory(); // refresh when returning to this Activity
     }
 
@@ -144,5 +137,71 @@ public class UEventsActivity extends AppCompatActivity {
             listView.setVisibility(View.GONE);
             emptyText.setVisibility(View.VISIBLE);
         });
+    }
+
+    private void loadWaitlistHistory(LinkedHashMap<String, UEventHistoryAdapter.HistoryItem> results,
+                                     AtomicInteger pendingSources) {
+        waitlistRepository.getEntriesByEntrant(deviceId, entries -> {
+            if (entries == null || entries.isEmpty()) {
+                markSourceComplete(results, pendingSources);
+                return;
+            }
+
+            AtomicInteger remaining = new AtomicInteger(entries.size());
+            for (WaitlistEntry entry : entries) {
+                eventRepository.getEvent(entry.getEventId(), event -> {
+                    if (event != null) {
+                        mergeHistoryItem(results, new UEventHistoryAdapter.HistoryItem(event, entry.getStatus()));
+                    }
+
+                    if (remaining.decrementAndGet() == 0) {
+                        markSourceComplete(results, pendingSources);
+                    }
+                });
+            }
+        });
+    }
+
+    private void loadCoOrganizerHistory(LinkedHashMap<String, UEventHistoryAdapter.HistoryItem> results,
+                                        AtomicInteger pendingSources) {
+        eventRepository.getEventsFromUser(deviceId, events -> {
+            if (events != null) {
+                for (Event event : events) {
+                    if (event != null && event.isCoOrganizer(deviceId)) {
+                        mergeHistoryItem(results, UEventHistoryAdapter.HistoryItem.coOrganizer(event));
+                    }
+                }
+            }
+
+            markSourceComplete(results, pendingSources);
+        });
+    }
+
+    private void mergeHistoryItem(LinkedHashMap<String, UEventHistoryAdapter.HistoryItem> results,
+                                  UEventHistoryAdapter.HistoryItem candidate) {
+        if (candidate == null || candidate.getEvent() == null || candidate.getEvent().getEventId() == null) {
+            return;
+        }
+
+        synchronized (results) {
+            String eventId = candidate.getEvent().getEventId();
+            UEventHistoryAdapter.HistoryItem existing = results.get(eventId);
+            if (existing == null || candidate.getStatusPriority() > existing.getStatusPriority()) {
+                results.put(eventId, candidate);
+            }
+        }
+    }
+
+    private void markSourceComplete(LinkedHashMap<String, UEventHistoryAdapter.HistoryItem> results,
+                                    AtomicInteger pendingSources) {
+        if (pendingSources.decrementAndGet() != 0) {
+            return;
+        }
+
+        ArrayList<UEventHistoryAdapter.HistoryItem> snapshot;
+        synchronized (results) {
+            snapshot = new ArrayList<>(results.values());
+        }
+        publishResults(snapshot);
     }
 }

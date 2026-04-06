@@ -1,8 +1,8 @@
 package com.example.walrusevents.controllers;
 
-import com.example.walrusevents.ProfileRepository;
-import com.example.walrusevents.WaitlistEntry;
-import com.example.walrusevents.WaitlistRepository;
+import com.example.walrusevents.data.ProfileRepository;
+import com.example.walrusevents.model.WaitlistEntry;
+import com.example.walrusevents.data.WaitlistRepository;
 import com.example.walrusevents.model.Entrant;
 
 /**
@@ -33,7 +33,7 @@ public class EntrantController {
      */
     public void joinWaitlist(String eventId, ActionCallback callback) {
         waitlistRepository.getEntry(eventId, entrant.getDeviceId(), existing -> {
-            if (existing != null && existing.getStatus() != WaitlistEntry.Status.CANCELLED) {
+            if (existing != null && existing.getStatus() != WaitlistEntry.Status.CANCELED) {
                 callback.onFailure("Already on the waitlist for this event.");
                 return;
             }
@@ -51,7 +51,7 @@ public class EntrantController {
     public void joinWaitlistWithLocation(String eventId, double latitude, double longitude,
                                          ActionCallback callback) {
         waitlistRepository.getEntry(eventId, entrant.getDeviceId(), existing -> {
-            if (existing != null && existing.getStatus() != WaitlistEntry.Status.CANCELLED) {
+            if (existing != null && existing.getStatus() != WaitlistEntry.Status.CANCELED) {
                 callback.onFailure("Already on the waitlist for this event.");
                 return;
             }
@@ -65,8 +65,8 @@ public class EntrantController {
     }
 
     /**
-     * Leaves the waitlist by setting status to CANCELLED.
-     * Entrants who have already ACCEPTED cannot self-cancel.
+     * Leaves the waitlist by setting status to CANCELED.
+     * Entrants who have been selected or already responded cannot self-cancel.
      */
     public void leaveWaitlist(String eventId, ActionCallback callback) {
         waitlistRepository.getEntry(eventId, entrant.getDeviceId(), entry -> {
@@ -74,12 +74,14 @@ public class EntrantController {
                 callback.onFailure("Not on the waitlist for this event.");
                 return;
             }
-            if (entry.getStatus() == WaitlistEntry.Status.ACCEPTED) {
-                callback.onFailure("Cannot leave, registration already confirmed.");
+            if (entry.getStatus() == WaitlistEntry.Status.INVITED
+                    || entry.getStatus() == WaitlistEntry.Status.ACCEPTED
+                    || entry.getStatus() == WaitlistEntry.Status.DECLINED) {
+                callback.onFailure("Cannot leave after selection or invite response.");
                 return;
             }
             waitlistRepository.updateStatus(eventId, entrant.getDeviceId(),
-                    WaitlistEntry.Status.CANCELLED, new WaitlistRepository.SaveCallback() {
+                    WaitlistEntry.Status.CANCELED, new WaitlistRepository.SaveCallback() {
                         @Override public void onSuccess() { callback.onSuccess(); }
                         @Override public void onFailure(String error) { callback.onFailure(error); }
                     });

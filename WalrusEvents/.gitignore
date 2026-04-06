@@ -17,3 +17,6 @@ local.properties
 
 # Firebase file
 app/google-services.json
+
+# Google Maps API Key
+secrets.properties

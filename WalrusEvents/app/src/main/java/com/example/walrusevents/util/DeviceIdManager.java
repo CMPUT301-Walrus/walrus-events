@@ -47,5 +47,13 @@ public class DeviceIdManager {
         return cachedId;
     }
 
+    public static String replaceId(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        String id = UUID.randomUUID().toString();
+        prefs.edit().putString(KEY_DEVICE_ID, id).apply();
+        cachedId = id;
+        return getOrCreate(context);
+    }
+
     private DeviceIdManager() {}
 }

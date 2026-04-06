@@ -1,6 +1,5 @@
 package com.example.walrusevents.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -9,14 +8,17 @@ import android.widget.ImageView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.walrusevents.EventRepository;
+import com.example.walrusevents.data.EventRepository;
 import com.example.walrusevents.controllers.OEventListController;
 import com.example.walrusevents.R;
 import com.example.walrusevents.ui.OEventListView;
+import com.example.walrusevents.util.DeviceIdManager;
+import com.example.walrusevents.util.PermissionGatekeeper;
 
 /**
  * Shows the "My Events" view for the organizer. Initializes and connects event repository, the
  * organizer event list view and organizer event list controller.
+ * Shows organizer all events they own/co-own
  */
 public class OEventsActivity extends AppCompatActivity {
     private OEventListView eventListView;
@@ -26,13 +28,19 @@ public class OEventsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PermissionGatekeeper.requireNotBanned(this, false, permissions -> initializeUi());
+    }
+
+    private void initializeUi() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.organizer_events);
 
+        String deviceId = DeviceIdManager.getOrCreate(this);
+
         eventListView = new OEventListView(this);
         eventRepository = new EventRepository();
-        eventListController = new OEventListController(this, eventRepository, eventListView.getEventList());
-        eventListController.loadEvents("ABCDEF");     //**Currently using a placeholder owner id
+        eventListController = new OEventListController(this, deviceId, eventListView.getEventList());
+        eventListController.loadEvents(deviceId);
 
         // Back to main button
         ImageView backButton = findViewById(R.id.backButton_organizer_to_main);
@@ -54,8 +62,16 @@ public class OEventsActivity extends AppCompatActivity {
         });
 
         eventListView.getBackButton().setOnClickListener(v -> {
-            Intent goBackIntent = new Intent(this, MainActivity.class);
-            startActivity(goBackIntent);
+            finish();
         });
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        if (eventListController != null) {
+            eventListController.loadEvents(DeviceIdManager.getOrCreate(this));
+        }
     }
 }

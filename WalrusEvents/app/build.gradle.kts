@@ -1,16 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
-
-    // add the google services gradle plugin
     id("com.google.gms.google-services")
-
+    alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
 }
 
 android {
     namespace = "com.example.walrusevents"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.walrusevents"
@@ -35,6 +31,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -44,6 +43,9 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.firebase.firestore)
     implementation(libs.fragment.testing)
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
+    implementation(libs.uiautomator)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -64,9 +66,13 @@ dependencies {
     // https://firebase.google.com/docs/android/setup#available-libraries
 
 
-    // Dependencies for ZXing (used for generating QR codes
-    implementation("com.google.zxing:core:3.5.3") // Check for the latest version
-    implementation("com.journeyapps:zxing-android-embedded:4.3.0") // Simplifies bitmap generation
+    // Dependencies for ZXing (used for generating QR codes)
+    // Code and logic for QR code were taken from a Reintech article provided by our TA
+    // https://reintech.io/blog/implementing-android-app-qr-code-scanner
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation("com.google.zxing:core:3.5.3")
+    // Required for camera functionality
+    implementation("androidx.appcompat:appcompat:1.6.1")
 
     // Dependencies for Glide (used for converting a URI into a Bitmap
     implementation("com.github.bumptech.glide:glide:4.16.0")
@@ -96,6 +102,8 @@ dependencies {
 
     // Recommended for ActivityScenarioRule
     androidTestImplementation("androidx.test:rules:1.6.1")
+
+    implementation("com.google.android.material:material:1.11.0")
 }
 
 

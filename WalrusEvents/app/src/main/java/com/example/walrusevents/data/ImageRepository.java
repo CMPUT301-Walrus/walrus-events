@@ -1,7 +1,15 @@
+/**
+ * This repo is in charge of storing and retrieving images from Firebase
+ * It manages converting images from the app and uploading them to Firebase in a storage friendly format (and vise versa)
+ */
+
 package com.example.walrusevents.data;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
+
+import com.example.walrusevents.data.FirebaseAPIManager;
+
 import java.io.File;
 
 public class ImageRepository {
@@ -31,5 +39,9 @@ public class ImageRepository {
         // In Firebase Storage, 'updating' is just uploading a new file with the same name.
         // It automatically overwrites the old one!
         storeImage(newImageUri, imageId, listener);
+    }
+
+    public void deleteImage(Uri fileUri, FirebaseAPIManager.OnImageDeletedListener listener){
+        firebaseAPIMgr.deleteImage(fileUri,listener);
     }
 }

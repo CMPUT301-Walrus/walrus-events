@@ -1,5 +1,11 @@
 package com.example.walrusevents.model;
 
+import android.content.Context;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * Profile
  * Data container holding a user's personal information and device id.
@@ -12,6 +18,7 @@ public class Profile {
     private String email;
     private String phone;
     private boolean notificationsEnabled;
+    private Collection<Notification> notifications;
 
     /**
      * No args constructor?
@@ -38,6 +45,7 @@ public class Profile {
         this.name = name;
         this.email = email;
         this.notificationsEnabled = true;
+        this.notifications = null;
     }
 
     // ─── Getters & Setters ────────────────────────────────────────────────────
@@ -105,6 +113,13 @@ public class Profile {
     }
 
     /**
+     * Returns whether the profile has the required fields needed for setup.
+     */
+    public boolean hasRequiredContactInfo() {
+        return hasValue(name) && hasValue(email);
+    }
+
+    /**
      * Wipes all personal data from this profile object.
      * Should be called before deleting the profile from the database.
      */
@@ -112,5 +127,51 @@ public class Profile {
         this.name = null;
         this.email = null;
         this.phone = null;
+    }
+
+    /**
+     * Helper method to check if a value is valid
+     * @param value value to check
+     * @return
+     */
+    private boolean hasValue(String value) {
+        return value != null && !value.trim().isEmpty();
+    }
+
+    /**
+     * Get notifications collection for profile
+     * @return
+     */
+    public Collection<Notification> getNotifications() { return notifications; }
+
+    /**
+     * Add given notification to the collection of notifications
+     * @param notification
+     */
+    public void addNotification(Notification notification) {
+        if (notifications == null) {
+            notifications = new ArrayList<>();
+        }
+        notifications.add(notification);
+    }
+
+    /**
+     * This function should only be called if the user has the option to click delete on a notification
+     * @param notification
+     */
+    public void removeNotification(Notification notification, Context context) {
+        // Safeguard in case this somehow gets called on an empty collection
+        if (notifications == null) {
+            Toast.makeText(context, "No notifications to remove", Toast.LENGTH_SHORT).show();
+        }
+        notifications.remove(notification);
+    }
+
+    /**
+     * Set notifications collection for profile
+     * @param notifications
+     */
+    public void setNotifications(Collection<Notification> notifications) {
+        this.notifications = notifications;
     }
 }
