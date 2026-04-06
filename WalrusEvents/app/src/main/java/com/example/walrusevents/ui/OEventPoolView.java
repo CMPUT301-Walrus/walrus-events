@@ -32,7 +32,7 @@ public class OEventPoolView {
         titleText = context.findViewById(R.id.org_waitlist_title);
         entrantCountText = context.findViewById(R.id.org_entrant_count);
 
-        inviteButton=context.findViewById(R.id.invite_private_event_button);
+        inviteButton = context.findViewById(R.id.invite_private_event_button);
     }
 
     public FragmentContainerView getFragmentContainerView() {

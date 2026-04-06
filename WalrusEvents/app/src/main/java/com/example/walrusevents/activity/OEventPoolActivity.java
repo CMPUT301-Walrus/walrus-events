@@ -32,6 +32,7 @@ import com.example.walrusevents.ui.OEventPoolView;
 import com.example.walrusevents.ui.PostLotteryPoolFragment;
 import com.example.walrusevents.ui.PreLotteryPoolFragment;
 import com.example.walrusevents.ui.SearchEntrantsPrivateEventFragment;
+import com.example.walrusevents.ui.SendNotificationsFragment;
 import com.example.walrusevents.util.DeviceIdManager;
 import com.example.walrusevents.util.PermissionGatekeeper;
 import com.example.walrusevents.util.SearchPrivateEntrantsController;
@@ -153,6 +154,15 @@ public class OEventPoolActivity extends AppCompatActivity {
             Intent intent = new Intent(this, MapsActivity.class);
             intent.putExtra("eventId", eventModel.getEventId());
             startActivity(intent);
+        });
+
+        view.getSendNotificationsButton().setOnClickListener(v -> {
+            SendNotificationsFragment sendNotificationsFragment = new SendNotificationsFragment(eventModel, this);
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            if (fragmentManager.findFragmentByTag(CONFIG_NOTIFICATIONS_TAG) == null) {
+                sendNotificationsFragment.show(fragmentManager, CONFIG_NOTIFICATIONS_TAG);
+            }
         });
 
         updateMapButtonVisibility();
