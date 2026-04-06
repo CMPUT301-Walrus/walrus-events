@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class UViewWaitlistActivity extends AppCompatActivity implements WaitlistRepository.EntryListCallback {
     private Event event;
-    private Button backToEvent;
+    private ImageView backToEvent;
     private TextView eventTitle;
     private TextView countEntrants;
     private List<WaitlistEntry> waitlist;
