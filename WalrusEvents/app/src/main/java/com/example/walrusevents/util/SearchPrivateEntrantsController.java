@@ -29,15 +29,17 @@ public class SearchPrivateEntrantsController implements ProfileRepository.Profil
 
     public SearchPrivateEntrantsController(Context context, ProfileRepository repo,ListView listview){
         this.entrants=new ArrayList<>();
+        filteredList = new ArrayList<>();
         this.profileRepository=repo;
-        this.listAdapter=new EntrantArrayAdapter(context,entrants);
+        this.listAdapter=new EntrantArrayAdapter(context,filteredList);
         listview.setAdapter(listAdapter);
     }
 
     public void loadAllEntrants(){
+        entrants.clear();
         listAdapter.clear();
         profileRepository.resetPagination();
-        profileRepository.initiateGetAllProfiles(15,this);
+        profileRepository.initiateGetAllProfiles(2,this);
     }
 
     @Override
@@ -46,8 +48,9 @@ public class SearchPrivateEntrantsController implements ProfileRepository.Profil
 
         updateData(entrants);
         //listAdapter.notifyDataSetChanged();
-        if (entrants.size() == 15){
-            profileRepository.getNextProfilesBatch(10, this);
+        if (!entrants.isEmpty())
+        {
+            profileRepository.getNextProfilesBatch(2, this);
         }
 
         System.out.printf("%d event(s) loaded", entrants.size());
@@ -57,8 +60,8 @@ public class SearchPrivateEntrantsController implements ProfileRepository.Profil
     * Currently for some reason doesn't filter
      */
     public void applyFilter(){
-        ArrayList<Entrant> filteredEntrants = new ArrayList<>();
-        if(!query.isEmpty()&&query==null){
+        filteredList.clear();
+        if(query!=null && !query.isEmpty()){
             for (Entrant entrant : entrants) {
 
                 boolean matchesKeyword = true;
@@ -66,26 +69,23 @@ public class SearchPrivateEntrantsController implements ProfileRepository.Profil
                 String name = entrant.getProfile().getName();
                 String email = entrant.getProfile().getEmail();
                 String phone = entrant.getProfile().getPhone();
-                boolean matchName = name.toLowerCase().contains(query.toLowerCase());
-                boolean matchEmail = email.toLowerCase().contains(query.toLowerCase());
-                boolean matchPhone = phone.toLowerCase().contains(query.toLowerCase());
+                boolean matchName = name != null && name.toLowerCase().contains(query.toLowerCase());
+                boolean matchEmail = email != null && email.toLowerCase().contains(query.toLowerCase());
+                boolean matchPhone = phone != null && phone.toLowerCase().contains(query.toLowerCase());
                 matchesKeyword = matchName || matchEmail || matchPhone;
 
                 if (matchesKeyword) {
-                    filteredEntrants.add(entrant);
+                    filteredList.add(entrant);
                 }
         }
         }else
         {
-            filteredEntrants.addAll(entrants);
+            filteredList.addAll(entrants);
         }
 
-        filteredList = filteredEntrants;
-        listAdapter.clear();
-        listAdapter.addAll(filteredList);
         listAdapter.notifyDataSetChanged();
-
     }
+
     public void setQuery(String s){
         this.query=s;
         applyFilter();
@@ -96,7 +96,6 @@ public class SearchPrivateEntrantsController implements ProfileRepository.Profil
     }
 
     public void updateData(ArrayList<Entrant> newEntrants){
-        entrants.clear();
         entrants.addAll(newEntrants);
         applyFilter();
     }

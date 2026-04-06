@@ -23,8 +23,10 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.walrusevents.data.ProfileRepository;
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.model.Lottery;
 import com.example.walrusevents.controllers.OEventPoolController;
@@ -52,6 +54,10 @@ import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Activity that handles the Organizer Pool view, which shows the current list of entrants
+ * for the event.
+ */
 public class OEventPoolActivity extends AppCompatActivity {
     public static final String CONFIG_LOTTERY_TAG = "configLottery";
     public static final String CONFIG_NOTIFICATIONS_TAG = "configNotifications";
@@ -137,9 +143,14 @@ public class OEventPoolActivity extends AppCompatActivity {
                     activityResultLauncher.launch(goEditDetails);
                 }
                 else if (menuItem.getItemId() == R.id.event_settings_co_owner) {
-                    //TODO: search users and select co-owner
-
-
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    if (fragmentManager.findFragmentByTag("invite co-organizer") == null) {
+                        SearchEntrantsPrivateEventFragment searchEntrantsCoOrganizer = new SearchEntrantsPrivateEventFragment(entrantId -> {
+                            String inviteMessage = String.format(Locale.getDefault(), "You were invited to be a co-organizer for %s!", eventModel.getTitle());
+                            controller.sendCoOwnerInvite(this, entrantId, "Co-Organizer Invite", inviteMessage);
+                        });
+                        searchEntrantsCoOrganizer.show(getSupportFragmentManager(), "invite co-organizer");
+                    }
                 }
                 else if (menuItem.getItemId() == R.id.event_settings_qr) {
                     Intent goQrCode = new Intent(this, QRCodeActivity.class);
@@ -404,7 +415,10 @@ public class OEventPoolActivity extends AppCompatActivity {
                 view.getLotteryButton().setText("Invite");
 
                 view.getLotteryButton().setOnClickListener(v -> {
-                    SearchEntrantsPrivateEventFragment fragment = new SearchEntrantsPrivateEventFragment(controller::sendInvite, eventModel.getTitle());
+                    SearchEntrantsPrivateEventFragment fragment = new SearchEntrantsPrivateEventFragment((SearchEntrantsPrivateEventFragment.ConfirmInviteCallback) entrantId -> {
+                        String inviteMessage = String.format(Locale.getDefault(),"You were invited to participate in %s!", eventModel.getTitle());
+                        controller.sendInvite(this, eventModel.getEventId(), "Invitation", inviteMessage);
+                    });
                     fragment.show(getSupportFragmentManager(),"search");
                 });
                 break;

@@ -11,6 +11,7 @@ public class Notification {
     private String eventId;
     private NotificationTarget targetGroup;
     private Date timestamp;
+    private boolean coOwnerInvite;
 
     public enum NotificationTarget {
         WAITING_LIST,
@@ -119,6 +120,14 @@ public class Notification {
      */
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public boolean getCoOwnerInvite() {
+        return coOwnerInvite;
+    }
+
+    public void setCoOwnerInvite(boolean coOwnerInvite) {
+        this.coOwnerInvite = coOwnerInvite;
     }
 
     public static NotificationTarget mapStatusToGroup(WaitlistEntry.Status status) {
