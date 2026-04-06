@@ -2,10 +2,8 @@ package com.example.walrusevents.activity;
 
 import static android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -18,8 +16,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.walrusevents.model.Entrant;
 import com.example.walrusevents.model.Lottery;
@@ -35,20 +32,33 @@ import com.example.walrusevents.ui.OEventPoolView;
 import com.example.walrusevents.ui.PostLotteryPoolFragment;
 import com.example.walrusevents.ui.PreLotteryPoolFragment;
 import com.example.walrusevents.ui.SearchEntrantsPrivateEventFragment;
+import com.example.walrusevents.ui.SendNotificationsFragment;
 import com.example.walrusevents.util.DeviceIdManager;
 import com.example.walrusevents.util.PermissionGatekeeper;
 import com.example.walrusevents.util.SearchPrivateEntrantsController;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class OEventPoolActivity extends AppCompatActivity {
     public static final String CONFIG_LOTTERY_TAG = "configLottery";
     public static final String CONFIG_NOTIFICATIONS_TAG = "configNotifications";
+
+    private enum PoolPhase {
+        PRE_LOTTERY,
+        POST_LOTTERY,
+        FINALIZED
+    }
+
     private Event eventModel;
     private OEventPoolView view;
     private OEventPoolController controller;
+    private final WaitlistRepository waitlistRepository = new WaitlistRepository();
     private ArrayList<String> selectedForRemoval;
     private ArrayList<Entrant> finalList;
     private String selectedMessage;
@@ -136,28 +146,6 @@ public class OEventPoolActivity extends AppCompatActivity {
             popupMenu.show();
         });
 
-        view.getRemoveButton().setOnClickListener(v -> {
-            if (selectedForRemoval == null) {
-                return;
-            }
-
-            WaitlistRepository waitlistRepository = new WaitlistRepository();
-
-            for (String entrantId : selectedForRemoval) {
-                waitlistRepository.updateStatus(eventModel.getEventId(), entrantId, WaitlistEntry.Status.CANCELED, new WaitlistRepository.SaveCallback() {
-                    @Override
-                    public void onSuccess() {
-                        refresh();
-                    }
-
-                    @Override
-                    public void onFailure(String error) {
-
-                    }
-                });
-            }
-        });
-
         view.getBackButton().setOnClickListener(v -> {
             finish();
         });
@@ -168,24 +156,25 @@ public class OEventPoolActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Toggle map button visibility based on geolocation requirement
+        view.getSendNotificationsButton().setOnClickListener(v -> {
+            SendNotificationsFragment sendNotificationsFragment = new SendNotificationsFragment(eventModel, this);
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            if (fragmentManager.findFragmentByTag(CONFIG_NOTIFICATIONS_TAG) == null) {
+                sendNotificationsFragment.show(fragmentManager, CONFIG_NOTIFICATIONS_TAG);
+            }
+        });
+
+        updateMapButtonVisibility();
+    }
+
+    private void updateMapButtonVisibility() {
         if (eventModel.getUseGeolocation()) {
             view.getMapButton().setVisibility(View.VISIBLE);
-        } else {
+        }
+        else {
             view.getMapButton().setVisibility(View.GONE);
         }
-
-        //Invite Button visibility based on isPrivate req
-        if(eventModel.getIsPrivate()){
-            view.getInviteButton().setVisibility(View.VISIBLE);
-        }else{
-            view.getInviteButton().setVisibility(View.GONE);
-        }
-
-        view.getInviteButton().setOnClickListener(v -> {
-            SearchEntrantsPrivateEventFragment fragment = new SearchEntrantsPrivateEventFragment();
-            fragment.show(getSupportFragmentManager(),"search");
-        });
     }
 
     /**
@@ -196,71 +185,220 @@ public class OEventPoolActivity extends AppCompatActivity {
             return;
         }
         controller = new OEventPoolController(eventModel);
-
         view.getTitleText().setText(eventModel.getTitle());
+        updateMapButtonVisibility();
 
-        if (eventModel.isInRegistration()) {
-            PreLotteryPoolFragment preLotteryFragment = new PreLotteryPoolFragment(eventModel, view.getEntrantCountText());
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.waiting_list_fragment, preLotteryFragment)
-                    .commit();
+        waitlistRepository.getAllEntries(eventModel.getEventId(), entries -> runOnUiThread(() -> renderPool(entries)));
+    }
 
-            setLotteryButton(3);
-            view.getRemoveButton().setVisibility(View.GONE);
-        }
-        else if (eventModel.isInConfirmation()) {
-            selectedForRemoval = new ArrayList<>();
-            PostLotteryPoolFragment postLotteryFragment = new PostLotteryPoolFragment(eventModel, controller, selectedForRemoval);
+    private void renderPool(List<WaitlistEntry> entries) {
+        PoolPhase poolPhase = determinePoolPhase(entries);
+        updateEntrantCount(entries, poolPhase);
 
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.waiting_list_fragment, postLotteryFragment)
-                    .commit();
-
-            if (!eventModel.getIsPrivate()) {
-                setLotteryButton(0);
-            }
-            else {
-                setLotteryButton(1);
-            }
-            view.getRemoveButton().setVisibility(View.VISIBLE);
-        }
-        else {
-            finalList = new ArrayList<>();
-            FinalizedPoolFragment finalizedPoolFragment = new FinalizedPoolFragment(eventModel, controller, finalList);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.waiting_list_fragment, finalizedPoolFragment)
-                    .commit();
-
-            setLotteryButton(2);
-            view.getRemoveButton().setVisibility(View.GONE);
+        switch (poolPhase) {
+            case PRE_LOTTERY:
+                showPreLotteryPool();
+                break;
+            case POST_LOTTERY:
+                showPostLotteryPool();
+                break;
+            case FINALIZED:
+                showFinalizedPool();
+                break;
         }
     }
 
+    private PoolPhase determinePoolPhase(List<WaitlistEntry> entries) {
+        if (hasLotteryResults(entries)) {
+            if (hasConfirmationEnded()) {
+                return PoolPhase.FINALIZED;
+            }
+            return PoolPhase.POST_LOTTERY;
+        }
+
+        if (hasConfirmationEnded()) {
+            return PoolPhase.FINALIZED;
+        }
+        return PoolPhase.PRE_LOTTERY;
+    }
+
+    private boolean hasLotteryResults(List<WaitlistEntry> entries) {
+        boolean hasCanceledAfterRegistration = false;
+
+        for (WaitlistEntry entry : entries) {
+            WaitlistEntry.Status status = entry.getStatus();
+            if (status == WaitlistEntry.Status.INVITED
+                    || status == WaitlistEntry.Status.ACCEPTED
+                    || status == WaitlistEntry.Status.NOT_CHOSEN
+                    || status == WaitlistEntry.Status.DECLINED) {
+                return true;
+            }
+            if (status == WaitlistEntry.Status.CANCELED && !eventModel.isInRegistration()) {
+                hasCanceledAfterRegistration = true;
+            }
+        }
+
+        return hasCanceledAfterRegistration;
+    }
+
+    private boolean hasConfirmationEnded() {
+        String endConfirmationTime = eventModel.getEndConfirmationTime();
+        if (endConfirmationTime == null || endConfirmationTime.isBlank()) {
+            return false;
+        }
+
+        try {
+            return LocalDateTime.now().isAfter(LocalDateTime.parse(endConfirmationTime));
+        }
+        catch (DateTimeParseException ignored) {
+            return false;
+        }
+    }
+
+    private void updateEntrantCount(List<WaitlistEntry> entries, PoolPhase poolPhase) {
+        int displayedEntrants;
+
+        switch (poolPhase) {
+            case PRE_LOTTERY:
+                displayedEntrants = countEntries(entries, WaitlistEntry.Status.PENDING);
+                break;
+            case POST_LOTTERY:
+                displayedEntrants = countEntries(entries,
+                        WaitlistEntry.Status.ACCEPTED,
+                        WaitlistEntry.Status.INVITED,
+                        WaitlistEntry.Status.CANCELED,
+                        WaitlistEntry.Status.DECLINED,
+                        WaitlistEntry.Status.NOT_CHOSEN);
+                break;
+            case FINALIZED:
+            default:
+                displayedEntrants = countEntries(entries, WaitlistEntry.Status.ACCEPTED);
+                break;
+        }
+
+        if (eventModel.getEntrantCapacity() <= 0) {
+            view.getEntrantCountText().setText(String.format(Locale.getDefault(), "(%d)", displayedEntrants));
+            return;
+        }
+
+        view.getEntrantCountText().setText(String.format(Locale.getDefault(),
+                "(%d/%d)",
+                displayedEntrants,
+                eventModel.getEntrantCapacity()));
+    }
+
+    private int countEntries(List<WaitlistEntry> entries, WaitlistEntry.Status... statuses) {
+        int count = 0;
+        for (WaitlistEntry entry : entries) {
+            for (WaitlistEntry.Status status : statuses) {
+                if (entry.getStatus() == status) {
+                    count++;
+                    break;
+                }
+            }
+        }
+        return count;
+    }
+
+    private void showPreLotteryPool() {
+        selectedForRemoval = null;
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.waiting_list_fragment, new PreLotteryPoolFragment(eventModel))
+                .commit();
+
+        view.getSendNotificationsButton().setVisibility(View.GONE);
+        view.getRemoveButton().setVisibility(View.GONE);
+
+        if (eventModel.getIsPrivate()) {
+            setLotteryButton(1);
+        }
+        else {
+            setLotteryButton(4);
+        }
+    }
+
+    private void showPostLotteryPool() {
+        selectedForRemoval = new ArrayList<>();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.waiting_list_fragment, new PostLotteryPoolFragment(controller, selectedForRemoval))
+                .commit();
+
+        view.getSendNotificationsButton().setVisibility(View.VISIBLE);
+        //view.getSendNotificationsButton().setOnClickListener(v -> PLACEHOLDER);
+
+        view.getRemoveButton().setVisibility(View.VISIBLE);
+        view.getRemoveButton().setText("Remove");
+        view.getRemoveButton().setOnClickListener(v -> removeSelectedEntrants());
+
+        if (eventModel.getIsPrivate()) {
+            setLotteryButton(1);
+        }
+        else {
+            setLotteryButton(0);
+        }
+    }
+
+    private void showFinalizedPool() {
+        selectedForRemoval = null;
+        finalList = new ArrayList<>();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.waiting_list_fragment, new FinalizedPoolFragment(eventModel, controller, finalList))
+                .commit();
+
+        view.getSendNotificationsButton().setVisibility(View.GONE);
+        view.getRemoveButton().setVisibility(View.GONE);
+        setLotteryButton(2);
+    }
+
+    private void removeSelectedEntrants() {
+        if (selectedForRemoval == null || selectedForRemoval.isEmpty()) {
+            Toast.makeText(this, "Select at least one entrant to remove", Toast.LENGTH_SHORT).show();
+            return;
+        }
+//Not Working
+//        ArrayList<String> entrantsToRemove = new ArrayList<>(selectedForRemoval);
+//        AtomicInteger remainingUpdates = new AtomicInteger(entrantsToRemove.size());
+//        AtomicBoolean updateFailed = new AtomicBoolean(false);
+//
+//        for (String entrantId : entrantsToRemove) {
+//            waitlistRepository.updateStatus(eventModel.getEventId(), entrantId, WaitlistEntry.Status.CANCELED, new WaitlistRepository.SaveCallback() {
+//                @Override
+//                public void onSuccess() {
+//                    if (remainingUpdates.decrementAndGet() == 0 && !updateFailed.get()) {
+//                        refresh();
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(String error) {
+//                    if (updateFailed.compareAndSet(false, true)) {
+//                        Toast.makeText(OEventPoolActivity.this, "Failed to remove entrants", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//            });
+//        }
+    }
+
     /**
-     * Sets the lottery button to lottery/join/export list
-     * @param mode 0 -> lottery, 1 -> invite, 2 -> export list, 3 -> gone
+     * Sets the lottery button to the primary action for the current pool phase.
+     * @param mode 0 -> replace canceled, 1 -> invite, 2 -> export list, 3 -> gone, 4 -> confirm selection
      */
     private void setLotteryButton(int mode) {
         switch (mode) {
             case 0:
                 view.getLotteryButton().setVisibility(View.VISIBLE);
-                view.getLotteryButton().setText("Lottery");
+                view.getLotteryButton().setText("Replace Canceled");
                 view.getLotteryButton().setOnClickListener(v -> {
-                    if (getSupportFragmentManager().findFragmentByTag(CONFIG_LOTTERY_TAG) == null) {
-                        ConfigureLotteryFragment configureLotteryFragment = new ConfigureLotteryFragment(eventModel, this);
-                        configureLotteryFragment.show(getSupportFragmentManager(), CONFIG_LOTTERY_TAG);
-                    }
+                    waitlistRepository.getAllEntries(eventModel.getEventId(), entries -> doLottery(entries, true));
                 });
                 break;
             case 1:
                 view.getLotteryButton().setVisibility(View.VISIBLE);
                 view.getLotteryButton().setText("Invite");
 
-                //TODO: replace testEntrantId when entrant search is implemented
-                String testEntrantId = DeviceIdManager.getOrCreate(this);
                 view.getLotteryButton().setOnClickListener(v -> {
-                    controller.sendInvite(this, testEntrantId, "Invitation",
-                            String.format(Locale.getDefault(),"You were invited to %s!", eventModel.getTitle()));
+                    SearchEntrantsPrivateEventFragment fragment = new SearchEntrantsPrivateEventFragment(controller::sendInvite, eventModel.getTitle());
+                    fragment.show(getSupportFragmentManager(),"search");
                 });
                 break;
             case 2:
@@ -278,6 +416,19 @@ public class OEventPoolActivity extends AppCompatActivity {
             case 3:
                 view.getLotteryButton().setVisibility(View.GONE);
                 break;
+            case 4:
+                view.getLotteryButton().setVisibility(View.VISIBLE);
+                view.getLotteryButton().setText("Draw Selection");
+                view.getLotteryButton().setOnClickListener(v -> {
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    if (fragmentManager.findFragmentByTag(CONFIG_LOTTERY_TAG) == null) {
+                        ConfigureLotteryFragment configureLotteryFragment = new ConfigureLotteryFragment(eventModel, this);
+                        configureLotteryFragment.show(getSupportFragmentManager(), CONFIG_LOTTERY_TAG);
+                    }
+
+                    //runLotteryWithoutNotifications();
+                });
+                break;
         }
     }
 
@@ -286,7 +437,15 @@ public class OEventPoolActivity extends AppCompatActivity {
         this.nonSelectedMessage = nonSelectedMessage;
     }
 
+    private void runLotteryWithoutNotifications() {
+        waitlistRepository.getAllEntries(eventModel.getEventId(), entries -> doLottery(entries, false));
+    }
+
     public void doLottery(List<WaitlistEntry> entries) {
+        doLottery(entries, true);
+    }
+
+    public void doLottery(List<WaitlistEntry> entries, boolean sendNotifications) {
         Lottery lottery = new Lottery();
         //Draw the lottery
         boolean lotterySuccess = lottery.drawToCapacity(entries, eventModel.getApplicantCapacity());
@@ -297,18 +456,50 @@ public class OEventPoolActivity extends AppCompatActivity {
             return;
         }
 
+        AtomicInteger remainingUpdates = new AtomicInteger(entries.size());
+        AtomicBoolean updateFailed = new AtomicBoolean(false);
+
         //Update the waitlist with the new state of the list
         for (WaitlistEntry entrant: entries) {
-            lottery.updateWaitlist(eventModel.getEventId(), entrant, OEventPoolActivity.this);
+            waitlistRepository.updateStatus(eventModel.getEventId(), entrant.getEntrantId(), entrant.getStatus(), new WaitlistRepository.SaveCallback() {
+                @Override
+                public void onSuccess() {
+                    if (remainingUpdates.decrementAndGet() == 0 && !updateFailed.get()) {
+                        finishLottery(sendNotifications);
+                    }
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    if (updateFailed.compareAndSet(false, true)) {
+                        Toast.makeText(OEventPoolActivity.this, "Lottery Failed", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         }
-        controller.sendNotifications(OEventPoolActivity.this,
-                String.format(Locale.getDefault(), "%s Lottery Result", eventModel.getTitle()),
-                selectedMessage,
-                Notification.NotificationTarget.SELECTED);
-        controller.sendNotifications(OEventPoolActivity.this,
-                String.format(Locale.getDefault(), "%s Lottery Result", eventModel.getTitle()),
-                nonSelectedMessage,
-                Notification.NotificationTarget.NOT_SELECTED);
+    }
+
+    private void finishLottery(boolean sendNotifications) {
+        if (sendNotifications) {
+            String selectedNotification = selectedMessage;
+            if (selectedNotification == null || selectedNotification.isBlank()) {
+                selectedNotification = "You've been selected!";
+            }
+
+            String nonSelectedNotification = nonSelectedMessage;
+            if (nonSelectedNotification == null || nonSelectedNotification.isBlank()) {
+                nonSelectedNotification = "You were not selected";
+            }
+
+            controller.sendNotifications(OEventPoolActivity.this,
+                    String.format(Locale.getDefault(), "%s Lottery Result", eventModel.getTitle()),
+                    selectedNotification,
+                    Notification.NotificationTarget.SELECTED);
+            controller.sendNotifications(OEventPoolActivity.this,
+                    String.format(Locale.getDefault(), "%s Lottery Result", eventModel.getTitle()),
+                    nonSelectedNotification,
+                    Notification.NotificationTarget.NOT_SELECTED);
+        }
         refresh();
     }
 }

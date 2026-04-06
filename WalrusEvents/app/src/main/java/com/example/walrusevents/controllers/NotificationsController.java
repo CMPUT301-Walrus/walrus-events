@@ -40,7 +40,6 @@ public class NotificationsController {
 
         // Find all users in this event who match the target group
         waitlistRepo.getAllEntries(eventId, entries -> {
-            final int[] processedCount = {0};
             for (WaitlistEntry entry : entries) {
                 System.out.println("SENDING");
                 Notification.NotificationTarget userGroup = Notification.mapStatusToGroup(entry.getStatus());
@@ -50,7 +49,6 @@ public class NotificationsController {
                         if (profile != null && profile.hasNotificationsEnabled()) {
                             // Only send if the user has opted-in
                             notifRepo.sendNotificationToUser(entry.getEntrantId(), notification);
-                            processedCount[0]++;
                         }
                     });
                 }

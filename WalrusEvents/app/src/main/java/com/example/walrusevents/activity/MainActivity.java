@@ -7,6 +7,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -81,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
         profileRepository = new ProfileRepository();
         eventListController = new MainSEventListController(this, eventRepository, eventListView);
         eventListController.loadEvents();
+
+        eventListController.setFeatured(this, findViewById(R.id.featured_event_name), findViewById(R.id.featured_event_thumbnail));
 
         /*
          * Search Bar
@@ -278,10 +281,11 @@ public class MainActivity extends AppCompatActivity {
         }
         initialProfileSetupLaunched = false;
         eventListController.loadEvents();
+        eventListController.setFeatured(this, findViewById(R.id.featured_event_name), findViewById(R.id.featured_event_thumbnail));
         ensureProfileSetupState();
     }
 
-    private void updateRoleText(){
+    public void updateRoleText(){
         UserRole role = UserRoleManager.getRole();
         changeUserRoleButton.setText("Role:"+role.toString());
 
